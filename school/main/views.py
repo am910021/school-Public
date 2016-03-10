@@ -16,6 +16,7 @@ class BaseView(TemplateView):
         # Settings context data for base template
         context['base_template_name'] = self.base_template_name
         context['SITE_NAME'] = settings.SITE_NAME
+        context['demo'] = Demo.objects.all()
         if hasattr(self, 'page_title'):
             context['page_title'] = self.page_title
 
@@ -52,8 +53,6 @@ class Index(BaseView):
     page_title = '校物系統首頁' # title
 
     def get(self, request, *args, **kwargs):
-        demo = Demo.objects.all()
-        kwargs['demo'] = demo
         return super(Index, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
