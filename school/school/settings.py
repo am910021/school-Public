@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-SITE_NAME = "校物系統"
+SITE_NAME = "校務系統"
 
 
 # Application definition

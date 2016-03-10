@@ -66,17 +66,13 @@ class ShowDemo(BaseView):
     def get(self, request, *args, **kwargs):
         if 'demoID' not in kwargs:
             return super(ShowDemo, self).get(request, *args, **kwargs)
-        
-        
-        demo = Demo.objects.get(id=kwargs['demoID'])
+
         chart_demo = None
         try:
             chart_demo = Demo.objects.get(id=kwargs['demoID'])
         except Exception as e:
             print(e)
-            
         kwargs['chart_demo'] = chart_demo
-        kwargs['demo'] = demo
             
         return super(ShowDemo, self).get(request, *args, **kwargs)
     
