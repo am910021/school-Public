@@ -1,0 +1,84 @@
+{% extends base_template_name %}
+
+{% block head %}
+<script type="text/javascript">
+var css_count={{css_count}};
+function remove(input){
+        //alert(input.value);
+        $.ajax({
+        url : "{% url 'developer:remove' %}", 
+        type : "POST",
+        dataType: "json", 
+        data : {
+            demoID : input.value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success : function(json) {
+            if (json.status=="success"){
+                alert("success")";
+            }
+        },
+        error : function(xhr,errmsg,err) {
+            alert("error")
+            alert(xhr.status + ": " + xhr.responseText);
+        }
+    });
+    return false;
+}
+</script>
+
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+        {% if demo %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            名稱
+                        </th>
+                        <th>
+                            資料夾名字
+                        </th>
+                        <th>
+                            上傳者
+                        </th>
+                        <th>
+                            時間
+                        </th>
+                        <th>
+                            移除
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in demo %}
+                    <tr>
+                        <td>
+                            {{i.name}}
+                        </td>
+                        <td>
+                            {{i.dirName}}
+                        </td>
+                        <td>
+                            {{i.user.profile.fullName}}
+                        </td>
+                        <td>
+                            {{i.date}}
+                        </td>
+                        <td>
+                           <button onclick="remove({{i.id}})">移除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h3>目前沒有上傳的Demo</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

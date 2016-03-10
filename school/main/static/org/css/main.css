@@ -1,0 +1,192 @@
+#header-wrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 151px;
+    background-color: #3c7bbe;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+  }
+
+#search{
+    height:50px;
+    width:90%;
+    background:#fff;
+
+    margin-right:5%;
+}
+    
+#search div{
+    display:inline-block;
+    margin-left:10px;
+    width:90%;
+    height:30px;
+    line-height: 100%;
+} 
+
+#search button{
+	display:inline-block;
+	margin-top:12px;
+	border: none;
+	background: none;
+	font-size:14pt;
+}
+
+#logo-link{
+	margin-left:40px;
+	
+	
+}
+
+#title-row{
+	padding-top:30px;
+}
+
+@media screen and (min-width: 991px) and (max-width: 1124px) {
+	#logo-link{
+	    margin-left:0px; 
+	    
+	}
+	#logo-col{
+	padding-right:0px; 
+	}
+}
+
+
+@media(min-width:1280px) {
+    #search-col{
+        left:-60px;
+    }
+}
+
+@media(min-width:1440px) {
+    #search-col{
+        left:-120px;
+    }
+}
+
+@media(min-width:1680px) {
+    #search-col{
+        left:-200px;
+    }
+}
+
+@media(max-width:991px) {
+    #header-wrapper{
+        height:160px;
+    }
+    
+	#title-row{
+	    padding-top:10px;
+	}
+    #search{
+        width:100%;
+    }
+    #search div{
+        width:92%;
+    } 
+    
+    #logo-link{
+        margin-left:0px; 
+        
+    }
+}
+
+@media(max-width:600px) {
+    #search div{
+        width:89%;
+    } 
+}
+
+
+@media(max-width:480px) {
+    #search div{
+        width:88%;
+    } 
+}
+
+@media(max-width:384px) {
+    #search{
+        width:100%;
+    }
+    
+    #search div{
+        width:85%;
+    } 
+}
+
+
+.header-nav-row{
+	background: #fff;
+	height: 40px;
+}
+
+.header-subnav-row{
+    background: #3c7bbe;
+    height:50px;
+}
+
+.header-search-row{
+  height:60px;
+}
+
+.header-wrapper-row{
+    margin-right: 100px;
+    margin-left: 100px;
+    
+}
+
+.header-search-row{
+  height:60px;
+}
+
+.header-wrapper-row{
+    margin-right: 100px;
+    margin-left: 100px;
+}
+
+#menu-toggle{
+    float:left;
+    width:40px;
+    height:40px;;
+    border-right:1px #ccc solid;
+    text-align: center;
+}
+    
+#menu-toggle a{
+    font-size:16pt;
+    line-height:40px;
+    color:#000;
+    text-decoration:none;
+}
+
+#login{
+    float:right;
+    width:55px;
+    height:100%;
+    border-left:1px #ccc solid;
+    vertical-align:middle;
+    text-align: center;
+    background-color:#333;
+  }
+
+#login a{
+    color:#fff;
+    text-decoration:none;
+    line-height:40px;
+}
+
+#main{
+	margin-top:151px;
+}
+
+#Exa2 li{
+display:inline;
+margin-right:25px;
+}
+
+

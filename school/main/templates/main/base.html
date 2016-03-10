@@ -1,0 +1,213 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{{SITE_NAME}}|{{page_title}}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'org/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'org/css/simple-sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'org/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'org/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'org/css/style.css' %}" media="screen" type="text/css" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+{% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <!-- menu in hrer -->
+            <h3 class="text-center">學校校務系統</h3>
+    <ul id="accordion" class="accordion">
+        <li>
+            <!-- <div class="link"><i class="fa fa-paint-brush"></i>Diseño web<i class="fa fa-chevron-down"></i></div> -->
+            <div class="link" style="border-top: 1px solid #8AB5E2;">教學<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                <li><a href="#">學生參與競賽獲獎人次</a></li>
+                <li><a href="#">學生參與展覽表演人次</a></li>
+                <li><a href="#">學生參與公職考試考取人次</a></li>
+                <li><a href="#">學生考取專業證照人次</a></li>
+                <li><a href="#">學生考取外語證照人次</a></li>
+                <li><a href="#">通過教師升等人數</a></li>
+                <li><a href="#">通過教師評鑑人數</a></li>
+                <li><a href="#">聘任業師人數(技術聘)</a></li>
+                <li><a href="#">學生二一退學人數</a></li>
+                <li><a href="#">系所博士班畢業人數</a></li>
+                <li><a href="#">系統博士生畢業人數</a></li>
+                <li><a href="#">大一新生各管道註冊率</a></li>
+                <li><a href="#">推甄錄取最低級分</a></li>
+                <li><a href="#">碩博士生註冊率</a></li>
+                <li><a href="#">建置磨課師課程數量</a></li>
+            </ul>
+        </li>
+        <li>
+            <div class="link">研究<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                <li><a href="#">學生專書出版人次</a></li>
+                <li><a href="#">學生專書出版篇數</a></li>
+                <li><a href="#">學生論文出版人士</a></li>
+                <li><a href="#">學生論文出版篇數</a></li>
+                <li><a href="#">學生參與國際研討會人數</a></li>
+                <li><a href="#">學生參與兩岸研討會人數</a></li>
+                <li><a href="#">教室審稿期刊發表篇數</a></li>
+                <li><a href="#">教師會議論文發表篇數</a></li>
+                <li><a href="#">教師專書發表篇數</a></li>
+                <li><a href="#">教師參與國際會議發表人次</a></li>
+                <li><a href="#">教師參與學術計畫件數</a></li>
+                <li><a href="#">教師參與學術研究計畫金額</a></li>
+                <li><a href="#">教師參與國際合作計畫件數</a></li>
+                <li><a href="#">教師參與國際合作計畫金額</a></li>
+                <li><a href="#">教師參與展覽表演活動人次</a></li>
+                <li><a href="#">教師參與全國性競賽獲獎人次</a></li>
+                <li><a href="#">教師參與國際性競賽獲獎人次</a></li>
+                <li><a href="#">辦理學術研討會場數</a></li>
+                <li><a href="#">辦理國際學術研討會場數</a></li>
+                <li><a href="#">辦理兩岸學術研討會場數</a></li>
+            </ul>
+        </li>
+        <li>
+            <div class="link">國際化<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                <li><a href="#">境外生人數</a></li>
+                <li><a href="#">雙聯學制學生數(IN/OUT)</a></li>
+                <li><a href="#">國際交流人數</a></li>
+                <li><a href="#">學生參與國際遊學團人數</a></li>
+                <li><a href="#">學生參與國際遊學團團數</a></li>
+            </ul>
+        </li>
+        <li><div class="link">產學合作及推廣教育<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                <li><a href="#">學生參與移地教學人數</a></li>
+                <li><a href="#">學生參與移地教學團數</a></li>
+                <li><a href="#">國際教師人數</a></li>
+                <li><a href="#">外籍學者來訪人次</a></li>
+                <li><a href="#">教師擔任國外交換教師人數</a></li>
+                <li><a href="#">擔任訪問學者人數</a></li>
+                <li><a href="#">全英語授課開課數</a></li>
+                <li><a href="#">建立跨國學位(雙聯學制)學校數</a></li>
+                <li><a href="#">教師參與業界實務人次</a></li>
+                <li><a href="#">教師參與產學計畫件數</a></li>
+                <li><a href="#">教師參與產學計畫金額</a></li>
+                <li><a href="#">教師技術移轉件數</a></li>
+                <li><a href="#">教師技術移轉金額</a></li>
+            </ul>
+        </li>
+        <li><div class="link">學生輔導及就業情形<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                <li><a href="#">產學聯盟家數</a></li>
+                <li><a href="#">學生實習人數</a></li>
+                <li><a href="#">學生參與國內實習人數</a></li>
+                <li><a href="#">學生參與國外實習人數</a></li>
+                <li><a href="#">畢業生就業率</a></li>
+                <li><a href="#">系所追蹤畢業生比例</a></li>
+                <li><a href="#">提供實習機構家教</a></li>
+                <li><a href="#">提供實習產學聯盟家數</a></li>
+            </ul>
+        </li>
+        <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">Demo<i class="fa fa-chevron-down"></i></div>
+            <ul class="submenu">
+                {% for i in demo %}
+                <li><a href="{% url 'main:demo' i.id %}">{{i.name}}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">登入</div>
+        </li>
+        <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">學校首頁</div>
+        </li>
+        
+    </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+	            <header id="header-wrapper">
+	                <div class="header-nav-row">
+			            <div id="menu-toggle"><a href="#menu-toggle" class="fa fa-bars"></a></div>
+			            <div id="login"><a href="" >登入</a></div>
+	                </div>
+
+	            
+	            <div class="row" id="title-row">
+	               <div class="col-md-5" id="logo-col">
+		                <a href="./index2.html" class="h3" style="color:#fff;line-height:50px;text-decoration:none;" id="logo-link">
+		                    <img alt="" style="height:50px" src="https://upload.wikimedia.org/wikipedia/zh/thumb/f/f7/Chaoyang_University_of_Technology_logo.svg/140px-Chaoyang_University_of_Technology_logo.svg.png"> 
+		                    <span>XX科技大學|</span><span style="font-size:14pt">校務系統</span>
+		                </a>
+	               </div>
+                   <div class="col-md-7" id="search-col">
+			            <form id="search">
+			            <div>
+			                <input type="text" style="height:100%;width:100%;font-size:14pt;">
+			            </div>
+			            <button type="submit" class="glyphicon glyphicon-search" ></button>
+			            
+			            </form>
+                   </div>
+	            </div>
+
+            
+	            </header>
+	            <div id="main">
+	                <div class="row">
+	                    <div class="col-lg-12">
+                            {% block content %}{% endblock %}
+	                    </div>
+	                </div>
+	            </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="{% static 'org/js/jquery.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'org/js/bootstrap.min.js' %}"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="{% static 'org/js/index.js' %}"></script>
+
+
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $("#header-wrapper").toggleClass("toggled");
+        //$("#body-overlay").toggleClass("body-overlay");
+        //$("#body-overlay2").toggleClass("body-overlay2");
+    });
+
+    </script>
+
+</body>
+
+</html>
