@@ -111,13 +111,14 @@ class Remove(DeveloperUserBase):
         return JsonResponse(response)
     
 class Config(DeveloperUserBase):
-    template_name = 'config.html' # xxxx/xxx.html
+    template_name = 'config/dir.html' # xxxx/xxx.html
     page_title = '設定' # title
     
     def get(self, request, *args, **kwargs):
         try:
             config = Setting.objects.get(name="dirPath")
             kwargs['path'] = config.c1
+            kwargs['time'] = config.time
         except Exception as e:
             print(e)
         return super(Config, self).post(request, *args, **kwargs)
@@ -144,4 +145,34 @@ class Config(DeveloperUserBase):
         messages.success(request, "設定成功。")
         return redirect(reverse('developer:config'))
 
+class ConfigSchoolAPI(DeveloperUserBase):
+    template_name = 'config/school.html' # xxxx/xxx.html
+    page_title = '啟用SchoolAPI' # title
+
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="SchoolAPI")
+            kwargs['isActive'] = config.isActive
+            kwargs['url'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(ConfigSchoolAPI, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('apiURL')=="":
+            kwargs['error'] = "*URL 不能為空"
+            return super(ConfigSchoolAPI, self).post(request, *args, **kwargs)
+        
+        try:
+            config = Setting.objects.get(name="SchoolAPI")
+            config.c1 = request.POST.get('apiURL')
+            config.isActive = True if request.POST.get('isActive') else False
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="SchoolAPI",isActive = True if request.POST.get('isActive') else False, c1 = request.POST.get('apiURL'))
+            print(e)
+        
+            
+        return redirect(reverse('developer:school'))
      
