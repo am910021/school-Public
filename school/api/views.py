@@ -1,7 +1,7 @@
 import os
 import json
 import csv
-import urllib.request
+from urllib.request import urlopen
 from django.contrib.auth.decorators import login_required 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -13,20 +13,12 @@ def tempResponse(request, *args, **kwargs):
     print(kwargs)
     return HttpResponse(404)
 
-def teplateCSV(request):
-    s=SchoolApi()
-    data = s.getData()
-    
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="data.csv"'
-    writer = csv.writer(response)
-    heads=[]
-    for i in data[0].keys():
-        heads.append(i)
-    writer.writerow(heads)
-    for i in data:
-        writer.writerow(list(i.values()))
-    return response
+def templateJSON(request, *args, **kwargs):
+        module_dir = os.path.dirname(__file__)  # get current directory
+        file_path = os.path.join(module_dir, 'example.json')
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            return JsonResponse(data,safe=False)        
 
 
 
@@ -145,11 +137,11 @@ class SchoolApi:
         return self.getSchoolTemp()
     
     def getSchoolApi(self,year,semester):
-        with urllib.request.urlopen(self.url+year+'/'+semester) as response:
-            data = json.load(response.read())
-            return data
-        return None
-    
+        response = urlopen(self.url+year+semester+"/"+semester+"/")
+        data = json.loads(response.read().decode('utf8'))
+        response.close()
+        return data
+
     def getSchoolTemp(self):
         module_dir = os.path.dirname(__file__)  # get current directory
         file_path = os.path.join(module_dir, 'example.json')
