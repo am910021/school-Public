@@ -1,13 +1,75 @@
 {% extends "main/base.html" %}
-{% block heading %}註冊{% endblock %}
 {% block content %}
-<p><strong>請在此註冊</strong></p>
-<form method=post action={% url 'account:signup' %}>
- {% csrf_token %}
- {{ userForm.as_p }}
- {{ userProfileForm.as_p }}
- <input type=submit value=送出>
-</form>
+<h3 class="text-center">帳號註冊</h3>
 <br>
-<p><a href={% url 'main:main' %}>回首頁</a></p>
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-horizontal" role="form" method=post action={% url 'account:signup' %}>
+             {% csrf_token %}
+             
+                <div class="form-group">
+                     
+                    <label for="betacode" class="col-sm-2 control-label">
+                        Beta 註冊碼
+                    </label>
+                    <div class="col-sm-3">
+                        <input type="text" name="betacode" id="betacode" class="form-control">
+                        <span class="text-danger">{{error}}</span>
+                    </div>
+                </div>
+             
+                <div class="form-group">
+                     
+                    <label for="id_username" class="col-sm-2 control-label">
+                        {{ userForm.username.label }}
+                    </label>
+                    <div class="col-sm-10">
+                        {{ userForm.username }}
+                        <span class="text-danger">{{ userForm.username.errors }}</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password" class="col-sm-2 control-label">
+                        {{ userForm.password.label }}
+                    </label>
+                    <div class="col-sm-10">
+                        {{ userForm.password }}
+                        <span class="text-danger">{{ userForm.password.errors }}</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password2" class="col-sm-2 control-label">
+                        {{ userForm.password2.label }}
+                    </label>
+                    <div class="col-sm-10">
+                        {{ userForm.password2 }}
+                        <span class="text-danger">{{ userForm.password2.errors }}</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_fullName" class="col-sm-2 control-label">
+                        {{ userProfileForm.fullName.label }}
+                    </label>
+                    <div class="col-sm-10">
+                        {{ userProfileForm.fullName }}
+                        <span class="text-danger">{{ userProfileForm.fullName.errors }}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-2">
+                        <button type="submit" class="btn btn-default">
+                            註冊
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                         
+                        <a href={% url 'main:main' %} class="btn btn-default">回首頁</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

@@ -29,8 +29,24 @@ def teplateCSV(request):
     return response
 
 
-@login_required
+
 def CSVapi(request,*args, **kwargs):
+    year = kwargs['year']
+    semester = kwargs['semester']
+    s = SchoolApi()
+    data = s.getData(year, semester)
+    
+    heads=[]
+    for i in data[0].keys():
+        heads.append(i)  
+    s=','.join(heads)  
+    for i in data:
+        s+="\n"
+        s+=','.join(i.values())
+    return HttpResponse(s,content_type='text/plain')
+
+
+def CSVapi_temp(request,*args, **kwargs):
     year = kwargs['year']
     semester = kwargs['semester']
     s = SchoolApi()
@@ -45,8 +61,9 @@ def CSVapi(request,*args, **kwargs):
     writer.writerow(heads)
     for i in data:
         writer.writerow(list(i.values()))
-    return response
 
+    return response
+   
 @login_required
 def CSVapi2(request, *args, **kwargs):
     year = kwargs['year']
@@ -135,7 +152,7 @@ class SchoolApi:
     
     def getSchoolTemp(self):
         module_dir = os.path.dirname(__file__)  # get current directory
-        file_path = os.path.join(module_dir, 'example2.json')
+        file_path = os.path.join(module_dir, 'example.json')
         with open(file_path, 'r') as file:
             data = json.load(file)
             return data

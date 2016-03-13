@@ -16,6 +16,7 @@ class DeveloperBase(BaseView):
     
     def __init__(self, *args, **kwargs):
         super(DeveloperBase, self).__init__(*args, **kwargs)
+        
         self.page_title="開發者"+self.page_title
         self.template_name = self.template_dir_name+self.template_name
 

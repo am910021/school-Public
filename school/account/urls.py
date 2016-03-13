@@ -17,7 +17,7 @@ from django.conf.urls import url
 import account.views as views
 
 urlpatterns = [          
-               url(r'^login/$', views.Login, name='login'), 
-               url(r'^signup/$', views.SignUp, name='signup'), 
+               url(r'^login/$', views.Login.as_view(), name='login'), 
+               url(r'^signup/$', views.SignUp.as_view(), name='signup'), 
                url(r'^logout/$', views.Logout, name='logout'), 
 ]

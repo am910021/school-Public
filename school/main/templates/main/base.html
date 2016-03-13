@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{{SITE_NAME}}|{{page_title}}</title>
+    <title>{{page_title}}|{{SITE_NAME}}</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'org/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -132,9 +132,20 @@
                 {% endfor %}
             </ul>
         </li>
-        <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">登入</div>
+        <li class="special">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+            {% if user.is_authenticated %}
+            <a href="{% url 'account:logout' %}">登出</a>
+            {% else %}
+            <a href="{% url 'account:login' %}">登入</a>
+            {% endif %}
+            </div>
+
         </li>
-        <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">學校首頁</div>
+        <li class="special">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+                <a href="http://ip_address_removed">學校首頁</a>
+            </div>
         </li>
         
     </ul>
@@ -147,7 +158,13 @@
 	            <header id="header-wrapper">
 	                <div class="header-nav-row">
 			            <div id="menu-toggle"><a href="#menu-toggle" class="fa fa-bars"></a></div>
-			            <div id="login"><a href="" >登入</a></div>
+			            {% if user.is_authenticated %}
+			             <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div>
+			             <div id="logined"><a href="#" >用戶：{{user.profile.fullName}}</a></div>
+			             <!-- <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div> -->
+			            {% else %}
+			             <div id="login"><a href="{% url 'account:login' %}" >登入</a></div>
+			            {% endif %}
 	                </div>
 
 	            
@@ -174,6 +191,14 @@
 	            <div id="main">
 	                <div class="row">
 	                    <div class="col-lg-12">
+							{% if messages %}
+							 {% for message in messages %}
+							    {% if message.level != 404 %}
+							        <p {% if message.tags %} class={{message.tags}} {% endif %}>{{message}}</p>
+							    {% endif %}
+							 {% endfor %}
+							{% endif %}
+							
                             {% block content %}{% endblock %}
 	                    </div>
 	                </div>

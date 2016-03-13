@@ -3,44 +3,66 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from account.forms import UserForm, UserProfileForm
+from main.views import BaseView
 
-def Login(request):
-    template = 'account/login.html'
-    if request.method=='GET':
-        return render(request, template)
-    # request.method=='POST':
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    user = authenticate(username=username, password=password)
-    if not user: # authenticate fail
-        return render(request, template, {'error':'登入失敗'})
-    if not user.is_active:
-        return render(request, template, {'error':'帳號已停用'})
-    # login success
-    login(request, user)
-    messages.success(request, '登入成功')
-    return redirect(reverse('main:main'))
+
+class Login(BaseView):
+    template_name = 'account/login.html' # xxxx/xxx.html
+    page_title = '登入' # title
+
+    def get(self, request, *args, **kwargs):
+        if request.user.username!="":
+            messages.success(request, '登入成功')
+            return redirect(reverse('main:main'))
         
+        return super(Login, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if not user: # authenticate fail
+            kwargs['error'] = '登入失敗'
+            return super(Login, self).post(request, *args, **kwargs)
+        if not user.is_active:
+            kwargs['error'] = '帳號已停用'
+            return super(Login, self).post(request, *args, **kwargs)
+        # login success
+        login(request, user)
+        messages.success(request, '登入成功')
+        return redirect(reverse('main:main'))
         
-def SignUp(request):
-    template = 'account/signup.html'
-    if request.method=='GET':
-        return render(request, template, {'userForm':UserForm(),'userProfileForm':UserProfileForm()})
+class SignUp(BaseView):
+    template_name = 'account/signup.html' # xxxx/xxx.html
+    page_title = '註冊' # title
+
+    def get(self, request, *args, **kwargs):
+        kwargs['userForm'] = UserForm()
+        kwargs['userProfileForm'] = UserProfileForm()
+        return super(SignUp, self).get(request, *args, **kwargs)
     
-    # request.method == 'POST':
-    userForm = UserForm(request.POST)
-    userProfileForm = UserProfileForm(request.POST)
-    if not (userForm.is_valid() and userProfileForm.is_valid()):
-        return render(request, template, {'userForm':userForm,'userProfileForm':userProfileForm})
-    
-    user = userForm.save()
-    user.set_password(user.password)
-    user.save()
-    userProfile = userProfileForm.save(commit=False)
-    userProfile.user = user
-    userProfile.save()
-    messages.success(request, '註冊成功')
-    return redirect(reverse('main:main'))
+    def post(self, request, *args, **kwargs):
+        userForm = UserForm(request.POST)
+        userProfileForm = UserProfileForm(request.POST)
+        if request.POST.get('betacode')!="Ew0Xav08L4":
+            kwargs['error'] = "* 註冊碼錯誤"
+            kwargs['userForm'] = userForm
+            kwargs['userProfileForm'] = userProfileForm
+            return super(SignUp, self).post(request, *args, **kwargs)
+        
+        if not (userForm.is_valid() and userProfileForm.is_valid()):
+            kwargs['userForm'] = userForm
+            kwargs['userProfileForm'] = userProfileForm
+            return super(SignUp, self).post(request, *args, **kwargs)
+        
+        user = userForm.save()
+        user.set_password(user.password)
+        user.save()
+        userProfile = userProfileForm.save(commit=False)
+        userProfile.user = user
+        userProfile.save()
+        messages.success(request, '註冊成功')
+        return redirect(reverse('main:main'))
 
 def Logout(request):
     logout(request)

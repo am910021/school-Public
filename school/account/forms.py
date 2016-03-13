@@ -4,8 +4,11 @@ from account.models import Profile
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(label='帳號')
+    username.widget.attrs.update({'class':'form-control'})
     password = forms.CharField(widget=forms.PasswordInput(), label='密碼')
+    password.widget.attrs.update({'class':'form-control'})
     password2 = forms.CharField(widget=forms.PasswordInput(), label='確認密碼')
+    password2.widget.attrs.update({'class':'form-control'})
     
     class Meta:
         model = User
@@ -20,6 +23,7 @@ class UserForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
     fullName = forms.CharField(max_length=128, label='姓名')
+    fullName.widget.attrs.update({'class':'form-control'})
     
     class Meta:
         model = Profile

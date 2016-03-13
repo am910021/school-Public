@@ -180,6 +180,24 @@
     line-height:40px;
 }
 
+#logined{
+    float:right;
+    height:100%;
+    border-left:1px #ccc solid;
+    vertical-align:middle;
+    text-align: center;
+    background-color:#333;
+    padding-left:5px;
+    padding-right:5px;
+  }
+
+#logined a{
+    color:#fff;
+    text-decoration:none;
+    line-height:40px;
+}
+
+
 #main{
 	margin-top:151px;
 }

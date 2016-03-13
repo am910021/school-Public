@@ -118,3 +118,10 @@ h1 a {
  	color: #66cef6;
  }
 
+ .special a{
+    color: #fff;
+ }
+
+ .special a:hover{
+    color: #66cef6;
+ }
