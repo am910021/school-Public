@@ -7,11 +7,27 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from main.models import Setting
 
+def schoolAPI(request, *args, **kwargs):
+    if request.user.username=="":
+        return HttpResponse("None",content_type='text/plain')
+    
+    
+    year = kwargs['year']
+    semester = kwargs['semester']
+    s = SchoolApi()
+    data = s.getData(year, semester)
+    
+    heads=[]
+    for i in data[0].keys():
+        heads.append(i)  
+    s=','.join(heads)  
+    for i in data:
+        s+="\n"
+        s+=','.join(i.values())
+    return HttpResponse(s,content_type='text/plain')
 
-def tempResponse(request, *args, **kwargs):
-    print(len(args))
-    print(kwargs)
-    return HttpResponse(404)
+def schoolAPI2(request, *args, **kwargs):
+    return 
 
 def templateJSON(request, *args, **kwargs):
         module_dir = os.path.dirname(__file__)  # get current directory
@@ -89,12 +105,8 @@ class Category:
         data = []
         if category==0:
             return data
-            
-            
         # 等資料庫
         #if category>=1:
-            
-            
         return data
 
     def Mode2(self,year, semester,category):
@@ -102,20 +114,15 @@ class Category:
         for i in category:
             if i==0:
                 return data
-        
             # 等資料庫
-        
         return data
-
 
     def Mode3(self,year, semester,category):
         data = []
         for i in category:
             if i==0:
                 return data
-        
             # 等資料庫
-        
         return data
 
 class SchoolApi:

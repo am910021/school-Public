@@ -160,7 +160,10 @@
 			            <div id="menu-toggle"><a href="#menu-toggle" class="fa fa-bars"></a></div>
 			            {% if user.is_authenticated %}
 			             <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div>
-			             <div id="logined"><a href="#" >用戶：{{user.profile.fullName}}</a></div>
+			             <div id="logined"><a href="#" >用戶：{{user.detail.fullName}}</a></div>
+			             {% if user.detail.type >= 2%}
+			             <div id="logined"><a href="{% url 'developer:main' %}" >開發者頁面</a></div>
+			             {% endif %}
 			             <!-- <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div> -->
 			            {% else %}
 			             <div id="login"><a href="{% url 'account:login' %}" >登入</a></div>

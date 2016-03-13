@@ -14,11 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import tempResponse, templateJSON, CSVapi,CSVapi2
+from .views import schoolAPI,schoolAPI2, templateJSON, CSVapi,CSVapi2
 
 urlpatterns = [
     url(r'^templatejson/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', templateJSON),
-    url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi),
+    
+    url(r'^school/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', schoolAPI),
+    #url(r'^school/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/$', schoolAPI2),
+    
+    #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi),
     #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>.+)/$', CSVapi2),
     #url(r'^query/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi2),
     #url(r'^query/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>\w+)/$', CSVapi2),

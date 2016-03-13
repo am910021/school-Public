@@ -21,8 +21,11 @@ class Login(BaseView):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
+        nextPage = request.POST.get('next')
         if not user: # authenticate fail
             kwargs['error'] = '登入失敗'
+            kwargs['username'] = username
+            kwargs['nextPage'] = nextPage
             return super(Login, self).post(request, *args, **kwargs)
         if not user.is_active:
             kwargs['error'] = '帳號已停用'
@@ -30,7 +33,7 @@ class Login(BaseView):
         # login success
         login(request, user)
         messages.success(request, '登入成功')
-        return redirect(reverse('main:main'))
+        return redirect(nextPage if nextPage else reverse('main:main'))
         
 class SignUp(BaseView):
     template_name = 'account/signup.html' # xxxx/xxx.html
@@ -60,6 +63,7 @@ class SignUp(BaseView):
         user.save()
         userProfile = userProfileForm.save(commit=False)
         userProfile.user = user
+        userProfile.type=2 #2 = Developer
         userProfile.save()
         messages.success(request, '註冊成功')
         return redirect(reverse('main:main'))

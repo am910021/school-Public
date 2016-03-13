@@ -1,16 +1,31 @@
 import os, zipfile, shutil
+from django.conf import settings
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.http import JsonResponse
-from main.views import BaseView, UserBase, LoginRequiredMixin
+from main.views import BaseView, UserBase
 from main.models import Setting
 from db.models import Demo
 from .forms import DemoForm
 # Create your views here.
 
-class DeveloperBase(BaseView):
+def developer_required(fun):
+    def auth(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect(settings.LOGIN_URL +'?next=%s' % request.path)
+        if request.user.detail.type < 2:
+            return redirect(reverse('main:main'))
+        return fun(request, *args, **kwargs)
+    return auth
+
+class DeveloperRequiredMixin(object):
+    @classmethod
+    def as_view(self):
+        return developer_required(super(DeveloperRequiredMixin, self).as_view())
+
+class DeveloperBase(DeveloperRequiredMixin, BaseView):
     base_template_name = 'developer/base.html'
     template_dir_name = "developer/"
     
@@ -21,7 +36,7 @@ class DeveloperBase(BaseView):
         self.template_name = self.template_dir_name+self.template_name
 
 
-class DeveloperUserBase(DeveloperBase, LoginRequiredMixin):
+class DeveloperUserBase(DeveloperBase):
     def __init__(self, *args, **kwargs):
         super(DeveloperUserBase, self).__init__(*args, **kwargs)
         
