@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import tempResponse, teplateCSV
+from .views import tempResponse, teplateCSV, CSVapi,CSVapi2
 
 urlpatterns = [
     url(r'^teplatecsv/$', teplateCSV),
-    url(r'^(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>.+)$', tempResponse, name='demo'),
-    url(r'^(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>\w+)$', tempResponse, name='demo'),
+    url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi),
+    #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>.+)/$', CSVapi2),
+    #url(r'^query/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi2),
+    #url(r'^query/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>\w+)/$', CSVapi2),
 ]
