@@ -76,20 +76,19 @@ class Upload(DeveloperUserBase):
             kwargs['not_found']="*請選擇檔案"
             kwargs['form'] = form
             return super(Upload, self).post(request, *args, **kwargs)
-
-        form = form.save(commit=False)
+        
         try:
             config = Setting.objects.get(name="dirPath")
-            
-            if os.path.exists(config.c1+form.dirName):
-                kwargs['dir_exists'] = "*資料夾已存在"
+            dirName = request.POST.get('dirName')
+            if os.path.exists(config.c1+dirName):
+                kwargs['dir_exists'] = "* 資料夾已存在"
                 kwargs['form'] = form
                 return super(Upload, self).post(request, *args, **kwargs)
             
             file = request.FILES['upload_file']
-            os.makedirs(config.c1+form.dirName)
+            os.makedirs(config.c1+dirName)
             zip_ref = zipfile.ZipFile(file, 'r')
-            zip_ref.extractall(config.c1+form.dirName)
+            zip_ref.extractall(config.c1+dirName)
             zip_ref.close()
         except Exception as e:
             print(e)
@@ -97,6 +96,7 @@ class Upload(DeveloperUserBase):
             kwargs['form'] = form
             return super(Upload, self).post(request, *args, **kwargs)
         
+        form = form.save(commit=False)
         form.user = request.user
         form.save()
         messages.success(request, '上傳成功')

@@ -27,13 +27,7 @@
                     <label for="upload_file">
                         上傳檔案（.zip）
                     </label>
-                    {% if messages %}
-                    {% for message in messages %}
-                        {% if message.level == 404%}
-                        <span class="text-danger">*{{not_found}} {{file_error}}</span>
-                        {% endif %}
-		            {% endfor %}
-		            {% endif %}
+                        <span class="text-danger">{{not_found}}</span>
                     <input type="file" name="upload_file" id="upload_file" accept=".zip"/>
                     <p class="help-block">
                         xxx.zip (直接放 .R 檔)
