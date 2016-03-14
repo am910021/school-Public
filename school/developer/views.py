@@ -111,20 +111,24 @@ class Remove(DeveloperUserBase):
         return redirect('main:main')
     
     def post(self, request, *args, **kwargs):
-        response = {}
         try:
             demoID = request.POST.get('demoID')
             demo = Demo.objects.get(id=demoID)
+            
+            if demo.user.username != request.user.username and request.user.detail.type<=2:
+                messages.success(request, demo.name+'刪除失敗，權限不足。')
+                return redirect(reverse('developer:list'))
+            
             config = Setting.objects.get(name="dirPath")
             if os.path.exists(config.c1+demo.dirName):
-                shutil.rmtree("config.c1"+demo.dirName)
+                shutil.rmtree(config.c1+demo.dirName)
                 demo.delete()
-            response['status']="success"
+            messages.success(request, demo.name+'刪除成功。')
         except Exception as e:
-            response['status']="fail"
+            messages.success(request, demo.name+'刪除失敗。')
             print(e)
          
-        return JsonResponse(response)
+        return redirect(reverse('developer:list'))
     
 class Config(DeveloperUserBase):
     template_name = 'config/dir.html' # xxxx/xxx.html

@@ -1,3 +1,6 @@
+import random
+import string
+from Crypto.Hash import SHA512
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required 
 from django.conf import settings
@@ -58,7 +61,7 @@ class Index(BaseView):
     def post(self, request, *args, **kwargs):
         return super(Index, self).post(request, *args, **kwargs)
 
-class ShowDemo(BaseView):
+class ShowDemo(UserBase):
     template_name = 'main/demo.html' # xxxx/xxx.html
     page_title = 'Demo 展示' # title
 
@@ -71,11 +74,20 @@ class ShowDemo(BaseView):
             chart_demo = Demo.objects.get(id=kwargs['demoID'])
         except Exception as e:
             print(e)
-        kwargs['chart_demo'] = chart_demo
             
+        h = SHA512.new()
+        request.user.detail.code = self.createCode(32)
+        request.user.detail.save()
+        h.update(str.encode(request.user.detail.code+request.user.password))
+        kwargs['chart_demo'] = chart_demo
+        kwargs['license'] = h.hexdigest()
+
         return super(ShowDemo, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         return super(ShowDemo, self).post(request, *args, **kwargs)
+    
+    def createCode(self, num):
+        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
 
 
