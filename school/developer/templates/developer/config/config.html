@@ -1,0 +1,43 @@
+{% extends base_template_name %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            設定
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td>
+                            <a href="{% url 'developer:configShinyHost' %}">Shiny Host 連接</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <a href="{% url 'developer:configShiny' %}">Shiny App位置</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <a href="{% url 'developer:configAPI' %}">School API 連接</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <a href="{% url 'developer:configKey' %}">系統金鑰設定</a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

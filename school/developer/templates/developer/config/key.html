@@ -1,0 +1,87 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block head %}
+  <script>
+    function createCode(num){
+      var sp = [33,64,35,36,37,94,38,42,95,43,45,61];
+      var n=0,l=0,u=0,s=0,i=0;
+      var t="";
+      var m = Math.floor(num/4);
+      while(true){
+        var r = randint(1,4);
+        if(r==1&&(n<m||i>0)){
+          n++;
+          t+=String.fromCharCode(randint(48,57));
+        }
+        if(r==2&&(l<m||i>0)){
+          l++;
+          t+=String.fromCharCode(randint(97,122));
+        }
+        if(r==3&&(u<m||i>0)){
+          u++;
+          t+=String.fromCharCode(randint(65,90));
+        }
+        if(r==4&&(s<m||i>0)){
+          s++;
+          t+=String.fromCharCode(sp[randint(1,11)]);
+        }
+        if(n+l+u+s>=m*4)
+          i++;
+        if(n+l+u+s>=num)
+          break
+      }
+      document.getElementById("id_key").value =t;
+    };
+  function randint(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+  }
+  </script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+        <h3>系統金鑰設定</h3>
+        <br>
+            
+            <form class="form-horizontal" role="form" method="post" action="{% url 'developer:configKey' %}">
+            {% csrf_token %}
+                <div class="form-group">
+                     
+                    <label for="id_key" class="col-sm-2 control-label">
+                        金鑰
+                    </label>
+                    <div class="col-sm-6">
+                        <input class="form-control" id="id_key" maxlength="128" name="key" type="text" {% if key %}value="{{key}}"{% endif %}>
+                    </div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-default" onclick="createCode(32)">
+                            自動產生
+                        </button>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                     
+                    <label  class="col-sm-2 control-label">
+                        最後修改日期
+                    </label>
+                    <div class="col-sm-10">
+                        {{time}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                         
+                        <button type="submit" class="btn btn-default">
+                            送出
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
