@@ -1,5 +1,8 @@
-var username = document.getElementById("username");
-var license = document.getElementById("license");
+document.domain = document.location.hostname;
 
-var parent_username = parent.document.getElementById("username");
+var license = document.getElementById("license");
+license.type="hidden";
 var parent_license = parent.document.getElementById("license");
+if (parent_license!=""){
+	license.value = parent_license.value;
+};

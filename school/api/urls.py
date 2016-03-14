@@ -18,9 +18,8 @@ from .views import schoolAPI,schoolAPI2, templateJSON, CSVapi,CSVapi2
 
 urlpatterns = [
     url(r'^templatejson/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', templateJSON),
-    
-    url(r'^school/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', schoolAPI),
-    #url(r'^school/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/$', schoolAPI2),
+    url(r'^school/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/$', schoolAPI2),
+    url(r'^school/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<license>.+)/$', schoolAPI),
     
     #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi),
     #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>.+)/$', CSVapi2),

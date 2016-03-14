@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <form class="form-horizontal" role="form" method="post" action="{% url 'developer:school' %}">
+            <form class="form-horizontal" role="form" method="post" action="{% url 'developer:configAPI' %}">
              {% csrf_token %}
              
                 <div class="form-group">
@@ -12,7 +12,7 @@
                     </label>
                     
                     <div class="col-sm-10">
-                        <input type="text" name="apiURL" value="{% if url %}{{url}}{% endif %}" class="form-control">
+                        <input type="text" name="apiURL" value="{% if url %}{{url}}{% endif %}" placeholder="http://example.com" class="form-control">
                         <span class="text-danger">{{error}}</span>
                     </div>
                 </div>

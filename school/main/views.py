@@ -1,10 +1,11 @@
 import random
 import string
-from Crypto.Hash import SHA512
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required 
 from django.conf import settings
 from db.models import Demo
+from .aescipher import AESCipher as ase
+from .aescipher import toSHA as sha1
 
 # Create your views here.
 
@@ -75,12 +76,12 @@ class ShowDemo(UserBase):
         except Exception as e:
             print(e)
             
-        h = SHA512.new()
-        request.user.detail.code = self.createCode(32)
+        
+        request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
         request.user.detail.save()
-        h.update(str.encode(request.user.detail.code+request.user.password))
+        kwargs['license'] = request.user.detail.license
         kwargs['chart_demo'] = chart_demo
-        kwargs['license'] = h.hexdigest()
+        
 
         return super(ShowDemo, self).get(request, *args, **kwargs)
     

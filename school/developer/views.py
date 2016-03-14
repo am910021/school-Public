@@ -131,6 +131,13 @@ class Remove(DeveloperUserBase):
         return redirect(reverse('developer:list'))
     
 class Config(DeveloperUserBase):
+    template_name = 'config/config.html' # xxxx/xxx.html
+    page_title = '設定列表' # title
+    
+    def get(self, request, *args, **kwargs):
+        return super(Config, self).post(request, *args, **kwargs)
+
+class ConfigShiny(DeveloperUserBase):
     template_name = 'config/dir.html' # xxxx/xxx.html
     page_title = '設定' # title
     
@@ -141,18 +148,19 @@ class Config(DeveloperUserBase):
             kwargs['time'] = config.time
         except Exception as e:
             print(e)
-        return super(Config, self).post(request, *args, **kwargs)
+        return super(ConfigShiny, self).post(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         if 'dirPath' not in request.POST:
             kwargs['error'] = "請輸入路徑"
-            return super(Config, self).post(request, *args, **kwargs)
+            return super(ConfigShiny, self).post(request, *args, **kwargs)
         
         dir = request.POST.get('dirPath')
         
         if not os.path.exists(dir):
             kwargs['error'] = " *路徑錯誤"
-            return super(Config, self).post(request, *args, **kwargs)
+            kwargs['path'] = dir
+            return super(ConfigShiny, self).post(request, *args, **kwargs)
         
         try:
             config = Setting.objects.get(name="dirPath")
@@ -163,7 +171,8 @@ class Config(DeveloperUserBase):
             print(e)
         
         messages.success(request, "設定成功。")
-        return redirect(reverse('developer:config'))
+        return redirect(reverse('developer:configShiny'))
+
 
 class ConfigSchoolAPI(DeveloperUserBase):
     template_name = 'config/school.html' # xxxx/xxx.html
@@ -192,7 +201,61 @@ class ConfigSchoolAPI(DeveloperUserBase):
         except Exception as e:
             Setting.objects.get_or_create(name="SchoolAPI",isActive = True if request.POST.get('isActive') else False, c1 = request.POST.get('apiURL'))
             print(e)
+        return redirect(reverse('developer:configAPI'))
+    
+class ConfigShinyHost(DeveloperUserBase):
+    template_name = 'config/server.html' # xxxx/xxx.html
+    page_title = 'Shiny Host' # title
+
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="ShinyHost")
+            kwargs['host'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(ConfigShinyHost, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('host')=="":
+            kwargs['error'] = "*HOST 不能為空"
+            return super(ConfigShinyHost, self).post(request, *args, **kwargs)
         
-            
-        return redirect(reverse('developer:school'))
+        try:
+            config = Setting.objects.get(name="ShinyHost")
+            config.c1 = request.POST.get('host')
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="ShinyHost", c1 = request.POST.get('host'))
+            print(e)
+        return redirect(reverse('developer:configShinyHost'))
      
+class CongigKey(DeveloperUserBase):
+    template_name = 'config/key.html' # xxxx/xxx.html
+    page_title = '系統金鑰設定' # title
+
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="SystemKey")
+            kwargs['key'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(CongigKey, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('key')=="":
+            kwargs['error'] = "*HOST 不能為空"
+            return super(CongigKey, self).post(request, *args, **kwargs)
+        
+        try:
+            config = Setting.objects.get(name="SystemKey")
+            config.c1 = request.POST.get('key')
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="SystemKey", c1 = request.POST.get('key'))
+            print(e)
+        return redirect(reverse('developer:configKey'))
+    
+    
+    
