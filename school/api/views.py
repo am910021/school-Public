@@ -19,12 +19,17 @@ def schoolAPI(request, *args, **kwargs):
         return HttpResponse("login fail",content_type='text/plain')
     
     
-    year = kwargs['year']
-    semester = kwargs['semester']
+    year = int(kwargs['year'])
+    semester = int(kwargs['semester'])
     s = SchoolApi()
-    data = s.getData(year, semester)
+    data = []
+    if semester>0:
+        data += s.getData(year, semester)
+    else:
+        data += s.getData(year, 1)
+        data += s.getData(year, 2)
     
-    if data==None:
+    if len(data)==0:
         return HttpResponse("None Data",content_type='text/plain')
     
     heads=[]
@@ -56,7 +61,6 @@ def schoolAPI2(request, *args, **kwargs):
     s = SchoolApi()
     for i in range(startYear,endYear+1):
         if semester>0:
-            print(len(s.getData(i, semester)))
             data += s.getData(i, semester)
         else:
             data += s.getData(i, 1)
