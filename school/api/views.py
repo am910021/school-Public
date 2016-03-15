@@ -10,13 +10,15 @@ from main.models import Setting
 from _ast import Str
 
 def schoolAPI(request, *args, **kwargs):
-    try:
-        user = Detail.objects.filter(license=kwargs['license'])
-        if not user:
+    
+    if request.user.detail.type <2:
+        try:
+            user = Detail.objects.filter(license=kwargs['license'])
+            if not user:
+                return HttpResponse("login fail",content_type='text/plain')
+        except Exception as e:
+            print(e)
             return HttpResponse("login fail",content_type='text/plain')
-    except Exception as e:
-        print(e)
-        return HttpResponse("login fail",content_type='text/plain')
     
     
     year = int(kwargs['year'])

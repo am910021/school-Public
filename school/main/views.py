@@ -1,5 +1,6 @@
 import random
 import string
+from django.utils import timezone
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required 
 from django.conf import settings
@@ -77,8 +78,10 @@ class ShowDemo(UserBase):
             print(e)
             
         
-        request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
-        request.user.detail.save()
+        
+        if timezone.now() > request.user.detail.expire:
+            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
+            request.user.detail.save()
         kwargs['license'] = request.user.detail.license
         kwargs['chart_demo'] = chart_demo
         
