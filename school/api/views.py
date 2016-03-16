@@ -15,7 +15,7 @@ def ArgsError(request, *args, **kwargs):
 
 
 def schoolAPI(request, *args, **kwargs):
-    if request.user.detail.type <2:
+    if request.user.username=="" or request.user.detail.type <2:
         try:
             user = Detail.objects.filter(license=kwargs['license'])
             if not user:
@@ -52,7 +52,7 @@ def schoolAPI(request, *args, **kwargs):
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
 
 def schoolAPI2(request, *args, **kwargs):
-    if request.user.detail.type <2:
+    if request.user.username=="" or request.user.detail.type <2:
         try:
             user = Detail.objects.filter(license=kwargs['license'])
             if not user:
