@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load main %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,91 +44,19 @@
             <!-- menu in hrer -->
             <h3 class="text-center">學校校務系統</h3>
     <ul id="accordion" class="accordion">
+        {% for i in menu %}
         <li>
             <!-- <div class="link"><i class="fa fa-paint-brush"></i>Diseño web<i class="fa fa-chevron-down"></i></div> -->
-            <div class="link" style="border-top: 1px solid #8AB5E2;">教學<i class="fa fa-chevron-down"></i></div>
+            <div class="link" style="border-top: 1px solid #8AB5E2;">{{i.name}}<i class="fa fa-chevron-down"></i></div>
             <ul class="submenu">
-                <li><a href="#">學生參與競賽獲獎人次</a></li>
-                <li><a href="#">學生參與展覽表演人次</a></li>
-                <li><a href="#">學生參與公職考試考取人次</a></li>
-                <li><a href="#">學生考取專業證照人次</a></li>
-                <li><a href="#">學生考取外語證照人次</a></li>
-                <li><a href="#">通過教師升等人數</a></li>
-                <li><a href="#">通過教師評鑑人數</a></li>
-                <li><a href="#">聘任業師人數(技術聘)</a></li>
-                <li><a href="#">學生二一退學人數</a></li>
-                <li><a href="#">系所博士班畢業人數</a></li>
-                <li><a href="#">系統博士生畢業人數</a></li>
-                <li><a href="#">大一新生各管道註冊率</a></li>
-                <li><a href="#">推甄錄取最低級分</a></li>
-                <li><a href="#">碩博士生註冊率</a></li>
-                <li><a href="#">建置磨課師課程數量</a></li>
+                {% for j in i|getItem %}
+                <li><a href="{% url 'main:shiny' j.id %}">{{j.name}}</a></li>
+                {% endfor %}
             </ul>
         </li>
-        <li>
-            <div class="link">研究<i class="fa fa-chevron-down"></i></div>
-            <ul class="submenu">
-                <li><a href="#">學生專書出版人次</a></li>
-                <li><a href="#">學生專書出版篇數</a></li>
-                <li><a href="#">學生論文出版人士</a></li>
-                <li><a href="#">學生論文出版篇數</a></li>
-                <li><a href="#">學生參與國際研討會人數</a></li>
-                <li><a href="#">學生參與兩岸研討會人數</a></li>
-                <li><a href="#">教室審稿期刊發表篇數</a></li>
-                <li><a href="#">教師會議論文發表篇數</a></li>
-                <li><a href="#">教師專書發表篇數</a></li>
-                <li><a href="#">教師參與國際會議發表人次</a></li>
-                <li><a href="#">教師參與學術計畫件數</a></li>
-                <li><a href="#">教師參與學術研究計畫金額</a></li>
-                <li><a href="#">教師參與國際合作計畫件數</a></li>
-                <li><a href="#">教師參與國際合作計畫金額</a></li>
-                <li><a href="#">教師參與展覽表演活動人次</a></li>
-                <li><a href="#">教師參與全國性競賽獲獎人次</a></li>
-                <li><a href="#">教師參與國際性競賽獲獎人次</a></li>
-                <li><a href="#">辦理學術研討會場數</a></li>
-                <li><a href="#">辦理國際學術研討會場數</a></li>
-                <li><a href="#">辦理兩岸學術研討會場數</a></li>
-            </ul>
-        </li>
-        <li>
-            <div class="link">國際化<i class="fa fa-chevron-down"></i></div>
-            <ul class="submenu">
-                <li><a href="#">境外生人數</a></li>
-                <li><a href="#">雙聯學制學生數(IN/OUT)</a></li>
-                <li><a href="#">國際交流人數</a></li>
-                <li><a href="#">學生參與國際遊學團人數</a></li>
-                <li><a href="#">學生參與國際遊學團團數</a></li>
-            </ul>
-        </li>
-        <li><div class="link">產學合作及推廣教育<i class="fa fa-chevron-down"></i></div>
-            <ul class="submenu">
-                <li><a href="#">學生參與移地教學人數</a></li>
-                <li><a href="#">學生參與移地教學團數</a></li>
-                <li><a href="#">國際教師人數</a></li>
-                <li><a href="#">外籍學者來訪人次</a></li>
-                <li><a href="#">教師擔任國外交換教師人數</a></li>
-                <li><a href="#">擔任訪問學者人數</a></li>
-                <li><a href="#">全英語授課開課數</a></li>
-                <li><a href="#">建立跨國學位(雙聯學制)學校數</a></li>
-                <li><a href="#">教師參與業界實務人次</a></li>
-                <li><a href="#">教師參與產學計畫件數</a></li>
-                <li><a href="#">教師參與產學計畫金額</a></li>
-                <li><a href="#">教師技術移轉件數</a></li>
-                <li><a href="#">教師技術移轉金額</a></li>
-            </ul>
-        </li>
-        <li><div class="link">學生輔導及就業情形<i class="fa fa-chevron-down"></i></div>
-            <ul class="submenu">
-                <li><a href="#">產學聯盟家數</a></li>
-                <li><a href="#">學生實習人數</a></li>
-                <li><a href="#">學生參與國內實習人數</a></li>
-                <li><a href="#">學生參與國外實習人數</a></li>
-                <li><a href="#">畢業生就業率</a></li>
-                <li><a href="#">系所追蹤畢業生比例</a></li>
-                <li><a href="#">提供實習機構家教</a></li>
-                <li><a href="#">提供實習產學聯盟家數</a></li>
-            </ul>
-        </li>
+        {% endfor %}
+ 
+        
         <li><div class="link" style="border-bottom: 1px solid #8AB5E2;">Demo<i class="fa fa-chevron-down"></i></div>
             <ul class="submenu">
                 {% for i in demo %}
@@ -135,6 +64,7 @@
                 {% endfor %}
             </ul>
         </li>
+        
         <li class="special">
             <div class="link" style="border-bottom: 1px solid #8AB5E2;">
             {% if user.is_authenticated %}
@@ -164,8 +94,11 @@
 			            {% if user.is_authenticated %}
 			             <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div>
 			             <div id="logined"><a href="#" >用戶：{{user.detail.fullName}}</a></div>
-			             {% if user.detail.type >= 2%}
-			             <div id="logined"><a href="{% url 'developer:main' %}" >開發者頁面</a></div>
+			             {% if user.detail.type >= 1 %}
+	                         {% if user.detail.type >= 2%}
+                                <div id="logined"><a href="{% url 'developer:main' %}">開發者頁面</a></div>
+	                         {% endif %}
+                                <div id="logined"><a href="{% url 'control:main' %}" >管理者頁面</a></div>
 			             {% endif %}
 			             <!-- <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div> -->
 			            {% else %}

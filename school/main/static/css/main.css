@@ -1,0 +1,9 @@
+.buttom-wrapper{
+padding-right:5px;
+padding-left:5px;
+padding-top:2px;
+padding-buttom:2px;
+}
+.no-radius{
+    border-radius: 0px;
+}

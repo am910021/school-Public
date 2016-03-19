@@ -1,4 +1,7 @@
 import os, zipfile, shutil
+import random
+import string
+from django.utils import timezone
 from django.conf import settings
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
@@ -7,6 +10,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from main.views import BaseView, UserBase
 from main.models import Setting
+from main.aescipher import toSHA as sha1
 from db.models import Demo
 from .forms import DemoForm
 # Create your views here.
@@ -34,16 +38,22 @@ class DeveloperBase(DeveloperRequiredMixin, BaseView):
         
         self.page_title="開發者"+self.page_title
         self.template_name = self.template_dir_name+self.template_name
-
-
-class DeveloperUserBase(DeveloperBase):
-    def __init__(self, *args, **kwargs):
-        super(DeveloperUserBase, self).__init__(*args, **kwargs)
         
 
 class Main(DeveloperBase):
     template_name = 'main.html' # xxxx/xxx.html
     page_title = '首頁' # title
+    def get(self, request, *args, **kwargs):
+        if timezone.now() > request.user.detail.expire:
+            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
+            request.user.detail.save()
+        kwargs['license'] = request.user.detail.license
+        kwargs['expire']= request.user.detail.expire
+        return super(Main, self).get(request, *args, **kwargs)
+    
+    def createCode(self, num):
+        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
+
 
 
 class Uplist(DeveloperBase):
@@ -58,7 +68,7 @@ class Uplist(DeveloperBase):
     def post(self, request, *args, **kwargs):
         return super(Uplist, self).post(request, *args, **kwargs)
 
-class Upload(DeveloperUserBase):
+class Upload(DeveloperBase):
     template_name = 'upload.html' # xxxx/xxx.html
     page_title = '檔案上傳' # title
 
@@ -103,7 +113,7 @@ class Upload(DeveloperUserBase):
         return redirect(reverse('developer:main'))
 
 
-class Remove(DeveloperUserBase):
+class Remove(DeveloperBase):
     template_name = '' # xxxx/xxx.html
     page_title = '' # title
 
@@ -130,14 +140,14 @@ class Remove(DeveloperUserBase):
          
         return redirect(reverse('developer:list'))
     
-class Config(DeveloperUserBase):
+class Config(DeveloperBase):
     template_name = 'config/config.html' # xxxx/xxx.html
     page_title = '設定列表' # title
     
     def get(self, request, *args, **kwargs):
         return super(Config, self).post(request, *args, **kwargs)
 
-class ConfigShiny(DeveloperUserBase):
+class ConfigShiny(DeveloperBase):
     template_name = 'config/dir.html' # xxxx/xxx.html
     page_title = '設定' # title
     
@@ -174,7 +184,7 @@ class ConfigShiny(DeveloperUserBase):
         return redirect(reverse('developer:configShiny'))
 
 
-class ConfigSchoolAPI(DeveloperUserBase):
+class ConfigSchoolAPI(DeveloperBase):
     template_name = 'config/school.html' # xxxx/xxx.html
     page_title = '啟用SchoolAPI' # title
 
@@ -203,7 +213,7 @@ class ConfigSchoolAPI(DeveloperUserBase):
             print(e)
         return redirect(reverse('developer:configAPI'))
     
-class ConfigShinyHost(DeveloperUserBase):
+class ConfigShinyHost(DeveloperBase):
     template_name = 'config/server.html' # xxxx/xxx.html
     page_title = 'Shiny Host' # title
 
@@ -230,7 +240,7 @@ class ConfigShinyHost(DeveloperUserBase):
             print(e)
         return redirect(reverse('developer:configShinyHost'))
      
-class CongigKey(DeveloperUserBase):
+class CongigKey(DeveloperBase):
     template_name = 'config/key.html' # xxxx/xxx.html
     page_title = '系統金鑰設定' # title
 

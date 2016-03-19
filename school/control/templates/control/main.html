@@ -1,0 +1,20 @@
+{% extends base_template_name %}
+{% load main %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-3 buttom-wrapper">
+             <a href="{% url 'control:menu' %}" class="no-radius btn btn-primary btn-lg btn-block">選單管理</a>
+        </div>
+        <div class="col-md-3 buttom-wrapper">
+            <a href="{% url 'control:item' %}" class="btn btn-primary btn-lg btn-block no-radius">指標項目管理</a>
+        </div>
+        <div class="col-md-3 buttom-wrapper">
+             <!-- <a href="#" class="btn btn-primary btn-lg btn-block no-radius">Shiny App管理</a> -->
+        </div>
+        <div class="col-md-3 buttom-wrapper">
+        </div>
+    </div>
+{% endblock %}

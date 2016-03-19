@@ -1,3 +1,13 @@
+.buttom-wrapper{
+padding-right:5px;
+padding-left:5px;
+padding-top:5px;
+padding-buttom:5px;
+}
+.no-radius{
+    border-radius: 0px;
+}
+
 #header-wrapper{
     position: fixed;
     top: 0;

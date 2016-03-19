@@ -1,0 +1,74 @@
+{% extends base_template_name %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+		    <div class="row">
+		        <div class="col-md-12">
+		            <form class="form-horizontal" role="form" method="post" action="{% url 'control:itemAdd' %}">
+		               {% csrf_token %} 
+                        <div class="form-group">
+                             
+                            <label for="id_menu" class="col-sm-2 control-label">
+                                所屬選單
+                            </label>
+                            <div class="col-sm-8">
+                                {{form.menu}}
+                                <span class="text-danger">{{form.menu.errors}}</span>
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="{% url 'control:menuAdd' %}" target="_blank" class="btn btn-default">增加選單</a>
+                            </div>
+                        </div>
+		                <div class="form-group">
+		                     
+		                    <label for="id_name" class="col-sm-2 control-label">
+		                        指標名稱
+		                    </label>
+		                    <div class="col-sm-10">
+		                        {{form.name}}
+		                        <span class="text-danger">{{form.name.errors}}</span>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                     
+		                    <label for="id_permission" class="col-sm-2 control-label">
+		                        指標使用權限
+		                    </label>
+		                    <div class="col-sm-10">
+		                        {{form.permission}}
+		                        <span class="text-danger">{{form.permission.errors}}</span>
+		                    </div>
+		                </div>
+                        <div class="form-group">
+                             
+                            <label for="id_isActive" class="col-sm-2 control-label">
+                                是否啟用
+                            </label>
+                            <div class="col-sm-10">
+                                {{form.isActive}}
+                                <span class="text-danger">{{form.isActive.errors}}</span>
+                            </div>
+                        </div>
+
+		                <div class="form-group">
+		                    <div class="col-sm-offset-2 col-sm-10">
+		                         
+		                        <button type="submit" class="btn btn-default">
+		                            送出
+		                        </button>
+		                    </div>
+		                </div>
+		            </form>
+		        </div>
+		    </div>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+{% endblock %}

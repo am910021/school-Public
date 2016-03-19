@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from main.views import Index
+from main.views import Index, blank
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^control/admin/', admin.site.urls), 
+    url(r'^control/', include('control.urls', namespace='control')), 
     url(r'^main/', include('main.urls', namespace='main')),
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^developer/', include('developer.urls', namespace='developer')),
+    url(r'^shiny/.*', blank),
     url(r'^.*', Index.as_view()),
 ]

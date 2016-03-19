@@ -1,0 +1,97 @@
+{% extends base_template_name %}
+
+{% block head %}
+<script type="text/javascript">
+function removeItem(id,text){
+    q = confirm("是否要刪除"+text+"選單");
+    if (!q){
+        return false;
+    }
+    else{
+        var form = document.getElementById("removeForm");
+        document.getElementById("appID").value=id;
+        document.getElementById("appName").value=text;
+        form.submit();
+    }
+};
+
+</script>
+{% endblock %}
+
+{% block content %}
+<form action="#" method="post" id="removeForm">
+{% csrf_token %}
+<input type="hidden" name="appID" id="appID" readonly>
+<input type="hidden" name="appName" id="appName" readonly>
+</form>
+
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-7">
+                    <span class="h3">{{itemName}} APP管理</span>
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:appAdd' itemID %}" class="btn btn-success btn-lg btn-block no-radius">新增APP</a>
+                </div>
+                <div class="col-md-3 buttom-wrapper">
+                    <a href="{% url 'control:main' %}" class="btn btn-success btn-lg btn-block no-radius">回管理員首頁</a>
+                </div>
+            </div>
+            <br>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            APP名稱
+                        </th>
+                        <th>
+                            APP資料夾
+                        </th>
+                        <th>
+                            所屬指標
+                        </th>
+                        <th>
+                            是否啟用
+                        </th>
+                        <th>
+                            開發者
+                        </th>
+                        <th>
+                            移除
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in apps %}
+                    <tr>
+                        <td>
+                            {{i.name}}
+                        </td>
+                        <td>
+                            {{i.dirName}}
+                        </td>
+                        <td>
+                            {{i.item.name}}
+                        </td>
+                        <td>
+                            {{i.isActive}}
+                        </td>
+                        <td>
+                            {{i.user.detail.fullName}}
+                        </td>
+                        <td>
+                            <button onclick="removeItem({{i.id}},'{{i.name}}')">移除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+{% endblock %}

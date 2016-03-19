@@ -21,11 +21,22 @@ class Setting(models.Model):
 class Menu(models.Model):
     name = models.CharField(max_length=128,unique=True)
     permission = models.IntegerField(default=0)
-    
+    isActive = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
 class Item(models.Model):
-    manu = models.ForeignKey(Menu)
+    menu = models.ForeignKey(Menu)
     name = models.CharField(max_length=128,unique=True)
     permission = models.IntegerField(default=0)
+    isActive = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    
+    #def save(self, *args, **kwargs):
+    #    self.menu = Menu.objects.get(id=self.menu)
+    #    super(Item, self).save(*args, **kwargs)
+
     
 class ShinyApp(models.Model):
     user = models.ForeignKey(User)
@@ -33,6 +44,9 @@ class ShinyApp(models.Model):
     name = models.CharField(max_length=32)
     dirName = models.CharField(max_length=32, unique=True)
     date = models.DateTimeField(auto_now=True)
-    
+    isActive = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
     
     

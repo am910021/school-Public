@@ -13,15 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
-from django.contrib import admin
-from main.views import Index
+from django.conf.urls import url
+from .views import Index, ShowDemo, CShinyApp
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^main/', include('main.urls', namespace='main')),
-    url(r'^account/', include('account.urls', namespace='account')),
-    url(r'^api/', include('api.urls', namespace='api')),
-    url(r'^developer/', include('developer.urls', namespace='developer')),
-    url(r'^.*', Index.as_view()),
+    url(r'^$', Index.as_view(), name='main'),
+    url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
+    url(r'^shiny/(?P<itemID>[0-9]+)/$', CShinyApp.as_view(), name='shiny'),
 ]
