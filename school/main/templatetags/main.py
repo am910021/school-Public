@@ -59,3 +59,22 @@ def plus(data):
 def getName(id, data):
     return data[id].name
 
+@register.filter(name='isEqual')
+def isEqual(id1, id2):
+    return True if str(id1)==str(id2) else False
+
+@register.filter(name='isOpen')
+def isOpen(id1, id2):
+    style="""
+    class=open
+    """
+    return style if str(id1)==str(id2) else ""
+
+@register.filter(name='isHide')
+def isHide(id1, id2):
+    style="""
+    style=display:block;
+    """
+    return style if str(id1)==str(id2) else ""
+
+

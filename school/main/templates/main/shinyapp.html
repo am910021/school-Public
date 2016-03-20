@@ -13,7 +13,7 @@
 
 </style>
 <script>
-var totalApps = {{totalApps}};
+var totalApps = {% if totalApps %}{{totalApps}}{% else %}0{% endif %};
 
 function show(appID){
     

@@ -238,7 +238,7 @@ class CAppAdd(ManagerBase):
         
         try:
             config = Setting.objects.get(name="dirPath")
-            dirName = request.POST.get('dirName')
+            dirName = str(request.POST.get('dirName')).replace(" ","-")
             if os.path.exists(config.c1+dirName):
                 kwargs['dir_exists'] = "* 資料夾已存在"
                 kwargs['form'] = form
@@ -254,12 +254,10 @@ class CAppAdd(ManagerBase):
             kwargs['file_error'] = "*檔案格式錯誤"
             kwargs['form'] = form
             return super(CAppAdd, self).post(request, *args, **kwargs)
-        
         form = form.save(commit=False)
         form.user = request.user
+        form.dirName = dirName
         form.save()
-        
-        
         messages.success(request, 'pass。')
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     

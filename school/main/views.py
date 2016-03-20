@@ -106,6 +106,7 @@ class CShinyApp(UserBase):
             itemID = kwargs['itemID'] if 'itemID' in kwargs else None
             item = Item.objects.get(id=itemID)
             shiny = ShinyApp.objects.filter(item=item)
+            kwargs['menuID'] = item.menu.id
         except Exception as e:
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)

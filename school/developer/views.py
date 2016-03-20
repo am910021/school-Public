@@ -89,7 +89,7 @@ class Upload(DeveloperBase):
         
         try:
             config = Setting.objects.get(name="dirPath")
-            dirName = request.POST.get('dirName')
+            dirName = str(request.POST.get('dirName')).replace(" ","-")
             if os.path.exists(config.c1+dirName):
                 kwargs['dir_exists'] = "* 資料夾已存在"
                 kwargs['form'] = form
@@ -108,6 +108,7 @@ class Upload(DeveloperBase):
         
         form = form.save(commit=False)
         form.user = request.user
+        form.dirName = dirName
         form.save()
         messages.success(request, '上傳成功')
         return redirect(reverse('developer:main'))
