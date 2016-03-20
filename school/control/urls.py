@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views import CAdminLogin, CMain, CMenu, CMenuAdd, CMenuDelete, CItem, CItemAdd, CItemDelete
-from .views import CApps, CAppAdd
+from .views import CApps, CAppAdd, CAppDelete
 
 urlpatterns = [
     url(r'^admin/login/$', CAdminLogin.as_view(), name='Login'),
@@ -32,8 +32,8 @@ urlpatterns = [
     url(r'^item/del/$', CItemDelete.as_view(), name='itemDel'),
     url(r'^item/(?P<menuID>[\w\-]+)/$', CItem.as_view(), name='itemBy'),
     
+    url(r'^apps/del/$', CAppDelete.as_view(), name='appDel'),
     url(r'^apps/(?P<itemID>[\w\-]+)/$', CApps.as_view(), name='apps'),
     url(r'^apps/add/(?P<itemID>[\w\-]+)/$', CAppAdd.as_view(), name='appAdd'),
-    
     #url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
 ]

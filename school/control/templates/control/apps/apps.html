@@ -3,7 +3,7 @@
 {% block head %}
 <script type="text/javascript">
 function removeItem(id,text){
-    q = confirm("是否要刪除"+text+"選單");
+    q = confirm("是否要刪除"+text+"APP?");
     if (!q){
         return false;
     }
@@ -19,7 +19,7 @@ function removeItem(id,text){
 {% endblock %}
 
 {% block content %}
-<form action="#" method="post" id="removeForm">
+<form action="{% url 'control:appDel' %}" method="post" id="removeForm">
 {% csrf_token %}
 <input type="hidden" name="appID" id="appID" readonly>
 <input type="hidden" name="appName" id="appName" readonly>

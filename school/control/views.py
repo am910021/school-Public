@@ -1,4 +1,4 @@
-import os, zipfile
+import os, zipfile, shutil
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
@@ -258,11 +258,32 @@ class CAppAdd(ManagerBase):
         form.user = request.user
         form.dirName = dirName
         form.save()
-        messages.success(request, 'pass。')
+        messages.success(request, 'APP上傳成功。')
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
     
-    
+class CAppDelete(ManagerBase):
+    template_name = '' # xxxx/xxx.html
+    page_title = '' # title
+    def post(self, request, *args, **kwargs):
+        print("post")
+        try:
+            appID = request.POST.get('appID')
+            shiny = ShinyApp.objects.get(id=appID)
+            itemID = shiny.item.id
+            shinyName = shiny.name
+            
+            config = Setting.objects.get(name="dirPath")
+            if os.path.exists(config.c1+shiny.dirName):
+                shutil.rmtree(config.c1+shiny.dirName)
+                shiny.delete()
+            messages.success(request, shinyName+'刪除成功。')
+        except Exception as e:
+            messages.success(request, shinyName+'刪除失敗。')
+            print(e)
+         
+        print("post end") 
+        return redirect(reverse('control:apps', args=(itemID,)))
     
     
     
