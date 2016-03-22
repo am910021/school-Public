@@ -23,7 +23,6 @@ class BaseView(TemplateView):
         # Settings context data for base template
         context['base_template_name'] = self.base_template_name
         context['SITE_NAME'] = settings.SITE_NAME
-        context['demo'] = Demo.objects.all()
         context['menu'] = Menu.objects.all()
         if hasattr(self, 'page_title'):
             context['page_title'] = self.page_title
@@ -65,37 +64,6 @@ class Index(UserBase):
     
     def post(self, request, *args, **kwargs):
         return super(Index, self).post(request, *args, **kwargs)
-
-class ShowDemo(UserBase):
-    template_name = 'main/demo.html' # xxxx/xxx.html
-    page_title = 'Demo 展示' # title
-
-    def get(self, request, *args, **kwargs):
-        if 'demoID' not in kwargs:
-            return super(ShowDemo, self).get(request, *args, **kwargs)
-
-        chart_demo = None
-        try:
-            chart_demo = Demo.objects.get(id=kwargs['demoID'])
-        except Exception as e:
-            print(e)
-            
-        
-        
-        if timezone.now() > request.user.detail.expire:
-            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
-            request.user.detail.save()
-        kwargs['license'] = request.user.detail.license
-        kwargs['chart_demo'] = chart_demo
-        
-
-        return super(ShowDemo, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        return super(ShowDemo, self).post(request, *args, **kwargs)
-    
-    def createCode(self, num):
-        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
 
 class CShinyApp(UserBase):
     template_name = 'main/shinyapp.html' # xxxx/xxx.html

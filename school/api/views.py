@@ -121,7 +121,7 @@ class SchoolApi:
             print(e)
         
     def getData(self,name, year=None,semester=None):
-        year = str(year) if year!=None else None
+        year = ("%03d" %year) if year!=None else None
         semester = str(semester) if semester!=None else None
         if self.isActive:
             return self.getSchoolApi(name, year, semester)
@@ -143,10 +143,12 @@ class SchoolApi:
             return []
 
     def getRequest(self,url):
-        isProxy = False
+        isProxy = True
         
         if isProxy:
-            proxies={"http":"http://ip_address_removed:3128"}
+            proxies={"https":"http://ip_address_removed:3128"}
+            print(url)
+            print(requests.get(url, proxies=proxies).status_code)
             return requests.get(url, proxies=proxies).text
         else:
             return requests.get(url).text

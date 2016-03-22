@@ -30,11 +30,14 @@ function removeItem(id,text){
         </div>
         <div class="col-md-10">
             <div class="row">
-                <div class="col-md-7">
-                    <span class="h3">{{itemName}} APP管理</span>
+                <div class="col-md-5">
+                    <span class="h3">{{itemName}}</span>
                 </div>
                 <div class="col-md-2 buttom-wrapper">
                     <a href="{% url 'control:appAdd' itemID %}" class="btn btn-success btn-lg btn-block no-radius">新增APP</a>
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:itemBy' menuID %}" class="btn btn-success btn-lg btn-block no-radius">回項目</a>
                 </div>
                 <div class="col-md-3 buttom-wrapper">
                     <a href="{% url 'control:main' %}" class="btn btn-success btn-lg btn-block no-radius">回管理員首頁</a>

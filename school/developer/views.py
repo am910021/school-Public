@@ -34,11 +34,16 @@ class DeveloperBase(DeveloperRequiredMixin, BaseView):
     template_dir_name = "developer/"
     
     def __init__(self, *args, **kwargs):
-        super(DeveloperBase, self).__init__(*args, **kwargs)
         
+        super(DeveloperBase, self).__init__(*args, **kwargs)
+        #self.context['demomenu'] = Demo.objects.all()
         self.page_title="開發者"+self.page_title
         self.template_name = self.template_dir_name+self.template_name
         
+    def get(self, request, *args, **kwargs):
+        print("test pass ")
+        kwargs['demomenu'] = Demo.objects.all()
+        return super(DeveloperBase, self).get(request, *args, **kwargs)
 
 class Main(DeveloperBase):
     template_name = 'main.html' # xxxx/xxx.html
@@ -268,5 +273,34 @@ class CongigKey(DeveloperBase):
             print(e)
         return redirect(reverse('developer:configKey'))
     
+class ShowDemo(DeveloperBase):
+    template_name = 'demo.html' # xxxx/xxx.html
+    page_title = 'Demo 展示' # title
+
+    def get(self, request, *args, **kwargs):
+        if 'demoID' not in kwargs:
+            return super(ShowDemo, self).get(request, *args, **kwargs)
+
+        chart_demo = None
+        try:
+            chart_demo = Demo.objects.get(id=kwargs['demoID'])
+        except Exception as e:
+            print(e)
+            
+        
+        
+        if timezone.now() > request.user.detail.expire:
+            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
+            request.user.detail.save()
+        kwargs['license'] = request.user.detail.license
+        kwargs['chart_demo'] = chart_demo
+        
+
+        return super(ShowDemo, self).get(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        return super(ShowDemo, self).post(request, *args, **kwargs)
+    
+    def createCode(self, num):
+        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
     

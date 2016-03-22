@@ -16,8 +16,9 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from main.views import Index, blank
-
+from control.views import CAdminLogin
 urlpatterns = [
+    url(r'^control/admin/login/$', CAdminLogin.as_view(), name='Login'),
     url(r'^control/admin/', admin.site.urls), 
     url(r'^control/', include('control.urls', namespace='control')), 
     url(r'^main/', include('main.urls', namespace='main')),

@@ -30,11 +30,14 @@ function removeItem(id,text){
         </div>
         <div class="col-md-10">
             <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-5">
                     <span class="h3">{{menuName}} 選項管理</span>
                 </div>
                 <div class="col-md-2 buttom-wrapper">
                     <a href="{% url 'control:itemAddBy' itemlist.0.menu.id %}" class="btn btn-success btn-lg btn-block no-radius">新增項目</a>
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:menu'  %}" class="btn btn-success btn-lg btn-block no-radius">回選單</a>
                 </div>
                 <div class="col-md-3 buttom-wrapper">
                     <a href="{% url 'control:main' %}" class="btn btn-success btn-lg btn-block no-radius">回管理員首頁</a>
@@ -46,6 +49,9 @@ function removeItem(id,text){
                     <tr>
                         <th>
                             指標名稱
+                        </th>
+                        <th>
+                            app數量
                         </th>
                         <th>
                             使用權限
@@ -66,6 +72,9 @@ function removeItem(id,text){
                     <tr>
                         <td>
                             <a href="{% url 'control:apps' i.id %}">{{i.name}} (增加app)</a>
+                        </td>
+                        <td>
+                            {{i.appQty}}
                         </td>
                         <td>
                             {{i.permission}}

@@ -14,10 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import Index, ShowDemo, CShinyApp
+from .views import Index, CShinyApp
 
 urlpatterns = [
     url(r'^$', Index.as_view(), name='main'),
-    url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
     url(r'^shiny/(?P<itemID>[0-9]+)/$', CShinyApp.as_view(), name='shiny'),
 ]

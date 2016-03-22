@@ -207,6 +207,7 @@ class CApps(ManagerBase):
         itemID = kwargs['itemID'] if 'itemID' in kwargs else None
         item=Item.objects.get(id=itemID)
         kwargs['itemName'] = item.name
+        kwargs['menuID'] = item.menu.id
         kwargs['apps'] = ShinyApp.objects.filter(item=item)
         return super(CApps, self).get(request, *args, **kwargs)
     
@@ -249,16 +250,20 @@ class CAppAdd(ManagerBase):
             zip_ref = zipfile.ZipFile(file, 'r')
             zip_ref.extractall(config.c1+dirName)
             zip_ref.close()
+            
+            form = form.save(commit=False)
+            form.user = request.user
+            form.dirName = dirName
+            form.save()
+            messages.success(request, 'APP上傳成功。')
         except Exception as e:
             print(e)
             kwargs['file_error'] = "*檔案格式錯誤"
             kwargs['form'] = form
+            messages.success(request, 'APP上傳失敗。')
             return super(CAppAdd, self).post(request, *args, **kwargs)
-        form = form.save(commit=False)
-        form.user = request.user
-        form.dirName = dirName
-        form.save()
-        messages.success(request, 'APP上傳成功。')
+        
+
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
     

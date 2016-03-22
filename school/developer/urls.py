@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import Main, Uplist, Upload, Remove, Config, ConfigShiny, ConfigSchoolAPI, ConfigShinyHost, CongigKey
+from .views import Main, Uplist, Upload, Remove, Config, ConfigShiny, ConfigSchoolAPI, ConfigShinyHost, CongigKey, ShowDemo
 
 urlpatterns = [
     url(r'^$', Main.as_view(), name='main'),
@@ -26,4 +26,6 @@ urlpatterns = [
     url(r'^config/school/$', ConfigSchoolAPI.as_view(), name='configAPI'),
     url(r'^config/shiny-host/$', ConfigShinyHost.as_view(), name='configShinyHost'),
     url(r'^config/key/$', CongigKey.as_view(), name='configKey'),
+    
+    url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
 ]

@@ -18,7 +18,6 @@ from .views import CAdminLogin, CMain, CMenu, CMenuAdd, CMenuDelete, CItem, CIte
 from .views import CApps, CAppAdd, CAppDelete
 
 urlpatterns = [
-    url(r'^admin/login/$', CAdminLogin.as_view(), name='Login'),
     url(r'^main/$', CMain.as_view(), name='main'),
     
     url(r'^menu/$', CMenu.as_view(), name='menu'),
