@@ -23,11 +23,8 @@ def setup():
         app = ShinyApp.objects.filter(item=i)
         if len(app)==0:
             i.isActive=False
-            i.save()
-    
-    
-    
-    
+        i.appQty = len(ShinyApp.objects.filter(item=i))
+        i.save()
     
 
     print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
