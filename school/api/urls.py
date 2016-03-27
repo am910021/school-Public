@@ -14,13 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import schoolAPI,schoolAPI2, templateJSON, ArgsError
+from .views import schoolAPI,schoolAPI2, templateJSON, ArgsError, schoolAPI3, schoolAPI4
 
 #studsem/104/1/, student, hstudent, class2/104/, sub, col, dep2, message, province, zip, entid, entsource, entqual, aborg, 
 
 
 urlpatterns = [
     url(r'^templatejson/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', templateJSON),
+    
+    #/case/103/10/10/
+    url(r'^ir/case/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<key1>[0-9]+)/(?P<key2>[0-9]+)/(?P<license>.+)/$', schoolAPI4),
+    url(r'^ir/case/(?P<year>[0-9]+)/(?P<key1>[0-9]+)/(?P<key2>[0-9]+)/(?P<license>.+)/$', schoolAPI3),
+    
     
     url(r'^ir/(?P<name>\w+)/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<semester>[0-2]?)/(?P<license>.+)/$', schoolAPI2),
     url(r'^ir/(?P<name>\w+)/(?P<startYear>[0-9]+)-(?P<endYear>[0-9]+)/(?P<license>.+)/$', schoolAPI2),

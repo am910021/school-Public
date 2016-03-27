@@ -14,6 +14,83 @@ def ArgsError(request, *args, **kwargs):
     return HttpResponse("ArgumentsError", content_type='text/plain')
 
 
+def schoolAPI3(request, *args, **kwargs):
+    print("schoolAPI3")
+    if request.user.username=="" or request.user.detail.type <2:
+        try:
+            user = Detail.objects.filter(license=kwargs['license'])
+            if not user:
+                return HttpResponse("LoginFail", content_type='text/plain')
+        except Exception as e:
+            print(e)
+            return HttpResponse("LoginFail", content_type='text/plain')
+    
+    name = "case"
+    year = int(kwargs['year']) if 'year' in kwargs else None
+    key1 = int(kwargs['key1']) if 'key1' in kwargs else None
+    key2 = int(kwargs['key2']) if 'key2' in kwargs else None
+
+    
+    if not(year and key1 and key2):
+        return HttpResponse("NoneData",content_type='text/plain')
+
+    s = SchoolApi()
+    data = s.getApi2(name, year, key1, key2)
+    #data = []
+    
+    if len(data)==0:
+        return HttpResponse("NoneData",content_type='text/plain')
+    
+    heads=[]
+    for i in data[0].keys():
+        heads.append(i)  
+    s=','.join(heads)  
+    for i in data:
+        s+="\n"
+        s+=','.join(i.values())
+    return HttpResponse(s,content_type='text/plain; charset=utf-8')
+
+
+def schoolAPI4(request, *args, **kwargs):
+    print("schoolAPI4")
+    if request.user.username=="" or request.user.detail.type <2:
+        try:
+            user = Detail.objects.filter(license=kwargs['license'])
+            if not user:
+                return HttpResponse("LoginFail", content_type='text/plain')
+        except Exception as e:
+            print(e)
+            return HttpResponse("LoginFail", content_type='text/plain')
+    
+    name = "case"
+    startYear = int(kwargs['startYear']) if 'startYear' in kwargs else None
+    endYear = int(kwargs['endYear']) if 'endYear' in kwargs else None
+    key1 = int(kwargs['key1']) if 'key1' in kwargs else None
+    key2 = int(kwargs['key2']) if 'key2' in kwargs else None
+
+    
+    if not(startYear and endYear and key1 and key2):
+        return HttpResponse("NoneData",content_type='text/plain')
+
+    s = SchoolApi()
+    data = []
+    
+    for i in range(startYear,endYear+1):
+        data += s.getApi2(name, i, key1, key2)
+    
+    if len(data)==0:
+        return HttpResponse("NoneData",content_type='text/plain')
+    
+    heads=[]
+    for i in data[0].keys():
+        heads.append(i)  
+    s=','.join(heads)  
+    for i in data:
+        s+="\n"
+        s+=','.join(i.values())
+    return HttpResponse(s,content_type='text/plain; charset=utf-8')
+
+
 def schoolAPI(request, *args, **kwargs):
     if request.user.username=="" or request.user.detail.type <2:
         try:
@@ -141,14 +218,28 @@ class SchoolApi:
         except Exception as e:
             print(e)
             return []
+        
+    def getApi2(self,name,year,key1,key2):
+        year = ("%03d" %year)
+        key1 = str(key1)
+        key2 = str(key2)
+        if self.isActive:
+            try:
+                response = self.getRequest(self.url+name+"/"+year+"/"+key1+"/"+key2+"/")
+                data = json.loads(response)
+                return data
+            except Exception as e:
+                print(e)
+                return []
+        return self.getSchoolTemp()
+    
 
     def getRequest(self,url):
-        isProxy = True
-        
+        isProxy = False
         if isProxy:
             proxies={"https":"http://ip_address_removed:3128"}
-            print(url)
-            print(requests.get(url, proxies=proxies).status_code)
+            #print(url)
+            #print(requests.get(url, proxies=proxies).status_code)
             return requests.get(url, proxies=proxies).text
         else:
             return requests.get(url).text
