@@ -15,6 +15,27 @@ function removeItem(id,text){
     }
 };
 
+function upMenu(id){
+        var form = document.getElementById("MOVEForm");
+        document.getElementById("UP").value=id;
+        form.submit();
+};
+function downMenu(id){
+    var form = document.getElementById("MOVEForm");
+    document.getElementById("DOWN").value=id;
+    form.submit();
+};
+
+function resetOrder(){
+    q = confirm("是否要重置排序？ 重置後就無法回復");
+    if (!q){
+        return false;
+    }
+    else{
+        var form = document.getElementById("resetOrderForm");
+        form.submit();
+    }
+};
 </script>
 {% endblock %}
 
@@ -25,10 +46,20 @@ function removeItem(id,text){
 <input type="hidden" name="menuName" id="menuName" readonly>
 </form>
 
+<form action="{% url 'control:menuMove' %}" method="post" id="MOVEForm">
+{% csrf_token %}
+<input type="hidden" name="UP" id="UP" readonly>
+<input type="hidden" name="DOWN" id="DOWN" readonly>
+</form>
+
+<form action="{% url 'control:orderReset' %}" method="post" id="resetOrderForm">
+{% csrf_token %}
+<input type="hidden" name="resetName" id="resetName" value="menu" readonly>
+<input type="hidden" name="where" id="where" value="" readonly>
+</form>
+
     <div class="row">
-        <div class="col-md-1">
-        </div>
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-7">
                 {% if menuName %}<span class="h3">{{menuName}} 項目管理</span>{% endif %}
@@ -48,12 +79,24 @@ function removeItem(id,text){
                             選單名稱
                         </th>
                         <th>
-                            使用權限
+                            指標數量
                         </th>
                         <th>
-                            是否啟用
+                            權限
                         </th>
                         <th>
+                            狀態
+                        </th>
+                        <th>
+                            往上移
+                        </th>
+                        <th>
+                            往下移
+                        </th>
+                        <th style="width:7%">
+                            編輯
+                        </th>
+                        <th style="width:7%">
                             刪除
                         </th>
                     </tr>
@@ -64,22 +107,41 @@ function removeItem(id,text){
                         <td>
                             <a href="{% url 'control:itemBy' i.id %}">{{i.name}} （管理）</a>
                         </td>
+                        <th>
+                            {{i.itemQty}}
+                        </th>
                         <td>
                             {{i.permission}}
                         </td>
                         <td>
-                            {{i.isActive}}
+                            {% if i.isActive %}正常{% else %}禁用{% endif %}
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')">移除</button>
+                            <button onclick="upMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-up"></button>
+                        </td>
+                        <td>
+                            <button onclick="downMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-down"></button>
+                        </td>
+                        <td>
+                            <a href="{% url 'control:itemEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
+                        </td>
+                        <td>
+                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-xs btn-danger">移除</button>
                         </td>
                     </tr>
                 {% endfor %}
 
                 </tbody>
             </table>
-        </div>
-        <div class="col-md-1">
+            <div class="row">
+                <div class="col-md-7">
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                </div>
+                <div class="col-md-3 buttom-wrapper">
+                <button onclick="resetOrder()" class="btn btn-warning btn-default">重置排序</button>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

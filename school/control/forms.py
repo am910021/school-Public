@@ -8,12 +8,12 @@ class FMenu(forms.ModelForm):
     permission = forms.IntegerField()
     permission.widget.attrs.update({'class':'form-control'})
     permission.initial=0
-    isActive = forms.BooleanField(required=False)
-    isActive.initial=True
+    #isActive = forms.BooleanField(required=False)
+    #isActive.initial=True
     
     class Meta:
         model = Menu
-        fields = ('name', 'permission', 'isActive')
+        fields = ('name', 'permission')
         
         
 class FItem(forms.ModelForm):
@@ -32,11 +32,11 @@ class FItem(forms.ModelForm):
     permission = forms.IntegerField()
     permission.widget.attrs.update({'class':'form-control'})
     permission.initial=0
-    isActive = forms.BooleanField(required=False)
-    isActive.initial=True
+    #isActive = forms.BooleanField(required=False)
+    #isActive.initial=True
     class Meta:
         model = Item
-        fields = ('name', 'permission', 'isActive')
+        fields = ('name', 'permission')
 
     
 class FShinyApp(forms.ModelForm):

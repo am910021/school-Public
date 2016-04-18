@@ -41,7 +41,6 @@ class DeveloperBase(DeveloperRequiredMixin, BaseView):
         self.template_name = self.template_dir_name+self.template_name
         
     def get(self, request, *args, **kwargs):
-        print("test pass ")
         kwargs['demomenu'] = Demo.objects.all()
         return super(DeveloperBase, self).get(request, *args, **kwargs)
 

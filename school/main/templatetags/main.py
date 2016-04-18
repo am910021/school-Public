@@ -8,10 +8,14 @@ register = template.Library()
 def getItemQty(menu):
     return len(Item.objects.filter(menu=menu))
 
+@register.filter(name='getItemActiveQty')
+def getItemActiveQty(menu):
+    return len(Item.objects.filter(menu=menu, isActive=True))
+
 
 @register.filter(name='getItem')
 def getItem(menu):
-    return Item.objects.filter(menu=menu)
+    return Item.objects.filter(menu=menu).order_by('order')
 
 
 @register.filter(name='delOneNumber')

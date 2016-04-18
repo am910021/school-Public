@@ -15,6 +15,28 @@ function removeItem(id,text){
     }
 };
 
+function upMenu(id){
+    var form = document.getElementById("MOVEForm");
+    document.getElementById("UP").value=id;
+    form.submit();
+};
+function downMenu(id){
+var form = document.getElementById("MOVEForm");
+document.getElementById("DOWN").value=id;
+form.submit();
+};
+
+function resetOrder(id){
+q = confirm("是否要重置排序？ 重置後就無法回復");
+if (!q){
+    return false;
+}
+else{
+    var form = document.getElementById("resetOrderForm");
+    document.getElementById("where").value=id;
+    form.submit();
+}
+};
 </script>
 {% endblock %}
 
@@ -25,16 +47,28 @@ function removeItem(id,text){
 <input type="hidden" name="itemName" id="itemName" readonly>
 </form>
 
+<form action="{% url 'control:itemMove' %}" method="post" id="MOVEForm">
+{% csrf_token %}
+<input type="hidden" name="UP" id="UP" readonly>
+<input type="hidden" name="DOWN" id="DOWN" readonly>
+</form>
+
+<form action="{% url 'control:orderReset' %}" method="post" id="resetOrderForm">
+{% csrf_token %}
+<input type="hidden" name="resetName" id="resetName" value="item" readonly>
+<input type="hidden" name="where" id="where" value="" readonly>
+</form>
+
     <div class="row">
-        <div class="col-md-1">
-        </div>
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-5">
                     <span class="h3">{{menuName}} 選項管理</span>
                 </div>
                 <div class="col-md-2 buttom-wrapper">
-                    <a href="{% url 'control:itemAddBy' itemlist.0.menu.id %}" class="btn btn-success btn-lg btn-block no-radius">新增項目</a>
+                {% if menuID != -1%}
+                    <a href="{% url 'control:itemAddBy' menuID %}" class="btn btn-success btn-lg btn-block no-radius">新增項目</a>
+                {% endif %}
                 </div>
                 <div class="col-md-2 buttom-wrapper">
                     <a href="{% url 'control:menu'  %}" class="btn btn-success btn-lg btn-block no-radius">回選單</a>
@@ -54,13 +88,24 @@ function removeItem(id,text){
                             app數量
                         </th>
                         <th>
-                            使用權限
+                            權限
                         </th>
                         <th>
                             所屬選單
                         </th>
                         <th>
-                            是否啟用
+                            狀態
+                        </th>
+                        {% if menuID >= 0%}
+                        <th>
+                            往上移
+                        </th>
+                        <th>
+                            往下移
+                        </th>
+                        {% endif %}
+                        <th style="width:7%">
+                            編輯
                         </th>
                         <th>
                             刪除
@@ -83,18 +128,36 @@ function removeItem(id,text){
                             {{i.menu.name}}
                         </td>
                         <td>
-                            {{i.isActive}}
+                            {% if i.isActive %}正常{% else %}禁用{% endif %}
+                        </td>
+                        {% if menuID >= 0%}
+                        <td>
+                            <button onclick="upMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-up"></button>
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')">移除</button>
+                            <button onclick="downMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-down"></button>
+                        </td>
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'control:itemEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
+                        </td>    
+                        <td>
+                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-danger btn-xs">移除</button>
                         </td>
                     </tr>
                 {% endfor %}
 
                 </tbody>
             </table>
-        </div>
-        <div class="col-md-1">
+            <div class="row">
+                <div class="col-md-7">
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                </div>
+                <div class="col-md-3 buttom-wrapper">
+                <button onclick="resetOrder({{menuID}})" class="btn btn-warning btn-default">重置排序</button>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

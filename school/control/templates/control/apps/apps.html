@@ -48,22 +48,25 @@ function removeItem(id,text){
                 <thead>
                     <tr>
                         <th>
-                            APP名稱
+                            名稱
                         </th>
                         <th>
-                            APP資料夾
+                            資料夾位置
                         </th>
                         <th>
                             所屬指標
                         </th>
                         <th>
-                            是否啟用
+                            狀態
                         </th>
                         <th>
                             開發者
                         </th>
                         <th>
                             移除
+                        </th>
+                        <th>
+                            下載
                         </th>
                     </tr>
                 </thead>
@@ -80,13 +83,19 @@ function removeItem(id,text){
                             {{i.item.name}}
                         </td>
                         <td>
-                            {{i.isActive}}
+                            {% if i.isActive %}正常{% else %}禁用{% endif %}
                         </td>
                         <td>
                             {{i.user.detail.fullName}}
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')">移除</button>
+                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-danger btn-xs">移除</button>
+                        </td>
+                        <td>
+                        {% if i.dirName and i.fileName %}
+                            <a href="{% url 'control:appDownload' i.id %}">下載</a>
+                            
+                        {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

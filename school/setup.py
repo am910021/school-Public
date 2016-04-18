@@ -51,16 +51,20 @@ def setup():
         ShinyApp.objects.all().delete()
         
     for i in range(0, len(menuName)):
-        menu = Menu.objects.create(name=menuName[i], permission=0, isActive=True)
+        menu = Menu.objects.create(name=menuName[i], permission=0, isActive=False)
+        menu.order = menu.id
+        menu.save()
         #name
         #permission
         #isActive
         for j in range(0, len(indexNmae[i])):
-            Item.objects.create(menu=menu,
+            item = Item.objects.create(menu=menu,
                                 name=indexNmae[i][j],
                                 permission=0,
-                                isActive=True,
+                                isActive=False,
                                 )
+            item.order = item.id
+            item.save()
     print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
 
 
