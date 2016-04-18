@@ -123,7 +123,7 @@ function resetOrder(){
                             <button onclick="downMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-down"></button>
                         </td>
                         <td>
-                            <a href="{% url 'control:itemEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
+                            <a href="{% url 'control:menuEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
                         </td>
                         <td>
                             <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-xs btn-danger">移除</button>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 class School(models.Model):
@@ -27,3 +28,27 @@ class Student(models.Model):
     sts_tsch = models.CharField(max_length=32)
     sts_tdep = models.CharField(max_length=32)
     sts_five = models.CharField(max_length=32)
+    
+    
+    
+class SchoolData(models.Model):
+    name = models.CharField(max_length=128)
+    type = models.IntegerField(default=0)
+    last = models.DateTimeField(auto_now=True)
+    
+class Department(models.Model):
+    school = models.ForeignKey(SchoolData)
+    name = models.CharField(max_length=128)
+
+    
+class Work(models.Model):
+    department = models.ForeignKey(Department)
+    name = models.CharField(max_length=128)
+    type = models.IntegerField(default=0,validators=[MinValueValidator(0),MaxValueValidator(2)])
+    year = models.IntegerField(default=0,validators=[MinValueValidator(0),MaxValueValidator(3)])
+    
+class Salary(models.Model):
+    department = models.ForeignKey(Department)
+    type = models.IntegerField(default=0,validators=[MinValueValidator(0),MaxValueValidator(6)])
+    
+    

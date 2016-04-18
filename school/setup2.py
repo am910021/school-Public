@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
-import random
 
 class bcolors:
     HEADER = '\033[95m'
@@ -18,14 +16,15 @@ def setup():
     import django
     django.setup()
     from main.models import Menu, Item, ShinyApp
-    item = Item.objects.all()
-    for i in item:
-        app = ShinyApp.objects.filter(item=i)
-        if len(app)==0:
-            i.isActive=False
-        i.appQty = len(ShinyApp.objects.filter(item=i))
+    for i in Menu.objects.all():
+        for j in Item.objects.filter(menu=i):
+            for k in ShinyApp.objects.filter(item=j):
+                k.order = k.id
+                k.save()
+            j.order = j.id
+            j.save()
+        i.order = i.id
         i.save()
-    
 
     print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)
 
@@ -34,10 +33,8 @@ def setup():
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
     print(bcolors.OKBLUE + "\n 啟動基本設定" + bcolors.ENDC)
-    #try:
     setup()
-    #except Exception as e:
-    #    print(bcolors.FAIL + str(e) + bcolors.ENDC)
+
     
     
     

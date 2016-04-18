@@ -22,7 +22,7 @@ class Setting(models.Model):
 class Menu(models.Model):
     name = models.CharField(max_length=128,unique=True)
     permission = models.IntegerField(default=0)
-    isActive = models.BooleanField(default=True)
+    isActive = models.BooleanField(default=False)
     itemQty = models.IntegerField(default=0)
     itemActiveQty = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
@@ -33,6 +33,10 @@ class Menu(models.Model):
         item = Item.objects.filter(menu=self)
         self.itemQty = len(item)
         self.itemActiveQty = len(item.filter(isActive=True))
+        if self.itemActiveQty>0:
+            self.isActive=True
+        elif self.itemActiveQty==0:
+            self.isActive=False
         super(Menu, self).save(*args, **kwargs)
         
     def delete(self, *args, **kwargs):
