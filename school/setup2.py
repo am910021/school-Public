@@ -20,9 +20,14 @@ def setup():
         for j in Item.objects.filter(menu=i):
             for k in ShinyApp.objects.filter(item=j):
                 k.order = k.id
+                k.item.appQty=len(list(ShinyApp.objects.filter(item = k.item)))
+                if k.item.appQty>0:
+                    k.item.isActive = True
+                else:
+                    k.item.isActive = False
+                k.item.save()
                 k.save()
             j.order = j.id
-            j.save()
         i.order = i.id
         i.save()
 

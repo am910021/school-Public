@@ -293,6 +293,7 @@ class CItemEdit(ManagerBase):
             kwargs['form'] = form
             kwargs['itemName'] = item.name
             kwargs['itemID'] = item.id
+            kwargs['menuID'] = item.menu.id
             return super(CItemEdit, self).post(request, *args, **kwargs)
             
         saved = form.save()
