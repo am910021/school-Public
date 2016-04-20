@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from account.models import Detail
 from main.models import Setting
 from _ast import Str
+from db.models import SchoolData, Department, Work, Salary
 
 def ArgsError(request, *args, **kwargs):
     return HttpResponse("ArgumentsError", content_type='text/plain')
@@ -271,3 +272,41 @@ class SchoolApi:
         for i in data:
             self.csv+="\n"
             self.csv+=','.join(i.values())
+            
+            
+def getWork(request, *args, **kwargs):
+    if request.user.username=="" or request.user.detail.type <2:
+        try:
+            user = Detail.objects.filter(license=kwargs['license'])
+            if not user:
+                return HttpResponse("LoginFail", content_type='text/plain')
+        except Exception as e:
+            print(e)
+            return HttpResponse("LoginFail", content_type='text/plain')
+    
+    s="school,department,name,rate,type,year\n"
+    for i in SchoolData.objects.all():
+        for j in Department.objects.filter(school=i):
+            for k in Work.objects.filter(department=j):
+                s+="%s,%s,%s,%f,%d,%d\n" % (i.name,j.name,k.name,k.rate,k.type,k.year)
+    return HttpResponse(s,content_type='text/plain; charset=utf-8')
+    #return HttpResponse(s,content_type='text/csv; charset=utf-8') 
+            
+def getSalary(request, *args, **kwargs):
+    if request.user.username=="" or request.user.detail.type <2:
+        try:
+            user = Detail.objects.filter(license=kwargs['license'])
+            if not user:
+                return HttpResponse("LoginFail", content_type='text/plain')
+        except Exception as e:
+            print(e)
+            return HttpResponse("LoginFail", content_type='text/plain')
+    
+    s="school,department,rate,type\n"
+    for i in SchoolData.objects.all():
+        for j in Department.objects.filter(school=i):
+            for k in Salary.objects.filter(department=j):
+                s+="%s,%s,%.2f,%d\n" % (i.name,j.name,k.rate,k.type)
+    return HttpResponse(s,content_type='text/plain; charset=utf-8')
+    #return HttpResponse(s,content_type='text/csv; charset=utf-8')        
+            

@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views import schoolAPI,schoolAPI2, templateJSON, ArgsError, schoolAPI3, schoolAPI4
+from .views import getWork, getSalary
 
 #studsem/104/1/, student, hstudent, class2/104/, sub, col, dep2, message, province, zip, entid, entsource, entqual, aborg, 
 
@@ -34,7 +35,8 @@ urlpatterns = [
     url(r'^ir/(?P<name>\w+)/(?P<year>[0-9]+)/(?P<license>.+)/$', schoolAPI),
     url(r'^ir/(?P<name>\w+)/(?P<license>.+)/$', schoolAPI),
     
-    
+    url(r'^local/work/(?P<license>.+)/$', getWork),
+    url(r'^local/salary/(?P<license>.+)/$', getSalary),
     
     #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/$', CSVapi),
     #url(r'^query/(?P<year>[0-9]+)/(?P<semester>[0-2]?)/(?P<category>.+)/$', CSVapi2),
