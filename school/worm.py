@@ -20,11 +20,7 @@ def getWeb():
         mylist.append(d)
         """這裡是找學校的網址"""
         
-    #count = 0
     for sec in mylist:
-        #count+=1
-        #if count>2:
-        #    break
         res2=requests.get(sec)
         res2.encoding='utf8'
         soup2 = BeautifulSoup(res2.text, "html.parser")
@@ -35,7 +31,6 @@ def getWeb():
             res3.encoding='utf8'
             soup3 = BeautifulSoup(res3.text, "html.parser")
             """這裡是找學校系所的網址"""
-            
             
             title = soup3.select(".title.cf")[0].select("h1[class~=h1]")[0]
             university = title.select("a")[0].text.replace(" ","")
@@ -55,12 +50,16 @@ def getWeb():
                             p = float(p.replace("%",""))
                             data = (dd.select("a")[0].text if dd.select("a") else "其他")
                             Work.objects.create(department=db_department,name=data,rate=p,type=type,year=year)           
+            r=0
             for fou in soup3.select('.rangeData'):
-                for dd in fou.select('.main'):
-                    if(len(dd.select("strong"))>0):
-                        m = dd.select("strong")[1].text.replace(" ","")
-                        m=m.replace("0","")
-                        Salary.objects.create(department=db_department,type=int(m),rate=float(dd.select("strong")[0].text))
+                dd = fou.select('.main')[0]
+                if(len(dd.select("strong"))>0):
+                    webRate = float(dd.select("strong")[0].text)
+                    rate=round(webRate-r,2)
+                    r=webRate
+                    m = dd.select("strong")[1].text.replace(" ","")
+                    m=m.replace("0","")
+                    Salary.objects.create(department=db_department,type=int(m),rate=rate)
                             
             print(department+"--加入完成")
         print(university+"--加入完成")
@@ -103,7 +102,7 @@ def delData():
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
     if checkDate() and delData():
-        print("資料已全數清除，準備更新．")
+        print("資料已全數清除，準備更新． \r\n\r\n")
         getWeb()
     
 
