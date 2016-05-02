@@ -45,10 +45,10 @@ def schoolAPI3(request, *args, **kwargs):
     heads=[]
     for i in data[0].keys():
         heads.append(i)  
-    s=','.join(heads)  
+    s=';'.join(heads)  
     for i in data:
         s+="\n"
-        s+=','.join(i.values())
+        s+=';'.join(i.values())
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
 
 
@@ -85,10 +85,10 @@ def schoolAPI4(request, *args, **kwargs):
     heads=[]
     for i in data[0].keys():
         heads.append(i)  
-    s=','.join(heads)  
+    s=';'.join(heads)  
     for i in data:
         s+="\n"
-        s+=','.join(i.values())
+        s+=';'.join(i.values())
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
 
 
@@ -123,10 +123,10 @@ def schoolAPI(request, *args, **kwargs):
     heads=[]
     for i in data[0].keys():
         heads.append(i)  
-    s=','.join(heads)  
+    s=';'.join(heads)  
     for i in data:
         s+="\n"
-        s+=','.join(i.values())
+        s+=';'.join(i.values())
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
 
 def schoolAPI2(request, *args, **kwargs):
@@ -169,10 +169,10 @@ def schoolAPI2(request, *args, **kwargs):
     heads=[]
     for i in data[0].keys():
         heads.append(i)  
-    s=','.join(heads)  
+    s=';'.join(heads)  
     for i in data:
         s+="\n"
-        s+=','.join(i.values())
+        s+=';'.join(i.values())
 
     return HttpResponse(s, content_type='text/plain; charset=utf-8')
 
@@ -271,7 +271,7 @@ class SchoolApi:
     def ConvertCSV(self,data): 
         for i in data:
             self.csv+="\n"
-            self.csv+=','.join(i.values())
+            self.csv+=';'.join(i.values())
             
             
 def getWork(request, *args, **kwargs):
@@ -284,11 +284,11 @@ def getWork(request, *args, **kwargs):
             print(e)
             return HttpResponse("LoginFail", content_type='text/plain')
     
-    s="school,department,name,rate,type,year\n"
+    s="school;department;name;rate;type;year\n"
     for i in SchoolData.objects.all():
         for j in Department.objects.filter(school=i):
             for k in Work.objects.filter(department=j):
-                s+="%s,%s,%s,%f,%d,%d\n" % (i.name,j.name,k.name,k.rate,k.type,k.year)
+                s+="%s;%s;%s;%f;%d;%d\n" % (i.name,j.name,k.name,k.rate,k.type,k.year)
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
     #return HttpResponse(s,content_type='text/csv; charset=utf-8') 
             
@@ -302,11 +302,11 @@ def getSalary(request, *args, **kwargs):
             print(e)
             return HttpResponse("LoginFail", content_type='text/plain')
     
-    s="school,department,rate,type\n"
+    s="school;department;rate;type\n"
     for i in SchoolData.objects.all():
         for j in Department.objects.filter(school=i):
             for k in Salary.objects.filter(department=j):
-                s+="%s,%s,%.2f,%d\n" % (i.name,j.name,k.rate,k.type)
+                s+="%s;%s;%.2f;%d\n" % (i.name,j.name,k.rate,k.type)
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
     #return HttpResponse(s,content_type='text/csv; charset=utf-8')        
             

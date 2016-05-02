@@ -579,6 +579,7 @@ class CAppDelete(ManagerBase):
             
             config = Setting.objects.get(name="dirPath")
             if os.path.exists(config.c1+shiny.dirName):
+                shutil.rmtree(config.c1+shiny.dirName)
                 shiny.delete()
             messages.success(request, shinyName+'刪除成功。')
         except Exception as e:
