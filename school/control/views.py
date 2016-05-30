@@ -590,6 +590,109 @@ class CAppDelete(ManagerBase):
         return redirect(reverse('control:apps', args=(itemID,)))
     
     
+class CConfig(AdminBase):
+    template_name = 'config/config.html' # xxxx/xxx.html
+    page_title = '設定' # title
+
+    def get(self, request, *args, **kwargs):
+        return super(CConfig, self).get(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        return super(CConfig, self).post(request, *args, **kwargs)
+    
+class CConfigShiny(AdminBase):
+    template_name = 'config/dir.html' # xxxx/xxx.html
+    page_title = '設定' # title
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="dirPath")
+            kwargs['path'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(CConfigShiny, self).post(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if 'dirPath' not in request.POST:
+            kwargs['error'] = "請輸入路徑"
+            return super(CConfigShiny, self).post(request, *args, **kwargs)
+        
+        dir = request.POST.get('dirPath')
+        
+        if not os.path.exists(dir):
+            kwargs['error'] = " *路徑錯誤"
+            kwargs['path'] = dir
+            return super(CConfigShiny, self).post(request, *args, **kwargs)
+        
+        try:
+            config = Setting.objects.get(name="dirPath")
+            config.c1 = dir
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="dirPath",c1=dir)
+            print(e)
+        
+        messages.success(request, "設定成功。")
+        return redirect(reverse('control:configAPP'))
+
+
+class CConfigSchoolAPI(AdminBase):
+    template_name = 'config/api.html' # xxxx/xxx.html
+    page_title = '學校 API 設定' # title
+
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="SchoolAPI")
+            kwargs['isActive'] = config.isActive
+            kwargs['url'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(CConfigSchoolAPI, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('apiURL')=="":
+            kwargs['error'] = "*URL 不能為空"
+            return super(CConfigSchoolAPI, self).post(request, *args, **kwargs)
+        
+        try:
+            config = Setting.objects.get(name="SchoolAPI")
+            config.c1 = request.POST.get('apiURL')
+            config.isActive = True if request.POST.get('isActive') else False
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="SchoolAPI",isActive = True if request.POST.get('isActive') else False, c1 = request.POST.get('apiURL'))
+            print(e)
+        messages.success(request, "設定成功。")
+        return redirect(reverse('control:configAPI'))
+    
+class CCongigKey(AdminBase):
+    template_name = 'config/key.html' # xxxx/xxx.html
+    page_title = '系統金鑰設定' # title
+
+    def get(self, request, *args, **kwargs):
+        try:
+            config = Setting.objects.get(name="SystemKey")
+            kwargs['key'] = config.c1
+            kwargs['time'] = config.time
+        except Exception as e:
+            print(e)
+        return super(CCongigKey, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('key')=="":
+            kwargs['error'] = "*HOST 不能為空"
+            return super(CCongigKey, self).post(request, *args, **kwargs)
+        
+        try:
+            config = Setting.objects.get(name="SystemKey")
+            config.c1 = request.POST.get('key')
+            config.save()
+        except Exception as e:
+            Setting.objects.get_or_create(name="SystemKey", c1 = request.POST.get('key'))
+            print(e)
+        messages.success(request, "設定成功。")
+        return redirect(reverse('control:configKEY'))
     
         

@@ -43,6 +43,7 @@ class Menu(models.Model):
         for i in Item.objects.filter(menu=self):
             i.delete()
         super(Menu, self).delete(*args, **kwargs)
+        
 
 class Item(models.Model):
     menu = models.ForeignKey(Menu)

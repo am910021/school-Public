@@ -21,11 +21,6 @@ urlpatterns = [
     url(r'^list/$', Uplist.as_view(), name='list'),
     url(r'^upload/$', Upload.as_view(), name='upload'),
     url(r'^remove/$', Remove.as_view(), name='remove'),
-    url(r'^config/$', Config.as_view(), name='config'),
-    url(r'^config/shiny/$', ConfigShiny.as_view(), name='configShiny'),
-    url(r'^config/school/$', ConfigSchoolAPI.as_view(), name='configAPI'),
-    url(r'^config/shiny-host/$', ConfigShinyHost.as_view(), name='configShinyHost'),
-    url(r'^config/key/$', CongigKey.as_view(), name='configKey'),
     
     url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
 ]

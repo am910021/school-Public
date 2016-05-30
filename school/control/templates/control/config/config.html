@@ -1,0 +1,19 @@
+{% extends base_template_name %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'control:configAPI' %}" class="no-radius btn btn-primary btn-lg btn-block">學校 API 連接</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'control:configAPP' %}" class="no-radius btn btn-primary btn-lg btn-block">Shiny App 位置</a>
+        </div>
+        <div class="col-md-3">
+             <a href="{% url 'control:configKEY' %}" class="no-radius btn btn-primary btn-lg btn-block">系統金鑰設定（無作用）</a>
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+{% endblock %}

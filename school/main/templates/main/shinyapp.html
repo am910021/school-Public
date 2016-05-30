@@ -13,20 +13,15 @@
 
 </style>
 <script>
+document.domain = '{{serverIP}}';
 var totalApps = {% if totalApps %}{{totalApps}}{% else %}0{% endif %};
 
 function show(appID){
-    
-
     for (i = 1; i <= totalApps; i++) { 
         document.getElementById('shinyapp'+i).style.display = 'none';
     }
     document.getElementById('shinyapp'+appID).style.display = 'block';
-    
-    
 }
-
-
 </script>
 {% endblock %}
 

@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <form class="form-horizontal" role="form" method="post" action="{% url 'developer:configAPI' %}">
+            <form class="form-horizontal" role="form" method="post" action="{% url 'control:configAPI' %}">
              {% csrf_token %}
              
                 <div class="form-group">

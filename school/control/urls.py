@@ -17,6 +17,7 @@ from django.conf.urls import url
 from .views import CAdminLogin, CMain, CMenu, CMenuAdd, CMenuDelete, CItem, CItemAdd, CItemDelete
 from .views import CApps, CAppAdd, CAppDelete, CMenuEdit, CMenuMove, CResetOrder, CItemEdit
 from .views import CItemMove, CAppEdit, CAppDownload
+from .views import CConfig, CConfigSchoolAPI, CConfigShiny, CCongigKey
 
 urlpatterns = [
     url(r'^main/$', CMain.as_view(), name='main'),
@@ -42,6 +43,11 @@ urlpatterns = [
     url(r'^apps/(?P<itemID>[\w\-]+)/$', CApps.as_view(), name='apps'),
     url(r'^apps/add/(?P<itemID>[\w\-]+)/$', CAppAdd.as_view(), name='appAdd'),
     url(r'^apps/download/(?P<appID>[\w\-]+)/$', CAppDownload.as_view(), name='appDownload'),
+    
+    url(r'config/$', CConfig.as_view(), name="config"),
+    url(r'config/api/$', CConfigSchoolAPI.as_view(), name="configAPI"),
+    url(r'config/app/$', CConfigShiny.as_view(), name="configAPP"),
+    url(r'config/key/$', CCongigKey.as_view(), name="configKEY"),
     #url(r'^apps/edit/(?P<appID>[\w\-]+)/$', CAppEdit.as_view(), name='appEdit'),
     #url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
 ]
