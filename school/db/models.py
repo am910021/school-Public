@@ -40,7 +40,9 @@ class Work(models.Model):
 class Salary(models.Model):
     department = models.ForeignKey(Department)
     rate = models.FloatField(default=0.0)
-    type = models.IntegerField(default=1,validators=[MinValueValidator(1),MaxValueValidator(8)])
+    money = models.IntegerField(default=20000,validators=[MaxValueValidator(80000),MinValueValidator(20000)])
+    type = models.CharField(max_length=32)
+    
     
 class Studsem_all(models.Model):
     sts_acy = models.IntegerField()

@@ -49,19 +49,33 @@ def getWeb():
                             p = dd.select("span")[0].text.replace(" ","") #記錄百分比 去除中間的空白，在後面加空白
                             p = float(p.replace("%",""))
                             data = (dd.select("a")[0].text if dd.select("a") else "其他")
-                            Work.objects.create(department=db_department,name=data,rate=p,type=type,year=year)           
-            r=0
-            for fou in soup3.select('.rangeData'):
-                dd = fou.select('.main')[0]
-                if(len(dd.select("strong"))>0):
-                    webRate = float(dd.select("strong")[0].text)
-                    rate=round(webRate-r,2)
-                    r=webRate
-                    m = dd.select("strong")[1].text.replace(" ","")
-                    m=m.replace("0","")
-                    Salary.objects.create(department=db_department,type=int(m),rate=rate)
+                            Work.objects.create(department=db_department,name=data,rate=p,type=type,year=year)
                             
-            print(department+"--加入完成")
+            try:
+                r=[0,0,0,0]
+                title = soup3.select("li.title.row.p1")[0]
+                title2 = soup3.select("ul.w-sort.w-sortOption")[0].select("a.a2")
+                t1 = title.select("strong")[0].text.split(" ")[1]
+                t2 = title2[0].text.split(" ")[1]
+                t3 = title2[1].text.split(" ")[1]
+                t4 = title2[2].text.split(" ")[1]
+                #print("%s  %s  %s  %s" % (t1,t2,t3,t4))
+                tData=[t1,t2,t3,t4]
+                for fou in soup3.select('.rangeData'):
+                    content = fou.select("div.content")
+                    i=-1
+                    for dd in content:
+                        i+=1
+                        if(len(dd.select("strong"))==0):
+                            continue
+                        webRate = float(dd.select("strong")[0].text)
+                        rate=float(round(webRate-r[i],2))
+                        r[i]=webRate
+                        m = int(dd.select("strong")[1].text.replace(" ",""))
+                        Salary.objects.create(department=db_department,type=tData[i],rate=rate,money=m)         
+                print(department+"--加入完成")
+            except:
+                print(department+"--無資料")
         print(university+"--加入完成")
 
 def checkDate():
