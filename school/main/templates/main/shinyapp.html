@@ -4,7 +4,7 @@
 <style>
 .app-iframe{
     border-top: 1px solid #AAA;
-    border-bottom: 1px solid #AAA;
+    border-bottom: 0px;
     border-left: none;
     border-right: none;
     width: 100%;
@@ -29,39 +29,45 @@ function show(appID){
 
     {% if shiny %}
     
-    <div class="row">
-		<div class="col-md-12 ">
-		  <span class="text-success h2">{{itemName}}</span>
-		</div>
-    </div>
-    <br>
-    <div class="row">
-        {% for i in listApps %}
-            <div class="col-md-3 buttom-wrapper">
-                <button type="button" onclick="show({{i|plus}})" class="btn btn-primary btn-lg btn-block no-radius">
-                    {{i|getName:shiny}}
-                </button>
+	    {% if not token %}
+        <div class="row">
+            <div class="col-md-12 ">
+              <span class="text-success h2">你的權限不足</span>
             </div>
-            {{i|nextRow|safe}}
-        {% endfor %}
-    </div>
-        
-    <form>
-    <input type="hidden" id="license" value={{license}} readonly>
-    <br>
-    </form>
-    {% for i in shiny %}
-    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
-        <span class="text-info h3">{{i.name}}</span>
-	    <iframe src="/shiny/apps/{{i.dirName}}/"  class="app-iframe"></iframe>
-	    {{listApps|delOneNumber}}
-    </div>
-    {% endfor %}
-    
-    
-    <!-- 
-    <iframe src="/shiny/apps/{{chart_demo.dirName}}/" style="border-top: 1px solid #AAA;border-bottom: 1px solid #AAA;border-left: none;border-right: none;width: 100%; height: 600px"></iframe>
-     -->
+        </div>
+	    {% else %}
+	    <div class="row">
+			<div class="col-md-12 ">
+			  <span class="text-success h2">指標--{{itemName}}</span>
+			</div>
+	    </div>
+	    <br>
+	    <div class="row">
+	        {% for i in listApps %}
+	            <div class="col-md-3 buttom-wrapper">
+	                <button type="button" onclick="show({{i|plus}})" class="btn btn-primary btn-lg btn-block no-radius">
+	                    {{i|getName:shiny}}
+	                </button>
+	            </div>
+	            {{i|nextRow|safe}}
+	        {% endfor %}
+	    </div>
+	        
+	    <form>
+	    <input type="hidden" id="license" value={{license}} readonly>
+	    <br>
+	    </form>
+	    {% for i in shiny %}
+	    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
+	        <span class="text-info h3">{{i.name}}</span>
+		    <iframe src="/shiny/apps/{{i.dirName}}/"  class="app-iframe"></iframe>
+		    {{listApps|delOneNumber}}
+	    </div>
+	    {% endfor %}
+	    <!-- 
+	    <iframe src="/shiny/apps/{{chart_demo.dirName}}/" style="border-top: 1px solid #AAA;border-bottom: 1px solid #AAA;border-left: none;border-right: none;width: 100%; height: 600px"></iframe>
+	     -->
+        {% endif %}
     {% else %}
     <h3>沒有找到圖</h3>
     {% endif %}

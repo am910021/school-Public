@@ -24,20 +24,10 @@ class Menu(models.Model):
     permission = models.IntegerField(default=0)
     isActive = models.BooleanField(default=False)
     itemQty = models.IntegerField(default=0)
-    itemActiveQty = models.IntegerField(default=0)
+    activeQty = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        item = Item.objects.filter(menu=self)
-        self.itemQty = len(item)
-        self.itemActiveQty = len(item.filter(isActive=True))
-        if self.itemActiveQty>0:
-            self.isActive=True
-        elif self.itemActiveQty==0:
-            self.isActive=False
-        super(Menu, self).save(*args, **kwargs)
         
     def delete(self, *args, **kwargs):
         for i in Item.objects.filter(menu=self):
@@ -58,11 +48,12 @@ class Item(models.Model):
 
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
-        if self.appQty>0:
-            self.menu.isActive = True
-        elif self.appQty==0:
-            self.menu.isActive = False
+        item = Item.objects.filter(menu=self.menu)
+        self.menu.itemQty=len(item)
+        self.menu.activeQty = len(item.filter(isActive=True))
+        self.menu.isActive = True if self.menu.activeQty > 0 else False
         self.menu.save()
+        
 
     def delete(self, *args, **kwargs):
         for i in ShinyApp.objects.filter(item=self):
@@ -92,9 +83,10 @@ class ShinyApp(models.Model):
 
     def save(self, *args, **kwargs):
         super(ShinyApp, self).save(*args, **kwargs)
-        item = ShinyApp.objects.filter(item=self.item)
-        self.item.isActive = True
-        self.item.appQty=len(item)
+        app = ShinyApp.objects.filter(item=self.item)
+        self.item.appQty=len(app)
+        self.item.activeQty = len(app.filter(isActive=True))
+        self.item.isActive = True if self.item.activeQty > 0 else False
         self.item.save()
         
     def delete(self, *args, **kwargs):

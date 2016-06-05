@@ -1,21 +1,7 @@
 {% extends base_template_name %}
 {% load main %}
-{% block head %}
-<script type="text/javascript">
-function removeMenu(id,text){
-	q = confirm("是否要刪除"+text+"選單");
-	if (!q){
-		return false;
-	}
-	else{
-	    var form = document.getElementById("removeForm");
-	    document.getElementById("menuID").value=id;
-	    document.getElementById("menuName").value=text;
-	    form.submit();
-	}
-};
 
-</script>
+{% block head %}
 {% endblock %}
 
 {% block content %}
@@ -28,6 +14,17 @@ function removeMenu(id,text){
 
     <div class="row">
         <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-7">
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:menu' %}" class="btn btn-success btn-lg btn-block no-radius">上一頁</a>
+                </div>
+                <div class="col-md-3 buttom-wrapper">
+                    <a href="{% url 'control:main' %}" class="btn btn-success btn-lg btn-block no-radius">回管理員首頁</a>
+                </div>
+            </div>
+            <br>
             <form class="form-horizontal" role="form" method="post" action="{% url 'control:menuAdd' %}">
                 {% csrf_token %}
                 <div class="form-group">

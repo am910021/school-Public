@@ -1,4 +1,5 @@
 {% extends base_template_name %}
+{% load staticfiles %}
 
 {% block head %}
 <script type="text/javascript">
@@ -18,11 +19,21 @@ function removeItem(id,text){
 </script>
 {% endblock %}
 
+{% block script %}
+<script src="{% static 'js/control/order.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <form action="{% url 'control:appDel' %}" method="post" id="removeForm">
 {% csrf_token %}
 <input type="hidden" name="appID" id="appID" readonly>
 <input type="hidden" name="appName" id="appName" readonly>
+</form>
+
+<form action="{% url 'control:appMove' %}" method="post" id="MOVEForm">
+{% csrf_token %}
+<input type="hidden" name="UP" id="UP" readonly>
+<input type="hidden" name="DOWN" id="DOWN" readonly>
 </form>
 
     <div class="row">
@@ -63,6 +74,15 @@ function removeItem(id,text){
                             開發者
                         </th>
                         <th>
+                            上移
+                        </th>
+                        <th>
+                            下移
+                        </th>
+                        <th>
+                            編輯
+                        </th>
+                        <th>
                             移除
                         </th>
                         <th>
@@ -89,12 +109,20 @@ function removeItem(id,text){
                             {{i.user.detail.fullName}}
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-danger btn-xs">移除</button>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-up move-up"></button>
+                        </td>
+                        <td>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-down move-down"></button>
+                        </td>
+                        <td>
+                            <a href="{% url 'control:appEdit' i.id %}" class="btn glyphicon glyphicon-pencil fa-lg"></a>
+                        </td>
+                        <td>
+                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn glyphicon glyphicon-remove remove"></button>
                         </td>
                         <td>
                         {% if i.dirName and i.fileName %}
-                            <a href="{% url 'control:appDownload' i.id %}">下載</a>
-                            
+                            <a href="{% url 'control:appDownload' i.id %}" class="btn glyphicon glyphicon-download-alt fa-lg"></a>
                         {% endif %}
                         </td>
                     </tr>

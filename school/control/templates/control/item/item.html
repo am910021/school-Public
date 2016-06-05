@@ -1,43 +1,12 @@
 {% extends base_template_name %}
+{% load staticfiles %}
 
 {% block head %}
-<script type="text/javascript">
-function removeItem(id,text){
-    q = confirm("是否要刪除"+text+"選單");
-    if (!q){
-        return false;
-    }
-    else{
-        var form = document.getElementById("removeForm");
-        document.getElementById("itemID").value=id;
-        document.getElementById("itemName").value=text;
-        form.submit();
-    }
-};
+<link rel="stylesheet" href="{% static 'css/control/control.css' %}">
+{% endblock %}
 
-function upMenu(id){
-    var form = document.getElementById("MOVEForm");
-    document.getElementById("UP").value=id;
-    form.submit();
-};
-function downMenu(id){
-var form = document.getElementById("MOVEForm");
-document.getElementById("DOWN").value=id;
-form.submit();
-};
-
-function resetOrder(id){
-q = confirm("是否要重置排序？ 重置後就無法回復");
-if (!q){
-    return false;
-}
-else{
-    var form = document.getElementById("resetOrderForm");
-    document.getElementById("where").value=id;
-    form.submit();
-}
-};
-</script>
+{% block script %}
+<script src="{% static 'js/control/order.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -85,10 +54,10 @@ else{
                             指標名稱
                         </th>
                         <th>
-                            app數量
+                            數量
                         </th>
                         <th>
-                            權限
+                            使用中
                         </th>
                         <th>
                             所屬選單
@@ -122,7 +91,7 @@ else{
                             {{i.appQty}}
                         </td>
                         <td>
-                            {{i.permission}}
+                            {{i.activeQty}}
                         </td>
                         <td>
                             {{i.menu.name}}
@@ -132,17 +101,17 @@ else{
                         </td>
                         {% if menuID >= 0%}
                         <td>
-                            <button onclick="upMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-up"></button>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-up move-up"></button>
                         </td>
                         <td>
-                            <button onclick="downMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-down"></button>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-down move-down"></button>
                         </td>
                         {% endif %}
                         <td>
-                            <a href="{% url 'control:itemEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
+                            <a href="{% url 'control:itemEdit' i.id %}" class="btn glyphicon glyphicon-pencil"></a>
                         </td>    
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-danger btn-xs">移除</button>
+                            <button value="{{i.id}},{{i.name}}" class="btn glyphicon glyphicon-remove remove"></button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -155,7 +124,7 @@ else{
                 <div class="col-md-2 buttom-wrapper">
                 </div>
                 <div class="col-md-3 buttom-wrapper">
-                <button onclick="resetOrder({{menuID}})" class="btn btn-warning btn-default">重置排序</button>
+                <button type="button" id="resetOrder" class="btn btn-warning btn-default">重置排序</button>
                 </div>
             </div>
         </div>

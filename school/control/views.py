@@ -369,13 +369,12 @@ class CItemAdd(ManagerBase):
     
     def post(self, request, *args, **kwargs):
         form = FItem(request.POST)
-        id = 0
         if not form.is_valid():
             kwargs['form'] = form
+            kwargs['menuID'] = request.POST.get('menu')
             return super(CItemAdd, self).post(request, *args, **kwargs)
         try:
             menu = form.save(commit=False)
-            id = request.POST.get('menu')
             menu.menu=Menu.objects.get(id=id)
             menu.save()
             menu.order = menu.id
@@ -385,8 +384,6 @@ class CItemAdd(ManagerBase):
             messages.success(request, request.POST.get('name')+'指標加入失敗。')
             print(e)
         return redirect(reverse('control:itemBy', args=(id,)))
-    
-    
     
     
 class CItemDelete(ManagerBase):
@@ -472,7 +469,7 @@ class CAppAdd(ManagerBase):
             
             form = form.save(commit=False)
             form.user = request.user
-            form.dirName = dirName
+            #form.dirName = dirName
             form.fileName = file.name
             form.fileType = file.content_type
             form.save()
@@ -512,7 +509,7 @@ class CAppEdit(ManagerBase):
         try:
             app = ShinyApp.objects.get(id=kwargs['appID'])
             kwargs['appName'] = app.name
-            kwargs['appID'] = app.id
+            #kwargs['appID'] = app.id
         except:
             return redirect(reverse('control:item'))
         if app:
@@ -522,46 +519,40 @@ class CAppEdit(ManagerBase):
     
     def post(self, request, *args, **kwargs):
         try:
-            app = ShinyApp.objects.get(id=request.POST.get('appID'))
-            form = FShinyApp(request.POST, instance=app)
+            shiny = ShinyApp.objects.get(id=request.POST.get('appID'))
+            dir = request.POST.get('dirName')
+            orgDir = shiny.dirName
+            config = Setting.objects.get(name="dirPath")
         except:
-            return redirect(reverse('control:item'))
+            return redirect(reverse('main:main'))
         
-            kwargs['appName'] = app.name
-            kwargs['appID'] = app.id
+        form = FShinyApp(request.POST, instance=shiny)
         if not form.is_valid():
             kwargs['form'] = form
-            return super(CAppEdit, self).post(request, *args, **kwargs)   
+            kwargs['appID'] = shiny.id
+            return super(CAppAdd, self).post(request, *args, **kwargs)
         
-        if 'upload_file' not in request.FILES:
-            kwargs['not_found']="*請選擇檔案"
-            kwargs['form'] = form
-            return super(CAppEdit, self).post(request, *args, **kwargs)
+        if orgDir != dir:
+            os.rename(config.c1+orgDir, config.c1+dir)
         
-        try:
-            config = Setting.objects.get(name="dirPath")
-            dirName = str(request.POST.get('dirName')).replace(" ","-")
-
-            if os.path.exists(config.c1+app.dirName):
-                shutil.rmtree(config.c1+app.dirName)
-            
+        if 'upload_file' in request.FILES:
             file = request.FILES['upload_file']
-            os.makedirs(config.c1+dirName)
+            if os.path.exists(config.c1+dir):
+                shutil.rmtree(config.c1+dir)
+                
+            file = request.FILES['upload_file']
+            os.makedirs(config.c1+dir)
             zip_ref = zipfile.ZipFile(file, 'r')
-            zip_ref.extractall(config.c1+dirName)
+            zip_ref.extractall(config.c1+dir)
             zip_ref.close()
             
-            form = form.save(commit=False)
-            form.user = request.user
-            form.dirName = dirName
-            form.save()
-            form.order = form.id
-            form.save()
-        except:
-            kwargs['file_error'] = "*檔案格式錯誤"
-            kwargs['form'] = form
-            messages.success(request, 'APP更新失敗。')
-            return super(CAppAdd, self).post(request, *args, **kwargs)
+            os.makedirs(config.c1+dir+"/zip/")
+            fd = open(config.c1+dir+'/zip/'+file.name, 'wb')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+            
+        form.save()
         
         messages.success(request, 'APP更新成功。')
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
@@ -576,17 +567,63 @@ class CAppDelete(ManagerBase):
             shiny = ShinyApp.objects.get(id=appID)
             itemID = shiny.item.id
             shinyName = shiny.name
-            
-            config = Setting.objects.get(name="dirPath")
-            if os.path.exists(config.c1+shiny.dirName):
-                shutil.rmtree(config.c1+shiny.dirName)
-                shiny.delete()
+            shiny.delete()
             messages.success(request, shinyName+'刪除成功。')
         except Exception as e:
             messages.success(request, shinyName+'刪除失敗。')
             print(e)
-         
-        print("post end") 
+        return redirect(reverse('control:apps', args=(itemID,)))
+    
+class CAppMove(ManagerBase):
+    template_name = '' # xxxx/xxx.html
+    page_title = '' # title
+    
+    def post(self, request, *args, **kwargs):
+        up = int(request.POST.get('UP')) if request.POST.get('UP')!="" else None
+        down = int(request.POST.get('DOWN')) if request.POST.get('DOWN')!="" else None
+        
+        if up:
+            tempApp = ShinyApp.objects.get(id=up)
+            app = ShinyApp.objects.filter(item=tempApp.item).order_by("order")
+            itemID=tempApp.item.id
+        elif down:
+            tempApp = ShinyApp.objects.get(id=down)
+            app = ShinyApp.objects.filter(item=tempApp.item).order_by("order")
+            itemID=tempApp.item.id
+        itemLen = len(list(app))
+        temp = app[0]
+        temp2 = app[itemLen-1]
+
+        
+        if temp.id == up:
+            messages.success(request, temp.name+'已經在最上方。')
+            return redirect(reverse('control:apps', args=(itemID,)))
+        elif temp2.id==down:
+            messages.success(request, temp2.name+'已經在最下方。')
+            return redirect(reverse('control:apps', args=(itemID,)))
+        
+        if up:
+            for i in range(1,itemLen):
+                if app[i].id==up:
+                    tmp = app[i].order
+                    app[i].order=app[i-1].order
+                    app[i-1].order=app[i].order
+                    app[i-1].order=tmp
+                    app[i].save()
+                    app[i-1].save()
+                    messages.success(request, app[i].name+'成功往上移動。')
+                    break
+        elif down:
+            for i in range(0,itemLen-1):
+                if app[i].id==down:
+                    tmp = app[i].order
+                    app[i].order=app[i+1].order
+                    app[i+1].order=app[i].order
+                    app[i+1].order=tmp
+                    app[i].save()
+                    app[i+1].save()
+                    messages.success(request, app[i].name+'成功往下移動。')
+                    break
         return redirect(reverse('control:apps', args=(itemID,)))
     
     

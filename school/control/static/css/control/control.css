@@ -1,0 +1,12 @@
+button.remove:hover {
+    color: red;
+}
+
+td a{
+	vertical-align:middle;
+}
+
+td a:hover{
+    vertical-align:middle;
+    text-decoration:none;
+}

@@ -73,8 +73,9 @@ class CShinyApp(UserBase):
         try:
             itemID = kwargs['itemID'] if 'itemID' in kwargs else None
             item = Item.objects.get(id=itemID)
-            shiny = ShinyApp.objects.filter(item=item)
+            shiny = ShinyApp.objects.filter(item=item).order_by("order")
             kwargs['menuID'] = item.menu.id
+            kwargs['token'] = True if request.user.detail.type >= item.permission else False
         except Exception as e:
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)

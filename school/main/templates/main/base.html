@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <title>{{page_title}}|{{SITE_NAME}}</title>
     <!-- Bootstrap Core CSS -->
-    <link href="{% static 'org/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Jquery UI -->
     <link rel="stylesheet" href="{% static 'jqueryui/jquery-ui.css' %}">
     <!-- Custom CSS -->
@@ -19,6 +19,22 @@
     <link rel="stylesheet" href="{% static 'org/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'org/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'org/css/style.css' %}" media="screen" type="text/css" />
+    
+    <style>
+    
+    #foot-wrapper {
+padding-right:15px;
+padding-left:265px;
+transition: all 0.5s ease;
+}
+
+    #foot-wrapper.toggled {
+padding-right:15px;
+padding-left:15px;
+transition: all 0.5s ease;
+}
+    
+    </style>
 {% block head %}{% endblock %}
 </head>
 
@@ -32,12 +48,12 @@
     <ul id="accordion" class="accordion">
     
     {% for i in menu %}
-        {% if i|getItemQty != 0 %}
+        {% if i.activeQty > 0 or user.detail.type >= 2 %}
         <li  {{menuID|isOpen:i.id}}>
             <!-- <div class="link"><i class="fa fa-paint-brush"></i>Diseño web<i class="fa fa-chevron-down"></i></div> -->
             <div class="link" style="border-top: 1px solid #8AB5E2;">{{i.name}}<i class="fa fa-chevron-down"></i></div>
             <ul class="submenu"  {{menuID|isHide:i.id}}>
-	        {% if i.itemActiveQty == 0 %}
+	        {% if i.activeQty == 0 and user.detail.type >= 2 %}
 	        <li><a href="#">正在建置中</a></li>
 	        {% else %}
                 {% for j in i|getItem %}
@@ -52,7 +68,7 @@
     {% endfor %}
  
     
-    {% if user.detail.type >= 2%}
+    {% if user.detail.type >= 2 %}
         {% for i in menu %}
         {% if i|getItemQty != 0 %}
         <li >
@@ -91,7 +107,7 @@
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
-        <div id="page-content-wrapper">
+        <div id="page-content-wrapper" style="height: 95%;">
             <div class="container-fluid">
 	            <header id="header-wrapper">
 	                <div class="header-nav-row">
@@ -149,6 +165,14 @@
 	            </div>
             </div>
         </div>
+        
+    <!--  
+    <div id="foot-wrapper" class="text-center">
+        <div style="border-top: 1px solid #AAA;">
+        asdasd
+        </div>
+    </div>
+    -->
         <!-- /#page-content-wrapper -->
 
     </div>
@@ -161,7 +185,7 @@
     <script src="{% static 'jqueryui/jquery-ui.min.js' %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'org/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
     <!-- Custom JavaScript -->
     <script src="{% static 'org/js/index.js' %}"></script>
@@ -173,11 +197,14 @@
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
         $("#header-wrapper").toggleClass("toggled");
+        $("#foot-wrapper").toggleClass("toggled");
         //$("#body-overlay").toggleClass("body-overlay");
         //$("#body-overlay2").toggleClass("body-overlay2");
     });
-
     </script>
+    
+	{% block script %}
+	{% endblock %}
 
 </body>
 

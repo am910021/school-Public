@@ -302,11 +302,11 @@ def getSalary(request, *args, **kwargs):
             print(e)
             return HttpResponse("LoginFail", content_type='text/plain')
     
-    s="school;department;type;rate;money\n"
+    s="school;department;title;rate;money;type\n"
     for i in SchoolData.objects.all():
         for j in Department.objects.filter(school=i):
             for k in Salary.objects.filter(department=j):
-                s+="%s;%s;%s;%.2f;%d\n" % (i.name,j.name,k.type,k.rate,k.money)
+                s+="%s;%s;%s;%.2f;%d;%d\n" % (i.name,j.name,k.title,k.rate,k.money,k.type)
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
     #return HttpResponse(s,content_type='text/csv; charset=utf-8')        
             

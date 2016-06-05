@@ -56,26 +56,27 @@ def getWeb():
                 title = soup3.select("li.title.row.p1")[0]
                 title2 = soup3.select("ul.w-sort.w-sortOption")[0].select("a.a2")
                 t1 = title.select("strong")[0].text.split(" ")[1]
-                t2 = title2[0].text.split(" ")[1]
-                t3 = title2[1].text.split(" ")[1]
-                t4 = title2[2].text.split(" ")[1]
+                t2 = title2[0].text.replace(" ","-")
+                t3 = title2[1].text.replace(" ","-")
+                t4 = title2[2].text.replace(" ","-")
                 #print("%s  %s  %s  %s" % (t1,t2,t3,t4))
                 tData=[t1,t2,t3,t4]
                 for fou in soup3.select('.rangeData'):
                     content = fou.select("div.content")
-                    i=-1
+                    #if(len(fou.select("div.main")[0].select("div.content"))==0):
+                    #    break;
+                    #print(len(list(content)))
+                    i= -1 if len(list(content))==4 else 0
                     for dd in content:
                         i+=1
-                        if(len(dd.select("strong"))==0):
-                            continue
                         webRate = float(dd.select("strong")[0].text)
                         rate=float(round(webRate-r[i],2))
                         r[i]=webRate
                         m = int(dd.select("strong")[1].text.replace(" ",""))
-                        Salary.objects.create(department=db_department,type=tData[i],rate=rate,money=m)         
+                        Salary.objects.create(department=db_department,title=tData[i],rate=rate,money=m,type=i)         
                 print(department+"--加入完成")
-            except:
-                print(department+"--無資料")
+            except Exception as e:
+                print("錯誤："+str(e))
         print(university+"--加入完成")
 
 def checkDate():

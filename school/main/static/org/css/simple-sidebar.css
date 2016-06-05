@@ -6,12 +6,27 @@
 
 /* Toggle Styles */
 
+#foot-wrapper {
+	height:5%;
+	padding-right:15px;
+	padding-left:265px;
+	transition: all 0.5s ease;
+}
+
+#foot-wrapper.toggled {
+	padding-right:15px;
+	padding-left:15px;
+	transition: all 0.5s ease;
+}
+
+
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    height:100%;
 }
 
 #sidebar-wrapper {
@@ -148,5 +163,20 @@
     
 	#header-wrapper.toggled {
         padding-left: 0px;  
+	}
+	
+	
+	#foot-wrapper {
+	    height:5%;
+	    major-top:100px;
+	    padding-right:15px;
+	    padding-left:15px;
+	    transition: all 0.5s ease;
+	}
+	
+	#foot-wrapper.toggled {
+	    padding-right:15px;
+	    padding-left:255px;
+	    transition: all 0.5s ease;
 	}
 }

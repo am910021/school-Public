@@ -41,7 +41,9 @@ class Salary(models.Model):
     department = models.ForeignKey(Department)
     rate = models.FloatField(default=0.0)
     money = models.IntegerField(default=20000,validators=[MaxValueValidator(80000),MinValueValidator(20000)])
-    type = models.CharField(max_length=32)
+    title = models.CharField(max_length=32)
+    type = models.IntegerField(default=0)
+    
     
     
 class Studsem_all(models.Model):

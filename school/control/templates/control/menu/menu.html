@@ -1,42 +1,12 @@
 {% extends base_template_name %}
+{% load staticfiles %}
 
 {% block head %}
-<script type="text/javascript">
-function removeItem(id,text){
-    q = confirm("是否要刪除"+text+"選單");
-    if (!q){
-        return false;
-    }
-    else{
-        var form = document.getElementById("removeForm");
-        document.getElementById("menuID").value=id;
-        document.getElementById("menuName").value=text;
-        form.submit();
-    }
-};
+<link rel="stylesheet" href="{% static 'css/control/control.css' %}">
+{% endblock %}
 
-function upMenu(id){
-        var form = document.getElementById("MOVEForm");
-        document.getElementById("UP").value=id;
-        form.submit();
-};
-function downMenu(id){
-    var form = document.getElementById("MOVEForm");
-    document.getElementById("DOWN").value=id;
-    form.submit();
-};
-
-function resetOrder(){
-    q = confirm("是否要重置排序？ 重置後就無法回復");
-    if (!q){
-        return false;
-    }
-    else{
-        var form = document.getElementById("resetOrderForm");
-        form.submit();
-    }
-};
-</script>
+{% block script %}
+<script src="{% static 'js/control/order.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -82,6 +52,9 @@ function resetOrder(){
                             指標數量
                         </th>
                         <th>
+                            己使用指標
+                        </th>
+                        <th>
                             權限
                         </th>
                         <th>
@@ -110,6 +83,9 @@ function resetOrder(){
                         <th>
                             {{i.itemQty}}
                         </th>
+                        <th>
+                            {{i.activeQty}}
+                        </th>
                         <td>
                             {{i.permission}}
                         </td>
@@ -117,16 +93,16 @@ function resetOrder(){
                             {% if i.isActive %}正常{% else %}禁用{% endif %}
                         </td>
                         <td>
-                            <button onclick="upMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-up"></button>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-up move-up"></button>
                         </td>
                         <td>
-                            <button onclick="downMenu({{i.id}})" class="btn glyphicon glyphicon-chevron-down"></button>
+                            <button value="{{i.id}}" class="btn glyphicon glyphicon-chevron-down move-down"></button>
                         </td>
                         <td>
-                            <a href="{% url 'control:menuEdit' i.id %}" class="btn btn-xs btn-warning">編輯</a>
+                            <a href="{% url 'control:menuEdit' i.id %}" class="btn glyphicon glyphicon-pencil"></a>
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn btn-xs btn-danger">移除</button>
+                            <button value="{{i.id}},{{i.name}}" class="btn glyphicon glyphicon-remove remove"></button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -139,7 +115,7 @@ function resetOrder(){
                 <div class="col-md-2 buttom-wrapper">
                 </div>
                 <div class="col-md-3 buttom-wrapper">
-                <button onclick="resetOrder()" class="btn btn-warning btn-default">重置排序</button>
+                <button type="button" id="resetOrder" class="btn btn-warning btn-default">重置排序</button>
                 </div>
             </div>
         </div>
