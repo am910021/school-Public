@@ -48,24 +48,21 @@ class Item(models.Model):
 
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
-        item = Item.objects.filter(menu=self.menu)
-        self.menu.itemQty=len(item)
-        self.menu.activeQty = len(item.filter(isActive=True))
-        self.menu.isActive = True if self.menu.activeQty > 0 else False
-        self.menu.save()
+        self.countQty()
         
 
     def delete(self, *args, **kwargs):
         for i in ShinyApp.objects.filter(item=self):
             i.delete()
-            
-        menu = self.menu
         super(Item, self).delete(*args, **kwargs)
-        l = len(Item.objects.filter(menu=menu, isActive=True))
-        if l==0:
-            menu.isActive = False
-        menu.appQty=l
-        menu.save()
+        self.countQty()
+        
+    def countQty(self):
+        item = Item.objects.filter(menu=self.menu)
+        self.menu.itemQty=len(item)
+        self.menu.activeQty = len(item.filter(isActive=True))
+        self.menu.isActive = True if self.menu.activeQty > 0 else False
+        self.menu.save()
 
     
 class ShinyApp(models.Model):
@@ -83,11 +80,7 @@ class ShinyApp(models.Model):
 
     def save(self, *args, **kwargs):
         super(ShinyApp, self).save(*args, **kwargs)
-        app = ShinyApp.objects.filter(item=self.item)
-        self.item.appQty=len(app)
-        self.item.activeQty = len(app.filter(isActive=True))
-        self.item.isActive = True if self.item.activeQty > 0 else False
-        self.item.save()
+        self.countQty()
         
     def delete(self, *args, **kwargs):
         try:
@@ -96,13 +89,14 @@ class ShinyApp(models.Model):
         except Exception as e:
             print(e)
         super(ShinyApp, self).delete(*args, **kwargs)
-        l = len(ShinyApp.objects.filter(item=self.item))
-        if l==0:
-            self.item.isActive = False
-        self.item.appQty=l
+        self.countQty()
+        
+    def countQty(self):
+        shiny = ShinyApp.objects.filter(item=self.item)
+        self.item.appQty = len(shiny)
+        self.item.activeQty = len(shiny.filter(isActive=True))
+        self.item.isActive = True if self.item.activeQty>0 else False
         self.item.save()
-        
-        
         
         
     
