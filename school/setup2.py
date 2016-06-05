@@ -16,19 +16,7 @@ def setup():
     import django
     django.setup()
     from main.models import Menu, Item, ShinyApp
-    for i in Menu.objects.all():
-        for j in Item.objects.filter(menu=i):
-            for k in ShinyApp.objects.filter(item=j):
-                k.order = k.id
-                k.item.appQty=len(list(ShinyApp.objects.filter(item = k.item)))
-                if k.item.appQty>0:
-                    k.item.isActive = True
-                else:
-                    k.item.isActive = False
-                k.item.save()
-                k.save()
-            j.order = j.id
-        i.order = i.id
+    for i in ShinyApp.objects.all():
         i.save()
 
     print(bcolors.OKBLUE + "\n 設定成功。 \n \n" + bcolors.ENDC)

@@ -79,6 +79,7 @@ class ShinyApp(models.Model):
         return "%s (%d)" % (self.name, self.id)
 
     def save(self, *args, **kwargs):
+        self.dirName = self.dirName.replace(" ", "-")
         super(ShinyApp, self).save(*args, **kwargs)
         self.countQty()
         

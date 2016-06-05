@@ -381,7 +381,7 @@ class CAppAdd(ManagerBase):
             
             form = form.save(commit=False)
             form.user = request.user
-            #form.dirName = dirName
+            form.dirName = dirName
             form.fileName = file.name
             form.fileType = file.content_type
             form.save()
@@ -433,7 +433,7 @@ class CAppEdit(ManagerBase):
         try:
             shiny = ShinyApp.objects.get(id=request.POST.get('appID'))
             item = shiny.item
-            dir = request.POST.get('dirName')
+            dir = str(request.POST.get('dirName')).replace(" ","-")
             orgDir = shiny.dirName
             config = Setting.objects.get(name="dirPath")
         except:
