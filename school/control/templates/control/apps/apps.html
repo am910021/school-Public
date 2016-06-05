@@ -2,21 +2,6 @@
 {% load staticfiles %}
 
 {% block head %}
-<script type="text/javascript">
-function removeItem(id,text){
-    q = confirm("是否要刪除"+text+"APP?");
-    if (!q){
-        return false;
-    }
-    else{
-        var form = document.getElementById("removeForm");
-        document.getElementById("appID").value=id;
-        document.getElementById("appName").value=text;
-        form.submit();
-    }
-};
-
-</script>
 {% endblock %}
 
 {% block script %}
@@ -26,12 +11,13 @@ function removeItem(id,text){
 {% block content %}
 <form action="{% url 'control:appDel' %}" method="post" id="removeForm">
 {% csrf_token %}
-<input type="hidden" name="appID" id="appID" readonly>
-<input type="hidden" name="appName" id="appName" readonly>
+<input type="hidden" name="appID" id="ID" readonly>
+<input type="hidden" name="appName" id="Name" readonly>
 </form>
 
-<form action="{% url 'control:appMove' %}" method="post" id="MOVEForm">
+<form action="{% url 'control:move' %}" method="post" id="MOVEForm">
 {% csrf_token %}
+<input type="hidden" name="TYPE" id="TYPE" value="apps" readonly>
 <input type="hidden" name="UP" id="UP" readonly>
 <input type="hidden" name="DOWN" id="DOWN" readonly>
 </form>
@@ -118,7 +104,7 @@ function removeItem(id,text){
                             <a href="{% url 'control:appEdit' i.id %}" class="btn glyphicon glyphicon-pencil fa-lg"></a>
                         </td>
                         <td>
-                            <button onclick="removeItem({{i.id}},'{{i.name}}')" class="btn glyphicon glyphicon-remove remove"></button>
+                            <button value="{{i.id}},{{i.name}}" class="btn glyphicon glyphicon-remove remove"></button>
                         </td>
                         <td>
                         {% if i.dirName and i.fileName %}

@@ -15,8 +15,8 @@ $("button[class~='remove']").on('click', function(e) {
 	if (!confirm("是否要刪除 "+value[1]+" 選單")){
         return false;
     }
-    $('#menuID').val(value[0]);
-    $('#menuName').val(value[1]);
+    $('#ID').val(value[0]);
+    $('#Name').val(value[1]);
     $('#removeForm').submit();
 });
 

@@ -153,47 +153,7 @@ class CMenuEdit(ManagerBase):
         saved = form.save()
         messages.success(request, saved.name+'('+name+')'+' 修改成功。')
         return redirect(reverse('control:menu'))
-
-class CMenuMove(ManagerBase):
-    template_name = '' # xxxx/xxx.html
-    page_title = '' # title
-    def post(self, request, *args, **kwargs):
-        up = int(request.POST.get('UP')) if request.POST.get('UP')!="" else None
-        down = int(request.POST.get('DOWN')) if request.POST.get('DOWN')!="" else None
-        menu = Menu.objects.all().order_by("order")
-        menuLen = len(list(menu))
-        temp = menu[0]
-        temp2 = menu[menuLen-1]
-        if temp.id == up:
-            messages.success(request, temp.name+'已經在最上方。')
-            return redirect(reverse('control:menu'))
-        elif temp2.id==down:
-            messages.success(request, temp2.name+'已經在最下方。')
-            return redirect(reverse('control:menu'))
-        if up:
-            for i in range(1,menuLen):
-                if menu[i].id==up:
-                    tmp = menu[i].order
-                    menu[i].order=menu[i-1].order
-                    menu[i-1].order=menu[i].order
-                    menu[i-1].order=tmp
-                    menu[i].save()
-                    menu[i-1].save()
-                    messages.success(request, menu[i].name+'成功往上移動。')
-                    break
-        elif down:
-            for i in range(0,menuLen-1):
-                if menu[i].id==down:
-                    tmp = menu[i].order
-                    menu[i].order=menu[i+1].order
-                    menu[i+1].order=menu[i].order
-                    menu[i+1].order=tmp
-                    menu[i].save()
-                    menu[i+1].save()
-                    messages.success(request, menu[i].name+'成功往下移動。')
-                    break
-        return redirect(reverse('control:menu'))
-    
+   
 class CResetOrder(ManagerBase):
     template_name = '' # xxxx/xxx.html
     page_title = '' # title
@@ -285,6 +245,7 @@ class CItemEdit(ManagerBase):
         try:
             item = Item.objects.get(id=request.POST.get('itemID'))
             name = item.name
+            menu = item.menu
         except:
             return redirect(reverse('control:item'))
             
@@ -295,65 +256,19 @@ class CItemEdit(ManagerBase):
             kwargs['itemID'] = item.id
             kwargs['menuID'] = item.menu.id
             return super(CItemEdit, self).post(request, *args, **kwargs)
-            
-        saved = form.save()
-        messages.success(request, saved.name+'('+name+')'+' 修改成功。')
-        return redirect(reverse('control:itemBy', args=(item.menu.id,)))
-    
-    
-class CItemMove(ManagerBase):
-    template_name = '' # xxxx/xxx.html
-    page_title = '' # title
-    
-    def post(self, request, *args, **kwargs):
-        up = int(request.POST.get('UP')) if request.POST.get('UP')!="" else None
-        down = int(request.POST.get('DOWN')) if request.POST.get('DOWN')!="" else None
+        form = form.save()
+        form.menu = Menu.objects.get(id=request.POST.get('menu'))
+        form.save()
         
-        if up:
-            tempItem = Item.objects.get(id=up)
-            item = Item.objects.filter(menu=tempItem.menu).order_by("order")
-            menuID=tempItem.menu.id
-        elif down:
-            tempItem = Item.objects.get(id=down)
-            item = Item.objects.filter(menu=tempItem.menu).order_by("order")
-            menuID=tempItem.menu.id
-        itemLen = len(list(item))
-        temp = item[0]
-        temp2 = item[itemLen-1]
-
+        item = Item.objects.filter(menu=menu)
+        menu.itemQty = len(item)
+        menu.activeQty = len(item.filter(isActive=True))
+        menu.isActive = True if menu.activeQty > 0 else False
+        menu.save()
         
-        if temp.id == up:
-            messages.success(request, temp.name+'已經在最上方。')
-            return redirect(reverse('control:itemBy', args=(menuID,)))
-        elif temp2.id==down:
-            messages.success(request, temp2.name+'已經在最下方。')
-            return redirect(reverse('control:itemBy', args=(menuID,)))
-        
-        if up:
-            for i in range(1,itemLen):
-                if item[i].id==up:
-                    tmp = item[i].order
-                    item[i].order=item[i-1].order
-                    item[i-1].order=item[i].order
-                    item[i-1].order=tmp
-                    item[i].save()
-                    item[i-1].save()
-                    messages.success(request, item[i].name+'成功往上移動。')
-                    break
-        elif down:
-            for i in range(0,itemLen-1):
-                if item[i].id==down:
-                    tmp = item[i].order
-                    item[i].order=item[i+1].order
-                    item[i+1].order=item[i].order
-                    item[i+1].order=tmp
-                    item[i].save()
-                    item[i+1].save()
-                    messages.success(request, item[i].name+'成功往下移動。')
-                    break
-        return redirect(reverse('control:itemBy', args=(menuID,)))
-    
-    
+        messages.success(request, form.name+'('+name+')'+' 修改成功。')
+        return redirect(reverse('control:itemBy', args=(form.menu.id,)))
+      
 class CItemAdd(ManagerBase):
     template_name = 'item/add.html' # xxxx/xxx.html
     page_title = '新增項目' # title
@@ -373,17 +288,15 @@ class CItemAdd(ManagerBase):
             kwargs['form'] = form
             kwargs['menuID'] = request.POST.get('menu')
             return super(CItemAdd, self).post(request, *args, **kwargs)
-        try:
-            menu = form.save(commit=False)
-            menu.menu=Menu.objects.get(id=id)
-            menu.save()
-            menu.order = menu.id
-            menu.save()
-            messages.success(request, request.POST.get('name')+'指標加入功成。')
-        except Exception as e:
-            messages.success(request, request.POST.get('name')+'指標加入失敗。')
-            print(e)
-        return redirect(reverse('control:itemBy', args=(id,)))
+
+        item = form.save(commit=False)
+        item.menu=Menu.objects.get(id=request.POST.get('menu'))
+        item.save()
+        item.order = item.id
+        item.save()
+        messages.success(request, request.POST.get('name')+'指標加入功成。')
+
+        return redirect(reverse('control:itemBy', args=(item.menu.id,)))
     
     
 class CItemDelete(ManagerBase):
@@ -393,20 +306,19 @@ class CItemDelete(ManagerBase):
     def get(self, request, *args, **kwargs):
         return redirect(reverse('control:item'))
     
-    def post(self, request, *args, **kwargs):
-        if 'itemID' not in request.POST:
-            messages.success(request, request.POST.get('itemName')+'指標刪除失敗。')
+    def post(self, request, *args, **kwargs): 
         try:
             item = Item.objects.get(id=request.POST.get('itemID'))
-            menu = item.menu
-            item.delete()
-            messages.success(request, request.POST.get('itemName')+'指標刪除成功。')
-            return redirect(reverse('control:itemBy', args=(menu.id,)))
         except Exception as e:
             print(e)
-            messages.success(request, request.POST.get('itemName')+'指標刪除失敗。')
-        return redirect(reverse('control:item'))
-    
+            messages.success(request,'指標刪除失敗。')
+            return redirect(reverse('control:item'))
+            
+        item = Item.objects.get(id=request.POST.get('itemID'))
+        menu = item.menu
+        item.delete()
+        messages.success(request, request.POST.get('itemName')+'指標刪除成功。')
+        return redirect(reverse('control:itemBy', args=(menu.id,)))
     
 class CApps(ManagerBase):
     template_name = 'apps/apps.html' # xxxx/xxx.html
@@ -520,6 +432,7 @@ class CAppEdit(ManagerBase):
     def post(self, request, *args, **kwargs):
         try:
             shiny = ShinyApp.objects.get(id=request.POST.get('appID'))
+            item = shiny.item
             dir = request.POST.get('dirName')
             orgDir = shiny.dirName
             config = Setting.objects.get(name="dirPath")
@@ -554,6 +467,12 @@ class CAppEdit(ManagerBase):
             
         form.save()
         
+        shiny = ShinyApp.objects.filter(item=item)
+        item.appQty = len(shiny)
+        item.activeQty = len(shiny.filter(isActive=True))
+        item.isActive = True if item.activeQty > 0 else False
+        item.save()
+        
         messages.success(request, 'APP更新成功。')
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
@@ -573,60 +492,7 @@ class CAppDelete(ManagerBase):
             messages.success(request, shinyName+'刪除失敗。')
             print(e)
         return redirect(reverse('control:apps', args=(itemID,)))
-    
-class CAppMove(ManagerBase):
-    template_name = '' # xxxx/xxx.html
-    page_title = '' # title
-    
-    def post(self, request, *args, **kwargs):
-        up = int(request.POST.get('UP')) if request.POST.get('UP')!="" else None
-        down = int(request.POST.get('DOWN')) if request.POST.get('DOWN')!="" else None
-        
-        if up:
-            tempApp = ShinyApp.objects.get(id=up)
-            app = ShinyApp.objects.filter(item=tempApp.item).order_by("order")
-            itemID=tempApp.item.id
-        elif down:
-            tempApp = ShinyApp.objects.get(id=down)
-            app = ShinyApp.objects.filter(item=tempApp.item).order_by("order")
-            itemID=tempApp.item.id
-        itemLen = len(list(app))
-        temp = app[0]
-        temp2 = app[itemLen-1]
-
-        
-        if temp.id == up:
-            messages.success(request, temp.name+'已經在最上方。')
-            return redirect(reverse('control:apps', args=(itemID,)))
-        elif temp2.id==down:
-            messages.success(request, temp2.name+'已經在最下方。')
-            return redirect(reverse('control:apps', args=(itemID,)))
-        
-        if up:
-            for i in range(1,itemLen):
-                if app[i].id==up:
-                    tmp = app[i].order
-                    app[i].order=app[i-1].order
-                    app[i-1].order=app[i].order
-                    app[i-1].order=tmp
-                    app[i].save()
-                    app[i-1].save()
-                    messages.success(request, app[i].name+'成功往上移動。')
-                    break
-        elif down:
-            for i in range(0,itemLen-1):
-                if app[i].id==down:
-                    tmp = app[i].order
-                    app[i].order=app[i+1].order
-                    app[i+1].order=app[i].order
-                    app[i+1].order=tmp
-                    app[i].save()
-                    app[i+1].save()
-                    messages.success(request, app[i].name+'成功往下移動。')
-                    break
-        return redirect(reverse('control:apps', args=(itemID,)))
-    
-    
+  
 class CConfig(AdminBase):
     template_name = 'config/config.html' # xxxx/xxx.html
     page_title = '設定' # title
@@ -732,4 +598,65 @@ class CCongigKey(AdminBase):
         messages.success(request, "設定成功。")
         return redirect(reverse('control:configKEY'))
     
+    
+    
+class CMove(ManagerBase):
+    template_name = '' # xxxx/xxx.html
+    page_title = '' # title
+    
+    def post(self, request, *args, **kwargs):
+        move = None
+        url = None
+        type = request.POST.get('TYPE')
+        up = int(request.POST.get('UP')) if request.POST.get('UP')!="" else None
+        down = int(request.POST.get('DOWN')) if request.POST.get('DOWN')!="" else None
+        target = up if up else down
+        
+        if type=="menu":
+            move = Menu.objects.all().order_by("order")
+            url = redirect(reverse('control:menu'))
+        elif type=="item":
+            tempMove = Item.objects.get(id=target)
+            move = Item.objects.filter(menu=tempMove.menu).order_by("order")
+            url = redirect(reverse('control:itemBy', args=(tempMove.menu.id,)))
+        elif type=="apps":
+            tempMove = ShinyApp.objects.get(id=target)
+            move = ShinyApp.objects.filter(item=tempMove.item).order_by("order")
+            url = redirect(reverse('control:apps', args=(tempMove.item.id,)))
+            
+        length = len(list(move))
+        first = move[0]
+        last = move[length-1]
+
+        if first.id == up:
+            messages.success(request, first.name+' 已經在最上方。')
+            return url
+        elif last.id==down:
+            messages.success(request, last.name+' 已經在最下方。')
+            return url
+
+        if up:
+            for i in range(1,length):
+                if move[i].id==up:
+                    tmp = move[i].order
+                    move[i].order=move[i-1].order
+                    move[i-1].order=move[i].order
+                    move[i-1].order=tmp
+                    move[i].save()
+                    move[i-1].save()
+                    messages.success(request, move[i].name+' 成功向上移動。')
+                    break
+        elif down:
+            for i in range(0,length-1):
+                if move[i].id==down:
+                    tmp = move[i].order
+                    move[i].order=move[i+1].order
+                    move[i+1].order=move[i].order
+                    move[i+1].order=tmp
+                    move[i].save()
+                    move[i+1].save()
+                    messages.success(request, move[i].name+'成功向下移動。')
+                    break
+        return url
+        
         

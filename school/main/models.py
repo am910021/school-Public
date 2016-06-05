@@ -17,7 +17,7 @@ class Setting(models.Model):
     time = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.name
+        return "%s (%d)" % (self.name, self.id)
     
 class Menu(models.Model):
     name = models.CharField(max_length=128,unique=True)
@@ -27,7 +27,7 @@ class Menu(models.Model):
     activeQty = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
     def __str__(self):
-        return self.name
+        return "%s (%d)" % (self.name, self.id)
         
     def delete(self, *args, **kwargs):
         for i in Item.objects.filter(menu=self):
@@ -44,7 +44,7 @@ class Item(models.Model):
     activeQty = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
     def __str__(self):
-        return self.name
+        return "%s (%d)" % (self.name, self.id)
 
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)
@@ -79,7 +79,7 @@ class ShinyApp(models.Model):
     isActive = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
     def __str__(self):
-        return self.name
+        return "%s (%d)" % (self.name, self.id)
 
     def save(self, *args, **kwargs):
         super(ShinyApp, self).save(*args, **kwargs)

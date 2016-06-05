@@ -12,12 +12,13 @@
 {% block content %}
 <form action="{% url 'control:menuDel' %}" method="post" id="removeForm">
 {% csrf_token %}
-<input type="hidden" name="menuID" id="menuID" readonly>
-<input type="hidden" name="menuName" id="menuName" readonly>
+<input type="hidden" name="menuID" id="ID" readonly>
+<input type="hidden" name="menuName" id="Name" readonly>
 </form>
 
-<form action="{% url 'control:menuMove' %}" method="post" id="MOVEForm">
+<form action="{% url 'control:move' %}" method="post" id="MOVEForm">
 {% csrf_token %}
+<input type="hidden" name="TYPE" id="TYPE" value="menu" readonly>
 <input type="hidden" name="UP" id="UP" readonly>
 <input type="hidden" name="DOWN" id="DOWN" readonly>
 </form>
