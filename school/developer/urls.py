@@ -14,13 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import Main, Uplist, Upload, Remove, Config, ConfigShiny, ConfigSchoolAPI, ConfigShinyHost, CongigKey, ShowDemo
+from .views import Main
 
 urlpatterns = [
     url(r'^$', Main.as_view(), name='main'),
-    url(r'^list/$', Uplist.as_view(), name='list'),
-    url(r'^upload/$', Upload.as_view(), name='upload'),
-    url(r'^remove/$', Remove.as_view(), name='remove'),
-    
-    url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
 ]
