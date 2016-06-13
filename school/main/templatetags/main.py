@@ -4,14 +4,6 @@ from main.models import Menu, Item, ShinyApp
 
 register = template.Library()
 
-@register.filter(name='getItemQty')
-def getItemQty(menu):
-    return len(Item.objects.filter(menu=menu))
-
-@register.filter(name='getItemActiveQty')
-def getItemActiveQty(menu):
-    return len(Item.objects.filter(menu=menu, isActive=True))
-
 
 @register.filter(name='getItem')
 def getItem(menu):

@@ -12,7 +12,8 @@ class Login(BaseView):
 
     def get(self, request, *args, **kwargs):
         if request.user.username!="":
-            messages.success(request, '登入成功')
+            #messages.success(request, '登入成功')
+            messages.success(request,request.user.username+'會員登入成功')
             return redirect(reverse('main:main'))
         
         return super(Login, self).get(request, *args, **kwargs)
@@ -32,7 +33,8 @@ class Login(BaseView):
             return super(Login, self).post(request, *args, **kwargs)
         # login success
         login(request, user)
-        messages.success(request, '登入成功')
+        #messages.success(request, '登入成功')
+        messages.success(request,request.user.username+'會員登入成功')
         return redirect(nextPage if nextPage else reverse('main:main'))
         
 class SignUp(BaseView):
@@ -65,10 +67,12 @@ class SignUp(BaseView):
         userProfile.user = user
         userProfile.type=2 #2 = Developer
         userProfile.save()
-        messages.success(request, '註冊成功')
+        #messages.success(request, '註冊成功')
+        messages.success(request,'註冊成功')
         return redirect(reverse('main:main'))
 
 def Logout(request):
     logout(request)
+    #messages.success(request, '歡迎再度光臨')
     messages.success(request, '歡迎再度光臨')
     return redirect(reverse('main:main'))

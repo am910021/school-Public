@@ -117,7 +117,8 @@ class CMenuAdd(ManagerBase):
         menu = form.save()
         menu.order = menu.id
         menu.save()
-        messages.success(request, request.POST.get('name')+'選單新增成功。')
+        #messages.success(request, request.POST.get('name')+'選單新增成功。')
+        messages.success(request,request.POST.get('name')+'選單新增成功。')
         return redirect(reverse('control:menu'))
     
 class CMenuEdit(ManagerBase):
@@ -151,6 +152,7 @@ class CMenuEdit(ManagerBase):
             return super(CMenuEdit, self).post(request, *args, **kwargs)
             
         saved = form.save()
+        #messages.success(request, saved.name+'('+name+')'+' 修改成功。')
         messages.success(request, saved.name+'('+name+')'+' 修改成功。')
         return redirect(reverse('control:menu'))
    
@@ -164,6 +166,7 @@ class CResetOrder(ManagerBase):
             for i in menu:
                 i.order = i.id
                 i.save()
+            #messages.success(request, '重置排序成功。')
             messages.success(request, '重置排序成功。')
             return redirect(reverse('control:menu'))
         elif do=="item":
@@ -174,6 +177,7 @@ class CResetOrder(ManagerBase):
                 for i in item:
                     i.order = i.id
                     i.save()
+                #messages.success(request, '重置排序成功。')
                 messages.success(request, '重置排序成功。')
                 return redirect(reverse('control:itemBy', args=(menu.id,)))
             else:
@@ -181,6 +185,7 @@ class CResetOrder(ManagerBase):
                 for i in item:
                     i.order = i.id
                     i.save()
+                #messages.success(request, '重置排序成功。')
                 messages.success(request, '重置排序成功。')
                 return redirect(reverse('control:item'))
 
@@ -193,14 +198,17 @@ class CMenuDelete(ManagerBase):
     
     def post(self, request, *args, **kwargs):
         if 'menuID' not in request.POST:
-            messages.success(request, request.POST.get('menuName')+'選單刪除失敗。')
+            #messages.success(request, request.POST.get('menuName')+'選單刪除失敗。')
+            messages.error(request, request.POST.get('menuName')+'選單刪除失敗。')
         try:
             menu = Menu.objects.get(id=request.POST.get('menuID'))
             menu.delete()
+            #messages.success(request, request.POST.get('menuName')+'選單刪除成功。')
             messages.success(request, request.POST.get('menuName')+'選單刪除成功。')
         except Exception as e:
             print(e)
-            messages.success(request, request.POST.get('menuName')+'選單刪除失敗。')
+            #messages.success(request, request.POST.get('menuName')+'選單刪除失敗。')
+            messages.error(request, request.POST.get('menuName')+'選單刪除失敗。')
         return redirect(reverse('control:menu'))
     
     
@@ -266,6 +274,7 @@ class CItemEdit(ManagerBase):
         menu.isActive = True if menu.activeQty > 0 else False
         menu.save()
         
+        #messages.success(request, form.name+'('+name+')'+' 修改成功。')
         messages.success(request, form.name+'('+name+')'+' 修改成功。')
         return redirect(reverse('control:itemBy', args=(form.menu.id,)))
       
@@ -294,8 +303,8 @@ class CItemAdd(ManagerBase):
         item.save()
         item.order = item.id
         item.save()
+        #messages.success(request, request.POST.get('name')+'指標加入功成。')
         messages.success(request, request.POST.get('name')+'指標加入功成。')
-
         return redirect(reverse('control:itemBy', args=(item.menu.id,)))
     
     
@@ -311,12 +320,14 @@ class CItemDelete(ManagerBase):
             item = Item.objects.get(id=request.POST.get('itemID'))
         except Exception as e:
             print(e)
-            messages.success(request,'指標刪除失敗。')
+            #messages.success(request,'指標刪除失敗。')
+            messages.error(request, '指標刪除失敗。')
             return redirect(reverse('control:item'))
             
         item = Item.objects.get(id=request.POST.get('itemID'))
         menu = item.menu
         item.delete()
+        #messages.success(request, request.POST.get('itemName')+'指標刪除成功。')
         messages.success(request, request.POST.get('itemName')+'指標刪除成功。')
         return redirect(reverse('control:itemBy', args=(menu.id,)))
     
@@ -340,11 +351,13 @@ class CAppAdd(ManagerBase):
     page_title = '上傳APP' # title
 
     def get(self, request, *args, **kwargs):
-        item = kwargs['itemID'] if 'itemID' in kwargs else None
-        if not item:
+        try:
+            item = Item.objects.get(id=kwargs['itemID'])
+        except:
             return redirect(reverse('control:item'))
-        
-        kwargs['form'] = FShinyApp(item=item)
+
+        kwargs['menuID'] = item.menu.id
+        kwargs['form'] = FShinyApp(item=item.id)
         return super(CAppAdd, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -387,12 +400,14 @@ class CAppAdd(ManagerBase):
             form.save()
             form.order = form.id
             form.save()
-            messages.success(request, 'APP上傳成功。')
+            #messages.success(request, request.POST.get('name')+' APP上傳成功。')
+            messages.success(request, request.POST.get('name')+' APP上傳成功。')
         except Exception as e:
             print(e)
             kwargs['file_error'] = "*檔案格式錯誤"
             kwargs['form'] = form
-            messages.success(request, 'APP上傳失敗。')
+            #messages.success(request, 'APP上傳失敗。')
+            messages.error(request, request.POST.get('name')+' APP上傳失敗。')
             return super(CAppAdd, self).post(request, *args, **kwargs)
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
@@ -420,13 +435,13 @@ class CAppEdit(ManagerBase):
     def get(self, request, *args, **kwargs):
         try:
             app = ShinyApp.objects.get(id=kwargs['appID'])
-            kwargs['appName'] = app.name
-            #kwargs['appID'] = app.id
         except:
             return redirect(reverse('control:item'))
-        if app:
-            kwargs['form'] = FShinyApp(instance=app, item=app.item.id)
-            self.page_title = app.name+"-編輯"
+        
+        kwargs['menuID'] = app.item.menu.id
+        kwargs['appName'] = app.name
+        kwargs['form'] = FShinyApp(instance=app, item=app.item.id)
+        self.page_title = app.name+"-編輯"
         return super(CAppEdit, self).post(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -453,7 +468,6 @@ class CAppEdit(ManagerBase):
             if os.path.exists(config.c1+dir):
                 shutil.rmtree(config.c1+dir)
                 
-            file = request.FILES['upload_file']
             os.makedirs(config.c1+dir)
             zip_ref = zipfile.ZipFile(file, 'r')
             zip_ref.extractall(config.c1+dir)
@@ -465,6 +479,11 @@ class CAppEdit(ManagerBase):
                 fd.write(chunk)
             fd.close()
             
+            form.dirName = dir
+            form.fileName = file.name
+            form.fileType = file.content_type
+            
+        form.user = request.user
         form.save()
         
         shiny = ShinyApp.objects.filter(item=item)
@@ -473,7 +492,8 @@ class CAppEdit(ManagerBase):
         item.isActive = True if item.activeQty > 0 else False
         item.save()
         
-        messages.success(request, 'APP更新成功。')
+        #messages.success(request, 'APP更新成功。')
+        messages.success(request, request.POST.get('name')+' APP上傳成功。')
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
     
@@ -487,9 +507,11 @@ class CAppDelete(ManagerBase):
             itemID = shiny.item.id
             shinyName = shiny.name
             shiny.delete()
+            #messages.success(request, shinyName+'刪除成功。')
             messages.success(request, shinyName+'刪除成功。')
         except Exception as e:
-            messages.success(request, shinyName+'刪除失敗。')
+            #messages.success(request, shinyName+'刪除失敗。')
+            messages.error(request, shinyName+'刪除失敗。')
             print(e)
         return redirect(reverse('control:apps', args=(itemID,)))
   
@@ -536,7 +558,8 @@ class CConfigShiny(AdminBase):
             Setting.objects.get_or_create(name="dirPath",c1=dir)
             print(e)
         
-        messages.success(request, "設定成功。")
+        #messages.success(request, "設定成功。")
+        messages.success(request,"設定成功。")
         return redirect(reverse('control:configAPP'))
 
 
@@ -567,6 +590,7 @@ class CConfigSchoolAPI(AdminBase):
         except Exception as e:
             Setting.objects.get_or_create(name="SchoolAPI",isActive = True if request.POST.get('isActive') else False, c1 = request.POST.get('apiURL'))
             print(e)
+        #messages.success(request, "設定成功。")
         messages.success(request, "設定成功。")
         return redirect(reverse('control:configAPI'))
     
@@ -595,6 +619,7 @@ class CCongigKey(AdminBase):
         except Exception as e:
             Setting.objects.get_or_create(name="SystemKey", c1 = request.POST.get('key'))
             print(e)
+        #messages.success(request, "設定成功。")
         messages.success(request, "設定成功。")
         return redirect(reverse('control:configKEY'))
     
@@ -629,10 +654,12 @@ class CMove(ManagerBase):
         last = move[length-1]
 
         if first.id == up:
+            #messages.success(request, first.name+' 已經在最上方。')
             messages.success(request, first.name+' 已經在最上方。')
             return url
         elif last.id==down:
-            messages.success(request, last.name+' 已經在最下方。')
+            #messages.success(request, last.name+' 已經在最下方。')
+            messages.success(request, first.name+' 已經在最下方。')
             return url
 
         if up:
@@ -644,6 +671,7 @@ class CMove(ManagerBase):
                     move[i-1].order=tmp
                     move[i].save()
                     move[i-1].save()
+                    #messages.success(request, move[i].name+' 成功向上移動。')
                     messages.success(request, move[i].name+' 成功向上移動。')
                     break
         elif down:
@@ -655,7 +683,8 @@ class CMove(ManagerBase):
                     move[i+1].order=tmp
                     move[i].save()
                     move[i+1].save()
-                    messages.success(request, move[i].name+'成功向下移動。')
+                    #messages.success(request, move[i].name+'成功向下移動。')
+                    messages.success(request, move[i].name+' 成功向下移動。')
                     break
         return url
         

@@ -75,11 +75,11 @@ class ShinyApp(models.Model):
     date = models.DateTimeField(auto_now=True)
     isActive = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
+    time = models.DateTimeField(auto_now=True)
     def __str__(self):
         return "%s (%d)" % (self.name, self.id)
 
     def save(self, *args, **kwargs):
-        self.dirName = self.dirName.replace(" ", "-")
         super(ShinyApp, self).save(*args, **kwargs)
         self.countQty()
         
