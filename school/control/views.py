@@ -362,6 +362,7 @@ class CAppAdd(ManagerBase):
     
     def post(self, request, *args, **kwargs):
         form = FShinyApp(request.POST)
+        kwargs['menuID'] = request.POST.get('menuID')
         if not form.is_valid():
             kwargs['form'] = form
             return super(CAppAdd, self).post(request, *args, **kwargs)
@@ -434,14 +435,14 @@ class CAppEdit(ManagerBase):
 
     def get(self, request, *args, **kwargs):
         try:
-            app = ShinyApp.objects.get(id=kwargs['appID'])
+            shiny = ShinyApp.objects.get(id=kwargs['appID'])
         except:
             return redirect(reverse('control:item'))
         
-        kwargs['menuID'] = app.item.menu.id
-        kwargs['appName'] = app.name
-        kwargs['form'] = FShinyApp(instance=app, item=app.item.id)
-        self.page_title = app.name+"-編輯"
+        kwargs['menuID'] = shiny.item.menu.id
+        kwargs['appName'] = shiny.name
+        kwargs['form'] = FShinyApp(instance=shiny, item=shiny.item.id)
+        self.page_title = shiny.name+"-編輯"
         return super(CAppEdit, self).post(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
@@ -458,6 +459,7 @@ class CAppEdit(ManagerBase):
         if not form.is_valid():
             kwargs['form'] = form
             kwargs['appID'] = shiny.id
+            kwargs['menuID'] = shiny.item.menu.id
             return super(CAppAdd, self).post(request, *args, **kwargs)
         
         if orgDir != dir:

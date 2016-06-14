@@ -69,13 +69,15 @@
 		                <div class="form-group">
 		                     
                             <label for="upload_file" class="col-sm-2 control-label">
-                                上傳檔案（.zip）
+                                上傳檔案（.zip
                             </label>
 
                             <div class="col-sm-10">
                                 <input type="file" name="upload_file" id="upload_file" accept=".zip"/>
 	                            <p class="help-block">
 	                                xxx.zip (直接放 .R 檔)
+	                                <br>
+	                                留空使用原本的檔案
 	                            </p>
                                 <span class="text-danger">{{not_found}}{{file_error}}</span>
                             </div>
