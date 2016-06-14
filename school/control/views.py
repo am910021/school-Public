@@ -451,6 +451,7 @@ class CAppEdit(ManagerBase):
             item = shiny.item
             dir = str(request.POST.get('dirName')).replace(" ","-")
             orgDir = shiny.dirName
+            orgName = shiny.name
             config = Setting.objects.get(name="dirPath")
         except:
             return redirect(reverse('main:main'))
@@ -495,7 +496,8 @@ class CAppEdit(ManagerBase):
         item.save()
         
         #messages.success(request, 'APP更新成功。')
-        messages.success(request, request.POST.get('name')+' APP上傳成功。')
+        msg = "%s(%s) APP修改成功。" % (request.POST.get('name'), orgName)
+        messages.success(request, msg)
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     
     
