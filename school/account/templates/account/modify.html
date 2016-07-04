@@ -1,0 +1,65 @@
+{% extends base_template_name %}
+{% load main %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-7">
+      </div>
+      <div class="col-md-2 buttom-wrapper">
+      </div>
+      <div class="col-md-3 buttom-wrapper">
+        <a href="{% url 'account:center' %}" class="btn btn-success btn-lg btn-block no-radius">回帳戶中心</a>
+      </div>
+    </div>
+    <br>
+    <form class="form-horizontal" role="form" method="post" action="{% url 'account:modify' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_name" class="col-sm-2 control-label">
+        使用者全名
+        </label>
+        <div class="col-sm-4">
+          <input class="form-control" id="id_name" maxlength="128" name="name" type="text" value="{{name}}">
+        </div>
+        <div class="col-sm-4">
+          <span class="text-danger">{{ name_error }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="id_email" class="col-sm-2 control-label">
+        電子郵件
+        </label>
+        <div class="col-sm-4">
+          <input class="form-control" id="id_email" maxlength="128" name="email" type="email"value="{{email}}">
+        </div>
+        <div class="col-sm-4">
+          <span class="text-danger">{{ email_error }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="id_password" class="col-sm-2 control-label">
+        帳戶密碼
+        </label>
+        <div class="col-sm-4">
+          <input class="form-control" id="id_password" maxlength="128" name="password" type="password">
+        </div>
+        <div class="col-sm-4">
+          <span class="text-danger">{{ password_error }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-1">
+          <button type="submit" class="btn btn-info btn-lg btn-block">
+          送出
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

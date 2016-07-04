@@ -1,14 +1,15 @@
-import os, zipfile, shutil
-from io import StringIO
+﻿import os, zipfile, shutil
 from django.http import HttpResponseNotFound, HttpResponse
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 from main.views import BaseView
-from main.models import Menu, Item, ShinyApp, Setting
-from .forms  import FMenu, FItem, FShinyApp
+from main.models import Menu, Item, ShinyApp, Setting, DBItemGroupName, DBItemGroups
+from .models import ItemGroupManage, AccountManage
+from .forms  import FMenu, FItem, FShinyApp, UserForm, UserProfileForm , UserEditForm
 # Create your views here.
 
 def admin_required(fun):
@@ -30,7 +31,7 @@ def manager_required(fun):
     def auth(request, *args, **kwargs):
         if not request.user.is_authenticated():
             return redirect(settings.LOGIN_URL +'?next=%s' % request.path)
-        if request.user.detail.type<1:
+        if request.user.profile.type<1:
             return redirect(reverse('main:main'))
         return fun(request, *args, **kwargs)
     return auth
@@ -57,7 +58,7 @@ class AdminBase(AdminRequiredMixin, BaseView):
     
     def __init__(self, *args, **kwargs):
         super(AdminBase, self).__init__(*args, **kwargs)
-        self.page_title="管理者"+self.page_title
+        #self.page_title="管理者"+self.page_title
         self.template_name = self.template_dir_name+self.template_name
         
         
@@ -401,7 +402,6 @@ class CAppAdd(ManagerBase):
             form.save()
             form.order = form.id
             form.save()
-            #messages.success(request, request.POST.get('name')+' APP上傳成功。')
             messages.success(request, request.POST.get('name')+' APP上傳成功。')
         except Exception as e:
             print(e)
@@ -482,9 +482,10 @@ class CAppEdit(ManagerBase):
                 fd.write(chunk)
             fd.close()
             
-            form.dirName = dir
-            form.fileName = file.name
-            form.fileType = file.content_type
+            shiny.dirName = dir
+            shiny.fileName = file.name
+            shiny.fileType = file.content_type
+            shiny.save()
             
         form.user = request.user
         form.save()
@@ -691,5 +692,207 @@ class CMove(ManagerBase):
                     messages.success(request, move[i].name+' 成功向下移動。')
                     break
         return url
+    
+    
+class CPermissions(AdminBase):
+    template_name = 'permissions/permissions.html' # xxxx/xxx.html
+    page_title = '權限管理' # title
+
+    def get(self, request, *args, **kwargs):
+        kwargs['group'] = DBItemGroupName.objects.all().iterator()
+        return super(CPermissions, self).get(request, *args, **kwargs)
+    
+class CPermissionsAdd(AdminBase):
+    template_name = 'permissions/add.html' # xxxx/xxx.html
+    page_title = '新增權限類別' # title
+    
+    def get(self, request, *args, **kwargs):
+        cgroup = ItemGroupManage(kwargs)
+        cgroup.setList()
+        return super(CPermissionsAdd, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        users = request.POST.getlist('users')
+        items = request.POST.getlist('items')
+        name = request.POST.get('name')
+        cgroup = ItemGroupManage(kwargs)
+        cgroup.setList()
+        if cgroup.userValid(users) and cgroup.itemValid(items) and cgroup.create(name):
+            messages.success(request, "新增 %s 群組成功。" % (name, ) )
+            return redirect(reverse('control:permissions'))
+        
+        return super(CPermissionsAdd, self).get(request, *args, **kwargs)
+        
+class CPermissionsEdit(AdminBase):
+    template_name = 'permissions/edit.html' # xxxx/xxx.html
+
+    def get(self, request, *args, **kwargs):
+        cgroup = ItemGroupManage(kwargs)
+        cgroup.setList()
+        if(not cgroup.setEditList()):
+            return redirect(reverse('control:permissions'))
+        self.page_title = kwargs['name']+" 群組權限編輯"
+
+        return super(CPermissionsEdit, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        cgroup = ItemGroupManage(kwargs)
+        cgroup.setList()
+        if(not cgroup.setEditList()):
+            return redirect(reverse('control:permissions'))
+        self.page_title = kwargs['name']+" 群組權限編輯"
+        users = request.POST.getlist('users')
+        items = request.POST.getlist('items')
+        name = request.POST.get('name')
+        if cgroup.userValid(users) and cgroup.itemValid(items) and cgroup.save(name):
+            messages.success(request, "新增 %s 編輯成功。" % (name, ) )
+            return redirect(reverse('control:permissions'))
+        return super(CPermissionsEdit, self).post(request, *args, **kwargs)
+        
+class CPermissionsDetail(AdminBase):
+    template_name = 'permissions/detail.html' # xxxx/xxx.html
+
+    def get(self, request, *args, **kwargs):
+        try:
+            users = []
+            items = []
+            group = DBItemGroupName.objects.get(id=kwargs['id'])
+            for i in DBItemGroups.objects.filter(group=group).values_list('user', flat=True).distinct():
+                users.append(User.objects.get(id=i))
+            for i in DBItemGroups.objects.filter(group=group).values_list('item', flat=True).distinct():
+                items.append(Item.objects.get(id=i))
+            kwargs['users'] = users
+            kwargs['items'] = items
+            self.page_title = group.name+" 群組詳細資料"
+        except Exception as e:
+            return redirect(reverse('control:permissions'))
+        return super(CPermissionsDetail, self).get(request, *args, **kwargs)
+    
+class CPermissionsRemove(AdminBase):
+    template_name = '' # xxxx/xxx.html
+    page_title = ""
+    def post(self, request, *args, **kwargs):
+        print(request.POST.get('groupID'))
+        print(request.POST.get('groupName'))
+        try:
+            group = DBItemGroupName.objects.get(id=request.POST.get('groupID'), name=request.POST.get('groupName'))
+            name = group.name
+            DBItemGroups.objects.filter(group=group).delete()
+            group.delete()
+            messages.success(request, "新增 %s 移除成功。" % (name, ))
+        except Exception as e:
+            messages.error(request, "移除權限失敗，資料不相符。")
+            print(e)
+        return redirect(reverse('control:permissions'))
+        
+class CAccount(AdminBase):
+    template_name = 'account/account.html' # xxxx/xxx.html
+    page_title = '帳號管理' # title
+
+    def get(self, request, *args, **kwargs):
+        account = AccountManage(kwargs)
+        account.getUser()
+        return super(CAccount, self).get(request, *args, **kwargs)
+
+class CAccountAdd(AdminBase):
+    template_name = 'account/add.html' # xxxx/xxx.html
+    page_title = '加入帳號' # title
+    
+    def get(self, request, *args, **kwargs):
+        kwargs['userForm'] = UserForm()
+        kwargs['userProfileForm'] = UserProfileForm()
+        return super(CAccountAdd, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        userForm = UserForm(request.POST)
+        userProfileForm = UserProfileForm(request.POST)      
+        if not (userForm.is_valid() and userProfileForm.is_valid()):
+            kwargs['userForm'] = userForm
+            kwargs['userProfileForm'] = userProfileForm
+            return super(CAccountAdd, self).post(request, *args, **kwargs) 
+        
+        user = userForm.save()
+        user.set_password(user.password)
+        user.save()
+        userProfile = userProfileForm.save(commit=False)
+        userProfile.user = user
+        userProfile.type=1 if 'isManager' in request.POST else 0 #0 = Normal #1 = Manager
+        userProfile.isActive = False if 'isBan' in request.POST else True
+        userProfile.save()
+        messages.success(request,user.username+' 帳號加入成功。')
+        return redirect(reverse('control:account'))
+    
+class CAccountEdit(AdminBase):
+    template_name = 'account/edit.html' # xxxx/xxx.html
+    page_title = '編輯帳號' # titled
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            user = User.objects.get(id=kwargs['id'])
+            kwargs['userForm'] = UserEditForm(instance=user)
+            kwargs['userProfileForm'] = UserProfileForm(instance=user.profile)
+            kwargs['user'] = user
+        except Exception as e:
+            print(e)
+            return redirect(reverse('control:account'))
+        
+        return super(CAccountEdit, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            user = User.objects.get(id=kwargs['id'])
+            username = user.username
+        except Exception as e:
+            print(e)
+            return redirect(reverse('control:account'))
         
         
+        userForm = UserEditForm(request.POST, instance=user)
+        userProfileForm = UserProfileForm(request.POST, instance=user.profile)
+        kwargs['userForm'] = userForm
+        kwargs['userProfileForm'] = userProfileForm
+        kwargs['user'] = user
+        if not (userForm.is_valid() and userProfileForm.is_valid()):
+            return super(CAccountEdit, self).post(request, *args, **kwargs)
+        
+        if(userForm.cleaned_data['username']!=username):
+            kwargs['error'] = "帳號不能修改。"
+            return super(CAccountEdit, self).post(request, *args, **kwargs)
+        
+        user = userForm.save()
+        if(userForm.cleaned_data['password']!=""):
+            user.set_password(userForm.cleaned_data['password'])
+            user.save()
+        userProfile = userProfileForm.save()
+        userProfile.type=1 if 'isManager' in request.POST else 0 #0 = Normal #1 = Manager
+        userProfile.isActive = False if 'isBan' in request.POST else True
+        userProfile.save()
+        messages.success(request,user.username+' 帳號修改成功。')
+        return redirect(reverse('control:account'))
+        
+class CAccountRemove(AdminBase):
+    template_name = '' # xxxx/xxx.html
+    page_title = '' # title
+
+    def post(self, request, *args, **kwargs):
+        try:
+            user = User.objects.get(id=request.POST.get('accountID'), username=request.POST.get('accountName'))
+            user.profile.delete()
+            user.delete()
+            username = user.username
+        except Exception as e:
+            print(e)
+            messages.error(request, "移除帳號失敗，資料不相符。")
+            return redirect(reverse('control:account'))
+        messages.success(request, username+" 移除帳號成功。")
+        return redirect(reverse('control:account'))
+    
+class CAccountDetail(AdminBase):
+    template_name = 'account/detail.html' # xxxx/xxx.html
+
+    def get(self, request, *args, **kwargs):
+        account = AccountManage(kwargs)
+        if account.getUserDetail():
+            self.page_title = kwargs['user'].username+' 帳號資料' # title
+            return super(CAccountDetail, self).get(request, *args, **kwargs)
+        return redirect(reverse('control:account'))

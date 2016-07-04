@@ -19,6 +19,9 @@ from .views import CMenu, CMenuAdd, CMenuDelete, CMenuEdit
 from .views import CItem, CItemAdd, CItemDelete, CItemEdit
 from .views import CApps, CAppAdd, CAppDelete, CAppEdit, CAppDownload
 from .views import CConfig, CConfigSchoolAPI, CConfigShiny, CCongigKey
+from .views import CPermissions, CPermissionsAdd, CPermissionsDetail, CPermissionsEdit, CPermissionsRemove
+from .views import CAccount, CAccountAdd, CAccountEdit, CAccountRemove, CAccountDetail
+
 
 urlpatterns = [
     url(r'^main/$', CMain.as_view(), name='main'),
@@ -50,4 +53,16 @@ urlpatterns = [
     url(r'config/app/$', CConfigShiny.as_view(), name="configAPP"),
     url(r'config/key/$', CCongigKey.as_view(), name="configKEY"),
     #url(r'^demo/(?P<demoID>[0-9]+)/$', ShowDemo.as_view(), name='demo'),
+    
+    url(r'permissions/$', CPermissions.as_view(), name="permissions"),
+    url(r'permissions/add/$', CPermissionsAdd.as_view(), name="permissionsAdd"),
+    url(r'permissions/edit/(?P<id>[\w\-]+)/$', CPermissionsEdit.as_view(), name="permissionsEdit"),
+    url(r'permissions/detail/(?P<id>[\w\-]+)/$', CPermissionsDetail.as_view(), name="permissionsDetail"),
+    url(r'permissions/remove/$', CPermissionsRemove.as_view(), name="permissionsRemove"),
+    
+    url(r'account/$', CAccount.as_view(), name="account"),
+    url(r'account/add/$', CAccountAdd.as_view(), name="accountAdd"),
+    url(r'account/edit/(?P<id>[\w\-]+)/$', CAccountEdit.as_view(), name="accountEdit"),
+    url(r'account/detail/(?P<id>[\w\-]+)/$', CAccountDetail.as_view(), name="accountDetail"),
+    url(r'account/remove/$', CAccountRemove.as_view(), name="accountRemove"),
 ]

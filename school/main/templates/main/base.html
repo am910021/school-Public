@@ -12,8 +12,7 @@
     <title>{{page_title}}|{{SITE_NAME}}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Jquery UI -->
-    <link rel="stylesheet" href="{% static 'jqueryui/jquery-ui.css' %}">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'org/css/simple-sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'org/font-awesome/css/font-awesome.min.css' %}">
@@ -21,20 +20,17 @@
     <link rel="stylesheet" href="{% static 'org/css/style.css' %}" media="screen" type="text/css" />
     
     <style>
-    
-    #foot-wrapper {
-padding-right:15px;
-padding-left:265px;
-transition: all 0.5s ease;
+#footer {
+    border-style: solid;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+#footer-data{
+    height: 30px;
 }
 
-    #foot-wrapper.toggled {
-padding-right:15px;
-padding-left:15px;
-transition: all 0.5s ease;
-}
-    
-    </style>
+</style>
 {% block head %}{% endblock %}
 </head>
 
@@ -48,12 +44,12 @@ transition: all 0.5s ease;
     <ul id="accordion" class="accordion">
     
     {% for i in menu %}
-        {% if i.activeQty > 0 or user.detail.type >= 2 %}
+        {% if i.activeQty > 0 or user.profile.type >= 1 %}
         <li  {{menuID|isOpen:i.id}}>
             <!-- <div class="link"><i class="fa fa-paint-brush"></i>Diseño web<i class="fa fa-chevron-down"></i></div> -->
             <div class="link" style="border-top: 1px solid #8AB5E2;">{{i.name}}<i class="fa fa-chevron-down"></i></div>
             <ul class="submenu"  {{menuID|isHide:i.id}}>
-	        {% if i.activeQty == 0 and user.detail.type >= 2 %}
+	        {% if i.activeQty == 0 %}
 	        <li><a href="#">正在建置中</a></li>
 	        {% else %}
                 {% for j in i|getItem %}
@@ -68,7 +64,7 @@ transition: all 0.5s ease;
     {% endfor %}
  
     
-    {% if user.detail.type >= 2 %}
+    {% if user.profile.type >= 1 %}
         {% for i in menu %}
         {% if i.itemQty != 0 %}
         <li >
@@ -107,21 +103,21 @@ transition: all 0.5s ease;
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
-        <div id="page-content-wrapper" style="height: 95%;">
-            <div class="container-fluid">
+        <div id="page-content-wrapper" style="height:100%">
+            <div class="container-fluid" style="height:100%">
 	            <header id="header-wrapper">
 	                <div class="header-nav-row">
 			            <div id="menu-toggle"><a href="#menu-toggle" class="fa fa-bars"></a></div>
 			            {% if user.is_authenticated %}
 			             <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div>
-			             <div id="logined"><a href="#" >用戶：{{user.detail.fullName}}</a></div>
-			             {% if user.detail.type >= 1 %}
-	                         {% if user.detail.type >= 2%}
+			             <div id="logined"><a href="#" >用戶：{{user.profile.fullName}}</a></div>
+			             {% if user.profile.type >= 1 %}
                                 <div id="logined"><a href="{% url 'developer:main' %}">開發者頁面</a></div>
-	                         {% endif %}
                                 <div id="logined"><a href="{% url 'control:main' %}" >管理者頁面</a></div>
 			             {% endif %}
 			             <!-- <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div> -->
+			             
+                            <div id="logined" class=""><a href="{% url 'account:center' %}" >帳戶中心</a></div>
 			            {% else %}
 			             <div id="login"><a href="{% url 'account:login' %}" >登入</a></div>
 			            {% endif %}
@@ -145,8 +141,6 @@ transition: all 0.5s ease;
 			            </form>
                    </div>
 	            </div>
-
-            
 	            </header>
 	            <div id="main">
 	                <div class="row">
@@ -158,37 +152,32 @@ transition: all 0.5s ease;
 							    {% elif message.level == 25 %}
 							        <p class="h3 text-success">{{message}}</p>
 							    {% endif %}
-							    
-							    
-							    
-							    
 							 {% endfor %}
 							{% endif %}
 							
                             {% block content %}{% endblock %}
+
 	                    </div>
 	                </div>
 	            </div>
+				<div class="row" id="footer-warpper">
+					<div class="col-lg-12 text-center">
+						
+						<div id="footer-data"  style="border-top: 1px solid gray;">
+							<span class="small">XX科技大學-校務研究系統</span><br>
+							<span class="small">建意使用Google Chrome, Mozilla Firofox瀏覽器，建意解析度大於1024*768。</span><br>
+							<span class="small">版本：0.5.0，Design by 方瑋翔</span>
+						</div>
+					</div>
+				</div>
             </div>
         </div>
-        
-    <!--  
-    <div id="foot-wrapper" class="text-center">
-        <div style="border-top: 1px solid #AAA;">
-        asdasd
-        </div>
-    </div>
-    -->
-        <!-- /#page-content-wrapper -->
 
     </div>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
     <script src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
-
-    <!-- jQuery UI -->
-    <script src="{% static 'jqueryui/jquery-ui.min.js' %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
@@ -203,9 +192,30 @@ transition: all 0.5s ease;
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
         $("#header-wrapper").toggleClass("toggled");
-        $("#foot-wrapper").toggleClass("toggled");
         //$("#body-overlay").toggleClass("body-overlay");
         //$("#body-overlay2").toggleClass("body-overlay2");
+    });
+    
+    $(window).load(function() {
+        function changeHeight() {
+            var $header = $('#header-wrapper').outerHeight(true);
+            var $main = $('#main');
+            var $footer = $('#footer-warpper').outerHeight(true);
+            var $wrapper = $('#header-wrapper').parent().outerHeight(true);
+            if($wrapper-($header+$footer+20)>615){
+            	$main.css('min-height',$wrapper-($header+$footer+20)+'px');
+            }else{
+            	$main.css('min-height','615px');
+            }
+        }
+        
+        changeHeight();
+        
+        
+        $(window).resize(function() {
+        	changeHeight();
+        	});
+        
     });
     </script>
     

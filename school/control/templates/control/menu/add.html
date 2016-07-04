@@ -5,13 +5,6 @@
 {% endblock %}
 
 {% block content %}
-
-<form action="{% url 'control:menuDel' %}" method="post" id="removeForm">
-{% csrf_token %}
-<input type="hidden" name="menuID" id="menuID" readonly>
-<input type="hidden" name="menuName" id="menuName" readonly>
-</form>
-
     <div class="row">
         <div class="col-md-12">
             <div class="row">
@@ -32,19 +25,11 @@
                     <label for="id_name" class="col-sm-2 control-label">
                         選單名稱
                     </label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-4">
                         {{form.name}}
-                        {{form.name.errors}}
                     </div>
-                </div>
-                <div class="form-group">
-                     
-                    <label for="id_permission" class="col-sm-2 control-label">
-                        使用權限
-                    </label>
-                    <div class="col-sm-10">
-                        {{form.permission}}
-                        {{form.permission.errors}}
+                    <div class="col-sm-4">
+                        <span class="text-danger">{{form.name.errors}}</span>
                     </div>
                 </div>
                 <div class="form-group">

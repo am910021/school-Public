@@ -1,0 +1,20 @@
+{% extends base_template_name %}
+{% load main %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-3 buttom-wrapper">
+             <a href="{% url 'account:modify' %}" class="no-radius btn btn-primary btn-lg btn-block">修改資料</a>
+        </div> 
+        <div class="col-md-3 buttom-wrapper">
+             <a href="{% url 'account:modifyPWD' %}" class="btn btn-primary btn-lg btn-block no-radius">修改密碼</a>
+        </div>
+        <div class="col-md-3 buttom-wrapper">
+            <a href="{% url 'account:permissions' %}" class="btn btn-primary btn-lg btn-block no-radius">查看權限</a>
+        </div>
+        <div class="col-md-3 buttom-wrapper">
+        </div>
+    </div>
+{% endblock %}

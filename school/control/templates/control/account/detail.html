@@ -1,0 +1,117 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block head %}
+<!--  -->
+{% endblock %}
+
+{% block script %}
+<script>
+$('#tbody1>tr:even').addClass('info');
+$('#tbody2>tr:even').addClass('info');
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-1">
+        <h3>{{page_title}}</h3>
+      </div>
+      <div class="col-md-2 buttom-wrapper">
+        <a href="{% url 'control:account' %}" class="no-radius btn btn-primary btn-lg btn-block">上一頁</a>
+      </div>
+      <div class="col-md-3 buttom-wrapper">
+        <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            帳號資料
+          </th>
+          <th>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody1">
+        <tr>
+          <td>
+            帳號
+          </td>
+          <td>
+            {{user.username}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            使用者全名
+          </td>
+          <td>
+            {{user.profile.fullName}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            電子郵件
+          </td>
+          <td>
+            {{user.email}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            權限分類
+          </td>
+          <td>
+            {% if user.profile.type == 0 %}
+            權限群組分類
+            {% elif user.profile.type == 1 %}
+            混合式分類（管理員）,選單管理, 項目管理, APP管理
+            {% elif user.profile.type == 2 %}
+            混合式分類（超級管理員）, 全域管理
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    {% if user.profile.type == 0 %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            指標
+          </th>
+          <th>
+            群組
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody2">
+        {% for i in permissions %}
+        <tr>
+          <td>
+            {{i.item.menu.name}}--{{i.item.name}}
+          </td>
+          <td>
+            {{i.group.name}}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+
+{% endblock %}

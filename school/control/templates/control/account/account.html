@@ -1,0 +1,102 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block head %}
+<!--  -->
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/control/account.js' %}"></script>
+<!-- <script>
+</script> -->
+{% endblock %}
+
+{% block content %}
+<form action="{% url 'control:accountRemove' %}" method="post" id="removeForm">
+{% csrf_token %}
+<input type="hidden" name="accountID" id="accountID" readonly>
+<input type="hidden" name="accountName" id="accountName" readonly>
+</form>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-1">
+        <h3>{{page_title}}</h3>
+      </div>
+      <div class="col-md-2 buttom-wrapper">
+        <a href="{% url 'control:accountAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">新增帳號</a>
+      </div>
+      <div class="col-md-3 buttom-wrapper">
+        <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-3 col-md-offset-1">
+        <div class="form-group">
+          <input class="form-control" id="tr-search" type="text" placeholder="搜尋...">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>
+                使用者帳號
+              </th>
+              <th>
+                使用者全名
+              </th>
+              <th>
+                權限分類
+              </th>
+              <th>
+                詳細資料
+              </th>
+              <th>
+                編輯
+              </th>
+              <th>
+                移除
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in users %}
+            <tr>
+              <td>
+                {{i.username}}
+              </td>
+              <td>
+                {{i.profile.fullName}}
+              </td>
+              <td>
+                {% if i.profile.type == 0 %}
+                權限群組分類
+                {% elif i.profile.type == 1 %}
+                混合式分類（管理員）
+                {% elif i.profile.type == 2 %}
+                混合式分類（超級管理員）
+                {% endif %}
+              </td>
+              <td>
+                <button value="{% url 'control:accountDetail' i.id %}" class="btn glyphicon glyphicon-th-list redirect"></button>
+              </td>
+              <td>
+                <button value="{% url 'control:accountEdit' i.id %}" class="btn glyphicon glyphicon-pencil redirect"></button>
+              </td>
+              <td>
+                <button value="{{i.id}},{{i.username}}" class="btn glyphicon glyphicon-remove remove"></button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -32,12 +32,14 @@
                             <label for="id_menu" class="col-sm-2 control-label">
                                 所屬選單
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-4">
                                 {{form.menu}}
-                                <span class="text-danger">{{form.menu.errors}}</span>
                             </div>
                             <div class="col-sm-2">
                                 <a href="{% url 'control:menuAdd' %}" target="_blank" class="btn btn-default">增加選單</a>
+                            </div>
+                            <div class="col-sm-4">
+                                <span class="text-danger">{{form.menu.errors}}</span>
                             </div>
                         </div>
 		                <div class="form-group">
@@ -45,20 +47,12 @@
 		                    <label for="id_name" class="col-sm-2 control-label">
 		                        指標名稱
 		                    </label>
-		                    <div class="col-sm-10">
+		                    <div class="col-sm-4">
 		                        {{form.name}}
-		                        <span class="text-danger">{{form.name.errors}}</span>
 		                    </div>
-		                </div>
-		                <div class="form-group">
-		                     
-		                    <label for="id_permission" class="col-sm-2 control-label">
-		                        指標使用權限
-		                    </label>
-		                    <div class="col-sm-10">
-		                        {{form.permission}}
-		                        <span class="text-danger">{{form.permission.errors}}</span>
-		                    </div>
+                            <div class="col-sm-4">
+                                <span class="text-danger">{{form.name.errors}}</span>
+                            </div>
 		                </div>
 
 

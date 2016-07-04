@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 import account.views as views
+from .views import CCenter, CModify, CModifyPwd, CPermissions, CPermissionsDetail
 
 urlpatterns = [          
-               url(r'^login/$', views.Login.as_view(), name='login'), 
-               url(r'^signup/$', views.SignUp.as_view(), name='signup'), 
-               url(r'^logout/$', views.Logout, name='logout'), 
+    url(r'^login/$', views.Login.as_view(), name='login'), 
+    url(r'^signup/$', views.SignUp.as_view(), name='signup'), 
+    url(r'^logout/$', views.Logout, name='logout'),
+    
+    url(r'^center/$', CCenter.as_view(), name='center'),  
+    url(r'^modify/$', CModify.as_view(), name='modify'),  
+    url(r'^modify/pwd/$', CModifyPwd.as_view(), name='modifyPWD'),  
+    url(r'^permissions/$', CPermissions.as_view(), name='permissions'), 
+    url(r'permissions/detail/(?P<id>[\w\-]+)/$', CPermissionsDetail.as_view(), name="permissionsDetail"),
+    
 ]

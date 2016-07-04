@@ -1,15 +1,15 @@
 import random
 import string
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.utils import timezone
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required 
 from django.conf import settings
-from db.models import Demo
-from .models import Menu, Item, ShinyApp
+from .models import Menu, Item, ShinyApp, DBItemGroups
 from .aescipher import AESCipher as ase
 from .aescipher import toSHA as sha1
-
 # Create your views here.
 
 class BaseView(TemplateView):
@@ -43,6 +43,16 @@ class BaseView(TemplateView):
     def getPost(self, request):
         return request.META['SERVER_PORT']
 
+def login_required(fun):
+    def auth(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect(settings.LOGIN_URL +'?next=%s' % request.path)
+        if not request.user.profile.isActive:
+            logout(request)
+            return redirect(reverse('main:main'))
+        return fun(request, *args, **kwargs)
+    return auth
+
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls):
@@ -75,7 +85,8 @@ class CShinyApp(UserBase):
             item = Item.objects.get(id=itemID)
             shiny = ShinyApp.objects.filter(item=item).order_by("order")
             kwargs['menuID'] = item.menu.id
-            kwargs['token'] = True if request.user.detail.type >= item.permission else False
+            group = DBItemGroups.objects.filter(user=request.user, item=item)
+            kwargs['token'] = True if len(group)>=1 or request.user.profile.type>=1 else False
         except Exception as e:
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)
@@ -83,12 +94,12 @@ class CShinyApp(UserBase):
         if len(shiny)==0:
             return super(CShinyApp, self).get(request, *args, **kwargs)
             
-        if timezone.now() > request.user.detail.expire:
-            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
-            request.user.detail.save()
+        if timezone.now() > request.user.profile.expire:
+            request.user.profile.license = sha1(self.createCode(32)+request.user.password+request.user.username)
+            request.user.profile.save()
         self.page_title=shiny[0].name
         kwargs['itemName'] = item.name
-        kwargs['license'] = request.user.detail.license
+        kwargs['license'] = request.user.profile.license
         kwargs['shiny'] = shiny
         kwargs['totalApps'] = len(shiny)
         kwargs['listApps'] = list(range(0,len(shiny)))

@@ -1,0 +1,72 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+{% block head %}
+<!--  -->
+{% endblock %}
+
+{% block script %}
+<script>
+$('#tbody1>tr:even').addClass('info');
+$('#tbody2>tr:even').addClass('info');
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-7">
+			</div>
+			<div class="col-md-2 buttom-wrapper">
+			<a href="{% url 'control:permissions' %}" class="no-radius btn btn-primary btn-lg btn-block">上一頁</a>
+			</div>
+			<div class="col-md-3 buttom-wrapper">
+			<a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <h3>{{page_title}}</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            群組成員
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody1">
+        {% for i in users %}
+        <tr>
+          <td>
+            {{i.username}}({{i.profile.fullName}})
+          </td>
+        </tr>
+        {% endfor %}
+       </tbody>
+    </table>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            群組指標
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody2">
+        {% for i in items %}
+        <tr>
+          <td>
+            {{i.menu.name}}--{{i.name}}
+          </td>
+        </tr>
+        {% endfor %}
+       </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

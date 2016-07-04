@@ -3,17 +3,6 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
     
-    
-class Demo(models.Model):
-    user = models.ForeignKey(User)
-    name = models.CharField(max_length=32)
-    dirName = models.CharField(max_length=32, unique=True)
-    date = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.name
-     
-    
 class SchoolData(models.Model):
     name = models.CharField(max_length=128)
     type = models.IntegerField(default=0)

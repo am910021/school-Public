@@ -26,12 +26,14 @@
                             <label for="id_item" class="col-sm-2 control-label">
                                 所屬指標
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-4">
                                 {{form.item}}
-                                <span class="text-danger">{{form.item.errors}}</span>
                             </div>
                             <div class="col-sm-2">
                                 <a href="{% url 'control:itemAddBy' menuID %}" target="_blank" class="btn btn-default">增加項目</a>
+                            </div>
+                            <div class="col-sm-4">
+                                <span class="text-danger">{{form.item.errors}}</span>
                             </div>
                         </div>
 		                <div class="form-group">
@@ -39,21 +41,25 @@
 		                    <label for="id_name" class="col-sm-2 control-label">
 		                        APP名稱
 		                    </label>
-		                    <div class="col-sm-10">
+		                    <div class="col-sm-4">
 		                        {{form.name}}
-		                        <span class="text-danger">{{form.name.errors}}</span>
 		                    </div>
+                            <div class="col-sm-4">
+                                <span class="text-danger">{{form.name.errors}}</span>
+                            </div>
 		                </div>
 		                <div class="form-group">
 		                     
 		                    <label for="id_dirName" class="col-sm-2 control-label">
 		                        APP資料夾（英文）
 		                    </label>
-		                    <div class="col-sm-10">
+		                    <div class="col-sm-4">
 		                        {{form.dirName}}
-		                        <span class="text-danger">{{form.dirName.errors}}</span>
-		                        <span class="text-danger">{{dir_exists}}</span>
 		                    </div>
+                            <div class="col-sm-4">
+                                <span class="text-danger">{{form.dirName.errors}}</span>
+                                <span class="text-danger">{{dir_exists}}</span>
+                            </div>
 		                </div>
                         <div class="form-group">
                              
@@ -69,7 +75,7 @@
 		                <div class="form-group">
 		                     
                             <label for="upload_file" class="col-sm-2 control-label">
-                                上傳檔案（.zip
+                                上傳檔案（.zip)
                             </label>
 
                             <div class="col-sm-10">

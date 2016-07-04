@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import threading,time
 from urllib.request import urlopen
@@ -6,7 +6,7 @@ import requests
 from django.contrib.auth.decorators import login_required 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from account.models import Detail
+from account.models import Profile
 from main.models import Setting
 from _ast import Str
 from db.models import SchoolData, Department, Work, Salary
@@ -17,9 +17,9 @@ def ArgsError(request, *args, **kwargs):
 
 def schoolAPI3(request, *args, **kwargs):
     print("schoolAPI3")
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:
@@ -54,9 +54,9 @@ def schoolAPI3(request, *args, **kwargs):
 
 def schoolAPI4(request, *args, **kwargs):
     print("schoolAPI4")
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:
@@ -93,9 +93,9 @@ def schoolAPI4(request, *args, **kwargs):
 
 
 def schoolAPI(request, *args, **kwargs):
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:
@@ -130,9 +130,9 @@ def schoolAPI(request, *args, **kwargs):
     return HttpResponse(s,content_type='text/plain; charset=utf-8')
 
 def schoolAPI2(request, *args, **kwargs):
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:
@@ -275,9 +275,9 @@ class SchoolApi:
             
             
 def getWork(request, *args, **kwargs):
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:
@@ -293,9 +293,9 @@ def getWork(request, *args, **kwargs):
     #return HttpResponse(s,content_type='text/csv; charset=utf-8') 
             
 def getSalary(request, *args, **kwargs):
-    if request.user.username=="" or request.user.detail.type <2:
+    if request.user.username=="" or request.user.profile.type <1:
         try:
-            user = Detail.objects.filter(license=kwargs['license'])
+            user = Profile.objects.filter(license=kwargs['license'])
             if not user:
                 return HttpResponse("LoginFail", content_type='text/plain')
         except Exception as e:

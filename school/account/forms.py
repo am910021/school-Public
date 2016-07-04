@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from account.models import Detail
+from account.models import Profile
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(label='帳號')
@@ -26,5 +26,5 @@ class UserProfileForm(forms.ModelForm):
     fullName.widget.attrs.update({'class':'form-control'})
     
     class Meta:
-        model = Detail
+        model = Profile
         fields = ('fullName', )

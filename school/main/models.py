@@ -1,6 +1,6 @@
 import os, shutil
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 # Create your models here.
 class Setting(models.Model):
@@ -21,7 +21,6 @@ class Setting(models.Model):
     
 class Menu(models.Model):
     name = models.CharField(max_length=128,unique=True)
-    permission = models.IntegerField(default=0)
     isActive = models.BooleanField(default=False)
     itemQty = models.IntegerField(default=0)
     activeQty = models.IntegerField(default=0)
@@ -38,7 +37,6 @@ class Menu(models.Model):
 class Item(models.Model):
     menu = models.ForeignKey(Menu)
     name = models.CharField(max_length=128,unique=True)
-    permission = models.IntegerField(default=0)
     isActive = models.BooleanField(default=False)
     appQty = models.IntegerField(default=0)
     activeQty = models.IntegerField(default=0)
@@ -52,6 +50,17 @@ class Item(models.Model):
         
 
     def delete(self, *args, **kwargs):
+        groups = DBItemGroups.objects.filter(item=self)
+        if len(groups)>0:
+            for i in groups.values_list('group', flat=True).distinct():
+                group = DBItemGroupName.objects.get(id=i)
+                userCount = len(DBItemGroups.objects.filter(group=group).exclude(item=self).values_list('user', flat=True).distinct())
+                itemCount = len(DBItemGroups.objects.filter(group=group).exclude(item=self).values_list('item', flat=True).distinct())
+                group.itemQty=itemCount
+                group.userQty=userCount
+                group.save() 
+        groups.delete()
+        
         for i in ShinyApp.objects.filter(item=self):
             i.delete()
         super(Item, self).delete(*args, **kwargs)
@@ -63,7 +72,7 @@ class Item(models.Model):
         self.menu.activeQty = len(item.filter(isActive=True))
         self.menu.isActive = True if self.menu.activeQty > 0 else False
         self.menu.save()
-
+        
     
 class ShinyApp(models.Model):
     user = models.ForeignKey(User)
@@ -99,6 +108,18 @@ class ShinyApp(models.Model):
         self.item.isActive = True if self.item.activeQty>0 else False
         self.item.save()
         
-        
+         
+class DBItemGroupName(models.Model):
+    name = models.CharField(max_length=128)
+    itemQty = models.IntegerField()
+    userQty = models.IntegerField()
+    def __str__(self):
+        return self.name+"群組"
     
+class DBItemGroups(models.Model):
+    item = models.ForeignKey(Item)
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(DBItemGroupName)
+    def __str__(self):
+        return "所屬： "+self.group.name+"群組"
     

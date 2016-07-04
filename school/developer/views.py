@@ -1,9 +1,7 @@
-import os, zipfile, shutil
-import random
+﻿import random
 import string
 from django.utils import timezone
 from django.conf import settings
-from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -11,15 +9,13 @@ from django.http import JsonResponse
 from main.views import BaseView, UserBase
 from main.models import Setting
 from main.aescipher import toSHA as sha1
-from db.models import Demo
-from .forms import DemoForm
 # Create your views here.
 
 def developer_required(fun):
     def auth(request, *args, **kwargs):
         if not request.user.is_authenticated():
             return redirect(settings.LOGIN_URL +'?next=%s' % request.path)
-        if request.user.detail.type < 2:
+        if request.user.profile.type < 1:
             return redirect(reverse('main:main'))
         return fun(request, *args, **kwargs)
     return auth
@@ -41,264 +37,18 @@ class DeveloperBase(DeveloperRequiredMixin, BaseView):
         self.template_name = self.template_dir_name+self.template_name
         
     def get(self, request, *args, **kwargs):
-        kwargs['demomenu'] = Demo.objects.all()
         return super(DeveloperBase, self).get(request, *args, **kwargs)
 
 class Main(DeveloperBase):
     template_name = 'main.html' # xxxx/xxx.html
     page_title = '首頁' # title
     def get(self, request, *args, **kwargs):
-        if timezone.now() > request.user.detail.expire:
-            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
-            request.user.detail.save()
-        kwargs['license'] = request.user.detail.license
-        kwargs['expire']= request.user.detail.expire
+        if timezone.now() > request.user.profile.expire:
+            request.user.profile.license = sha1(self.createCode(32)+request.user.password+request.user.username)
+            request.user.profile.save()
+        kwargs['license'] = request.user.profile.license
+        kwargs['expire']= request.user.profile.expire
         return super(Main, self).get(request, *args, **kwargs)
-    
-    def createCode(self, num):
-        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
-
-
-
-class Uplist(DeveloperBase):
-    template_name = 'list.html' # xxxx/xxx.html
-    page_title = '已上傳列表' # title
-
-    def get(self, request, *args, **kwargs):
-        demo = Demo.objects.all()
-        kwargs['demo'] = demo
-        return super(Uplist, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        return super(Uplist, self).post(request, *args, **kwargs)
-
-class Upload(DeveloperBase):
-    template_name = 'upload.html' # xxxx/xxx.html
-    page_title = '檔案上傳' # title
-
-    def get(self, request, *args, **kwargs):
-        kwargs['form'] = DemoForm()
-        return super(Upload, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        
-        form = DemoForm(request.POST)
-        if not form.is_valid():
-            kwargs['form'] = form
-            return super(Upload, self).post(request, *args, **kwargs)
-        if 'upload_file' not in request.FILES:
-            kwargs['not_found']="*請選擇檔案"
-            kwargs['form'] = form
-            return super(Upload, self).post(request, *args, **kwargs)
-        
-        try:
-            config = Setting.objects.get(name="dirPath")
-            dirName = str(request.POST.get('dirName')).replace(" ","-")
-            if os.path.exists(config.c1+dirName):
-                kwargs['dir_exists'] = "* 資料夾已存在"
-                kwargs['form'] = form
-                return super(Upload, self).post(request, *args, **kwargs)
-            
-            file = request.FILES['upload_file']
-            os.makedirs(config.c1+dirName)
-            zip_ref = zipfile.ZipFile(file, 'r')
-            zip_ref.extractall(config.c1+dirName)
-            zip_ref.close()
-        except Exception as e:
-            print(e)
-            kwargs['file_error'] = "*檔案格式錯誤"
-            kwargs['form'] = form
-            return super(Upload, self).post(request, *args, **kwargs)
-        
-        form = form.save(commit=False)
-        form.user = request.user
-        form.dirName = dirName
-        form.save()
-        messages.success(request, '上傳成功')
-        return redirect(reverse('developer:main'))
-
-
-class Remove(DeveloperBase):
-    template_name = '' # xxxx/xxx.html
-    page_title = '' # title
-
-    def get(self, request, *args, **kwargs):
-        return redirect('main:main')
-    
-    def post(self, request, *args, **kwargs):
-        try:
-            demoID = request.POST.get('demoID')
-            demo = Demo.objects.get(id=demoID)
-            
-            if demo.user.username != request.user.username and request.user.detail.type<=2:
-                messages.success(request, demo.name+'刪除失敗，權限不足。')
-                return redirect(reverse('developer:list'))
-            
-            config = Setting.objects.get(name="dirPath")
-            if os.path.exists(config.c1+demo.dirName):
-                shutil.rmtree(config.c1+demo.dirName)
-                demo.delete()
-            messages.success(request, demo.name+'刪除成功。')
-        except Exception as e:
-            messages.success(request, demo.name+'刪除失敗。')
-            print(e)
-         
-        return redirect(reverse('developer:list'))
-    
-class Config(DeveloperBase):
-    template_name = 'config/config.html' # xxxx/xxx.html
-    page_title = '設定列表' # title
-    
-    def get(self, request, *args, **kwargs):
-        return super(Config, self).post(request, *args, **kwargs)
-
-class ConfigShiny(DeveloperBase):
-    template_name = 'config/dir.html' # xxxx/xxx.html
-    page_title = '設定' # title
-    
-    def get(self, request, *args, **kwargs):
-        try:
-            config = Setting.objects.get(name="dirPath")
-            kwargs['path'] = config.c1
-            kwargs['time'] = config.time
-        except Exception as e:
-            print(e)
-        return super(ConfigShiny, self).post(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        if 'dirPath' not in request.POST:
-            kwargs['error'] = "請輸入路徑"
-            return super(ConfigShiny, self).post(request, *args, **kwargs)
-        
-        dir = request.POST.get('dirPath')
-        
-        if not os.path.exists(dir):
-            kwargs['error'] = " *路徑錯誤"
-            kwargs['path'] = dir
-            return super(ConfigShiny, self).post(request, *args, **kwargs)
-        
-        try:
-            config = Setting.objects.get(name="dirPath")
-            config.c1 = dir
-            config.save()
-        except Exception as e:
-            Setting.objects.get_or_create(name="dirPath",c1=dir)
-            print(e)
-        
-        messages.success(request, "設定成功。")
-        return redirect(reverse('developer:configShiny'))
-
-
-class ConfigSchoolAPI(DeveloperBase):
-    template_name = 'config/school.html' # xxxx/xxx.html
-    page_title = '啟用SchoolAPI' # title
-
-    def get(self, request, *args, **kwargs):
-        try:
-            config = Setting.objects.get(name="SchoolAPI")
-            kwargs['isActive'] = config.isActive
-            kwargs['url'] = config.c1
-            kwargs['time'] = config.time
-        except Exception as e:
-            print(e)
-        return super(ConfigSchoolAPI, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('apiURL')=="":
-            kwargs['error'] = "*URL 不能為空"
-            return super(ConfigSchoolAPI, self).post(request, *args, **kwargs)
-        
-        try:
-            config = Setting.objects.get(name="SchoolAPI")
-            config.c1 = request.POST.get('apiURL')
-            config.isActive = True if request.POST.get('isActive') else False
-            config.save()
-        except Exception as e:
-            Setting.objects.get_or_create(name="SchoolAPI",isActive = True if request.POST.get('isActive') else False, c1 = request.POST.get('apiURL'))
-            print(e)
-        return redirect(reverse('developer:configAPI'))
-    
-class ConfigShinyHost(DeveloperBase):
-    template_name = 'config/server.html' # xxxx/xxx.html
-    page_title = 'Shiny Host' # title
-
-    def get(self, request, *args, **kwargs):
-        try:
-            config = Setting.objects.get(name="ShinyHost")
-            kwargs['host'] = config.c1
-            kwargs['time'] = config.time
-        except Exception as e:
-            print(e)
-        return super(ConfigShinyHost, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('host')=="":
-            kwargs['error'] = "*HOST 不能為空"
-            return super(ConfigShinyHost, self).post(request, *args, **kwargs)
-        
-        try:
-            config = Setting.objects.get(name="ShinyHost")
-            config.c1 = request.POST.get('host')
-            config.save()
-        except Exception as e:
-            Setting.objects.get_or_create(name="ShinyHost", c1 = request.POST.get('host'))
-            print(e)
-        return redirect(reverse('developer:configShinyHost'))
-     
-class CongigKey(DeveloperBase):
-    template_name = 'config/key.html' # xxxx/xxx.html
-    page_title = '系統金鑰設定' # title
-
-    def get(self, request, *args, **kwargs):
-        try:
-            config = Setting.objects.get(name="SystemKey")
-            kwargs['key'] = config.c1
-            kwargs['time'] = config.time
-        except Exception as e:
-            print(e)
-        return super(CongigKey, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('key')=="":
-            kwargs['error'] = "*HOST 不能為空"
-            return super(CongigKey, self).post(request, *args, **kwargs)
-        
-        try:
-            config = Setting.objects.get(name="SystemKey")
-            config.c1 = request.POST.get('key')
-            config.save()
-        except Exception as e:
-            Setting.objects.get_or_create(name="SystemKey", c1 = request.POST.get('key'))
-            print(e)
-        return redirect(reverse('developer:configKey'))
-    
-class ShowDemo(DeveloperBase):
-    template_name = 'demo.html' # xxxx/xxx.html
-    page_title = 'Demo 展示' # title
-
-    def get(self, request, *args, **kwargs):
-        if 'demoID' not in kwargs:
-            return super(ShowDemo, self).get(request, *args, **kwargs)
-
-        chart_demo = None
-        try:
-            chart_demo = Demo.objects.get(id=kwargs['demoID'])
-        except Exception as e:
-            print(e)
-            
-        
-        
-        if timezone.now() > request.user.detail.expire:
-            request.user.detail.license = sha1(self.createCode(32)+request.user.password+request.user.username)
-            request.user.detail.save()
-        kwargs['license'] = request.user.detail.license
-        kwargs['chart_demo'] = chart_demo
-        
-
-        return super(ShowDemo, self).get(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        return super(ShowDemo, self).post(request, *args, **kwargs)
     
     def createCode(self, num):
         return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
