@@ -23,9 +23,6 @@ def setupDB():
 
 def setup():
     from main.models import Setting, Menu, Item, ShinyApp, DBItemGroupName, DBItemGroups
-    
-    
-    
     menuName= ('教學', '研究', '國際化', '產學合作及推廣教育', '學生輔導及就業情形', '其他')
     indexNmae= (
 ('學生參與競賽獲獎人次', '學生參與展覽表演人次', '學生參與公職考試考取人次', '學生考取專業證照人次', '學生考取外語證照人次', '通過教師升等人數', '通過教師評鑑人數', '聘任業師人數(技術聘)', '系所博士班畢業人數', '系統博士生畢業人數', '大一新生各管道註冊率', '推甄錄取最低級分', '碩博士生註冊率', '建置磨課師課程數量', '學生休學原因分析', '學生退學原因分析', '年度四技各系所日夜間部註冊率', '年度碩士班各系所日夜間部註冊率', '年度博士班系所註冊率', '全校學院系所註冊率'),
@@ -161,6 +158,7 @@ def email_valid(email):
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
+    setupDB()
     print(bcolors.OKBLUE + "\n 啟動基本設定" + bcolors.ENDC)
     django.setup()
     if checkDB():

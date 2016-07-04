@@ -23,6 +23,7 @@ class BaseView(TemplateView):
         # Settings context data for base template
         context['base_template_name'] = self.base_template_name
         context['SITE_NAME'] = settings.SITE_NAME
+        context['SITE_VERSION'] = settings.SITE_VERSION
         context['menu'] = Menu.objects.all().order_by('order')
         if hasattr(self, 'page_title'):
             context['page_title'] = self.page_title
