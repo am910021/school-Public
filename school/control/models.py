@@ -120,7 +120,7 @@ class AccountManage:
         print(self.data['id'])
         try:
             user = User.objects.get(id=self.data['id'])
-            self.data['user'] = user
+            self.data['account'] = user
             self.data['permissions'] = DBItemGroups.objects.filter(user=user).order_by('item').order_by('group')
         except Exception as e: 
             print(e)

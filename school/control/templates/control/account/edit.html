@@ -93,13 +93,13 @@ $(document).ready(function() {
                 <span class="text-danger">{{ userForm.email.errors }}</span>
 			</div>
 		</div>
-		{% if user.profile.type <= 1 %}
+		{% if account.profile.type <= 1 %}
         <div class="form-group">
           <label for="id_manager" class="col-sm-2 control-label">
             設定為管理員
           </label>
           <div class="col-sm-5">
-            <input type="checkbox" name="isManager" id="id_manager" {% if user.profile.type == 1 %} checked {% endif %}>
+            <input type="checkbox" name="isManager" id="id_manager" {% if account.profile.type == 1 %} checked {% endif %}>
           </div>
           <div class="col-sm-5">
           </div>
@@ -109,7 +109,7 @@ $(document).ready(function() {
             停用帳號
           </label>
           <div class="col-sm-5">
-            <input type="checkbox" name="isBan" id="id_ban" {% if not user.profile.isActive %} checked {% endif %}>
+            <input type="checkbox" name="isBan" id="id_ban" {% if not account.profile.isActive %} checked {% endif %}>
           </div>
           <div class="col-sm-5">
           </div>

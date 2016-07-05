@@ -831,7 +831,7 @@ class CAccountEdit(AdminBase):
             user = User.objects.get(id=kwargs['id'])
             kwargs['userForm'] = UserEditForm(instance=user)
             kwargs['userProfileForm'] = UserProfileForm(instance=user.profile)
-            kwargs['user'] = user
+            kwargs['account'] = user
         except Exception as e:
             print(e)
             return redirect(reverse('control:account'))
@@ -851,7 +851,7 @@ class CAccountEdit(AdminBase):
         userProfileForm = UserProfileForm(request.POST, instance=user.profile)
         kwargs['userForm'] = userForm
         kwargs['userProfileForm'] = userProfileForm
-        kwargs['user'] = user
+        kwargs['account'] = user
         if not (userForm.is_valid() and userProfileForm.is_valid()):
             return super(CAccountEdit, self).post(request, *args, **kwargs)
         
@@ -893,6 +893,6 @@ class CAccountDetail(AdminBase):
     def get(self, request, *args, **kwargs):
         account = AccountManage(kwargs)
         if account.getUserDetail():
-            self.page_title = kwargs['user'].username+' 帳號資料' # title
+            self.page_title = kwargs['account'].username+' 帳號資料' # title
             return super(CAccountDetail, self).get(request, *args, **kwargs)
         return redirect(reverse('control:account'))
