@@ -156,13 +156,19 @@ def email_valid(email):
     except forms.ValidationError as e:
         return False
 
+
+
+
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
-    setupDB()
-    print(bcolors.OKBLUE + "\n 啟動基本設定" + bcolors.ENDC)
+    command = sys.argv.pop()
     django.setup()
-    if checkDB():
-        setup()
-        print("\n")
+    if(command=="install"):
+        print(bcolors.OKBLUE + "\n 啟動基本設定" + bcolors.ENDC)
+        if checkDB():
+            setup()
+            print("\n")
+            createSuperuser()
+    elif(command=="createadmin"):
         createSuperuser()
 
