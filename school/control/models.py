@@ -36,13 +36,14 @@ class ItemGroupManage:
     def save(self,name): 
         data = self.data
         group = self.group
-        group.itemQty=len(self.itemArr)
-        group.userQty=len(self.userArr)
-        group.save()
         if(group.name!=name) and (len(DBItemGroupName.objects.filter(name=name))!=0):
             data['name_error'] = "此名稱已經存在，請在試一次．"
             data['name'] = name
             return False
+        group.name = name
+        group.itemQty=len(self.itemArr)
+        group.userQty=len(self.userArr)
+        group.save()
         
         DBItemGroups.objects.filter(group=group).delete()
         for i in self.userArr:
