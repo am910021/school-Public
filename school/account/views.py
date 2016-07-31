@@ -190,8 +190,8 @@ class CAccountAuth(BaseView):
 
     def get(self, request, *args, **kwargs):
         token = kwargs['token']
-        #res=httpget.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("test", token))
-        res=httpget.get("http://127.0.0.1:8000/account/xmltest/")
+        res=httpget.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("test", token))
+        #res=httpget.get("http://127.0.0.1:8000/account/xmltest/")
         res.encoding='utf8'
         root = BeautifulSoup(res.text, "xml").select('root')[0]
         error = root.select('msg')
