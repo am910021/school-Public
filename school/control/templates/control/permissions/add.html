@@ -63,23 +63,23 @@
             <div class="row">
               <div class="col-sm-5">
                 <span>使用者</span>
-                <select name="" id="undo_redo" class="form-control" size="13" multiple="multiple">
+                <select name="" id="multiselect" class="form-control" size="13" multiple="multiple">
                   {% for i in user_all %}
                   <option value="{{i.user.id}}">{{i.user.username}}</option>
                   {% endfor %}
                 </select>
               </div>
               <div class="col-sm-2">
-                <button type="button" id="undo_redo_undo" class="btn btn-primary btn-block">復原</button>
-                <button type="button" id="undo_redo_rightAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
-                <button type="button" id="undo_redo_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                <button type="button" id="undo_redo_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                <button type="button" id="undo_redo_leftAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
-                <button type="button" id="undo_redo_redo" class="btn btn-warning btn-block">重做</button>
+                <button type="button" id="undo" class="btn btn-primary btn-block">上一動</button>
+                <button type="button" id="rightAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                <button type="button" id="rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                <button type="button" id="leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                <button type="button" id="leftAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                <button type="button" id="redo" class="btn btn-warning btn-block">下一動</button>
               </div>
               <div class="col-sm-5">
                 <span>己加入的使用者</span>
-                <select name="users" id="undo_redo_to" class="form-control right-select" size="15" multiple="multiple">
+                <select name="users" id="added" class="form-control right-select" size="15" multiple="multiple">
                   {% for i in users %}
                   <option value="{{i.id}}">{{i.username}}</option>
                   {% endfor %}
@@ -104,7 +104,7 @@
             <div class="row">
               <div class="col-sm-5">
                 <span>指標</span>
-                <select name="" id="undo_redo2" class="form-control" size="13" multiple="multiple">
+                <select name="" id="multiselect2" class="form-control" size="13" multiple="multiple">
                   {% for i in menu_all %}
                   {% for j in i|getItem %}
                   <option value="{{j.id}}">{{i.name}}--{{j.name}}</option>
@@ -113,16 +113,16 @@
                 </select>
               </div>
               <div class="col-sm-2">
-                <button type="button" id="undo_redo_undo2" class="btn btn-primary btn-block">復原</button>
-                <button type="button" id="undo_redo_rightAll2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
-                <button type="button" id="undo_redo_rightSelected2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                <button type="button" id="undo_redo_leftSelected2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                <button type="button" id="undo_redo_leftAll2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
-                <button type="button" id="undo_redo_redo2" class="btn btn-warning btn-block">重做</button>
+                <button type="button" id="undo2" class="btn btn-primary btn-block">上一動</button>
+                <button type="button" id="rightAll2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                <button type="button" id="rightSelected2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                <button type="button" id="leftSelected2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                <button type="button" id="leftAll2" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                <button type="button" id="redo2" class="btn btn-warning btn-block">下一動</button>
               </div>
               <div class="col-sm-5">
                 <span>可使用的指標</span>
-                <select name="items" id="undo_redo_to2" class="form-control right-select" size="15" multiple="multiple">
+                <select name="items" id="added2" class="form-control right-select" size="15" multiple="multiple">
                   {% for i in items %}
                   <option value="{{i.id}}">{{i.menu.name}}--{{i.name}}</option>
                   {% endfor %}

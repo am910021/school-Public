@@ -22,7 +22,7 @@ def setupDB():
 
 
 def setup():
-    from main.models import Setting, Menu, Item, ShinyApp, DBItemGroupName, DBItemGroups
+    from main.models import Setting, Menu, Item, ShinyApp, DBGroupName, DBGroupItem
     menuName= ('教學', '研究', '國際化', '產學合作及推廣教育', '學生輔導及就業情形', '其他')
     indexNmae= (
 ('學生參與競賽獲獎人次', '學生參與展覽表演人次', '學生參與公職考試考取人次', '學生考取專業證照人次', '學生考取外語證照人次', '通過教師升等人數', '通過教師評鑑人數', '聘任業師人數(技術聘)', '系所博士班畢業人數', '系統博士生畢業人數', '大一新生各管道註冊率', '推甄錄取最低級分', '碩博士生註冊率', '建置磨課師課程數量', '學生休學原因分析', '學生退學原因分析', '年度四技各系所日夜間部註冊率', '年度碩士班各系所日夜間部註冊率', '年度博士班系所註冊率', '全校學院系所註冊率'),
@@ -49,7 +49,7 @@ def checkDB():
     from django.utils import timezone
     from account.models import User, Profile
     from db.models import Salary, SchoolData, Studsem_all, Department, Work
-    from main.models import Setting, Menu, Item, ShinyApp, DBItemGroupName, DBItemGroups
+    from main.models import Setting, Menu, Item, ShinyApp, DBGroupName, DBGroupItem
     
     user = len(User.objects.all())
     profile = len(Profile.objects.all())
@@ -62,8 +62,8 @@ def checkDB():
     menu  = len(Menu.objects.all())
     item  = len(Item.objects.all())
     shinyapp  = len(ShinyApp.objects.all())
-    dbitemgroupname  = len(DBItemGroupName.objects.all())
-    dbitemgroups  = len(DBItemGroups.objects.all())
+    dbitemgroupname  = len(DBGroupName.objects.all())
+    dbitemgroups  = len(DBGroupItem.objects.all())
     
     
     if user>0 or profile>0 or salary>0 or work>0 or department>0 or schoolData>0 or studsem_all>0 or setting>0 or menu>0 or item>0 or shinyapp>0 or  dbitemgroupname>0 or dbitemgroups>0:
@@ -89,8 +89,8 @@ def checkDB():
         ShinyApp.objects.all().delete()
         Item.objects.all().delete()
         Menu.objects.all().delete()
-        DBItemGroups.objects.all().delete()
-        DBItemGroupName.objects.all().delete()
+        DBGroupItem.objects.all().delete()
+        DBGroupName.objects.all().delete()
         return True
         
 

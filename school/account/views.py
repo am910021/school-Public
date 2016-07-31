@@ -1,13 +1,17 @@
 from django.core.validators import validate_email
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django import forms
+from bs4 import BeautifulSoup
+import requests as httpget
+from account.models import Profile
 from account.forms import UserForm, UserProfileForm
 from main.views import BaseView, UserBase
-from main.models import DBItemGroups, DBItemGroupName
+from main.models import DBGroupItem, DBGroupName
 
 
 class Login(BaseView):
@@ -35,6 +39,10 @@ class Login(BaseView):
         if not user.profile.isActive:
             kwargs['error'] = '帳號已停用。'
             return super(Login, self).post(request, *args, **kwargs)
+        if user.profile.isAuth:
+            kwargs['error'] = '此帳號為第三方認證帳戶，無法登入。'
+            return super(Login, self).post(request, *args, **kwargs)
+        
         # login success
         login(request, user)
         #messages.success(request, '登入成功')
@@ -91,6 +99,10 @@ class CModify(UserBase):
     page_title = '修改資料' # title
     
     def get(self, request, *args, **kwargs):
+        if(request.user.profile.isAuth):
+            return redirect(reverse('account:center'))
+        
+        
         kwargs['name'] = request.user.profile.fullName
         kwargs['email'] = request.user.email
         return super(CModify, self).get(request, *args, **kwargs)
@@ -129,6 +141,11 @@ class CModifyPwd(UserBase):
     template_name = 'account/modify_pwd.html' # xxxx/xxx.html
     page_title = '修改密碼' # title
     
+    def get(self, request, *args, **kwargs):
+        if(request.user.profile.isAuth):
+            return redirect(reverse('account:center'))
+        return super(CModifyPwd, self).get(request, *args, **kwargs)
+    
     def post(self, request, *args, **kwargs):
         orgPwd = request.POST.get('password')
         newPwd = request.POST.get('newPwd')
@@ -158,28 +175,82 @@ class CModifyPwd(UserBase):
 
 class CPermissions(UserBase):
     template_name = 'account/permissions.html' # xxxx/xxx.html
-    page_title = '權限群組查尋' # title
+    page_title = '權限資料' # title
 
     def get(self, request, *args, **kwargs):
-        group = []
-        for i in DBItemGroups.objects.filter(user=request.user).values_list('group', flat=True).distinct():
-            group.append(DBItemGroupName.objects.get(id=i))
+        group = request.user.profile.group
+        kwargs['items'] = DBGroupItem.objects.filter(group=group)
         kwargs['group'] = group
+        
         return super(CPermissions, self).get(request, *args, **kwargs)
-
-class CPermissionsDetail(UserBase):
-    template_name = 'account/permissions_detail.html' # xxxx/xxx.html
+    
+class CAccountAuth(BaseView):
+    template_name = '' # xxxx/xxx.html
+    page_title = '' # title
 
     def get(self, request, *args, **kwargs):
-        try:
-            group = DBItemGroupName.objects.get(id=kwargs['id'])
-        except Exception as e:
-            print(e)
-            return redirect(reverse('account:permissions'))
+        token = kwargs['token']
+        #res=httpget.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("test", token))
+        res=httpget.get("http://127.0.0.1:8000/account/xmltest/")
+        res.encoding='utf8'
+        root = BeautifulSoup(res.text, "xml").select('root')[0]
+        error = root.select('msg')
+        if len(error)>0:
+            return HttpResponse('驗證錯誤')
+        id = root.select('id')[0].text
+        name = root.select('name')[0].text
+        other = root.select('other')[0].text
+        
+        user = User.objects.filter(username=id)
+        if len(user)==0:
+            newUser = User()
+            newUser.username = id
+            newUser.set_password(id)
+            newUser.save()
+            profile = Profile()
+            profile.user = newUser
+            profile.fullName = name
+            profile.type=0
+            profile.isActive=True
+            profile.isAuth=True
+            profile.save()
+            messages.success(request,request.user.username+'帳號認證成功。')
+            login(request, authenticate(username=id, password=id))
+        elif len(user)==1 and user[0].profile.isAuth and user[0].profile.isActive:
+            user = user[0]
+            user.profile.fullName = name
+            user.profile.save()
+            login(request, authenticate(username=user.username, password=user.username))
+            messages.success(request,request.user.username+'帳號認證成功。')
+        else:
+            messages.error(request,'帳號認證失敗。')
+        return redirect(reverse('main:main'))
+    
+    def post(self, request, *args, **kwargs):
+        return redirect(reverse('main:main'))
 
-        self.page_title = group.name+'群組資料'
-        kwargs['items'] = DBItemGroups.objects.filter(user=request.user, group=group)
-        kwargs['groupName'] = group.name
-        return super(CPermissionsDetail, self).get(request, *args, **kwargs)
+class CXMLtest(BaseView):
+    template_name = '' # xxxx/xxx.htmls
+    page_title = '' # title
 
-
+    def get(self, request, *args, **kwargs):
+        xml = """
+        <?xml version="1.0" encoding="ISO-8859-1"?>
+         <root>
+         <id>demo3</id>
+         <name>姓名2</name>
+         <other>(其他資訊)</other>
+        </root
+        """
+        
+        xml2 = """
+        <?xml version="1.0" encoding="ISO-8859-1"?>
+         <root>
+         <msg>error</msg>
+        </root
+        """
+        
+        return HttpResponse(xml)
+    
+    def post(self, request, *args, **kwargs):
+        return redirect(reverse('main:main'))

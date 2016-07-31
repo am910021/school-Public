@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from account.models import Profile
-from main.models import Menu,Item, DBItemGroupName, DBItemGroups
+from main.models import Menu,Item, DBGroupName, DBGroupItem
 from .forms import UserForm, UserProfileForm
 
 # Create your models here.
@@ -13,7 +13,7 @@ class ItemGroupManage:
         data = self.data
         data['menu_all'] = Menu.objects.all().iterator()
         #data['user_all'] = User.objects.all().iterator()
-        data['user_all'] = Profile.objects.filter(type=0).iterator()
+        data['user_all'] = Profile.objects.filter(type=0).filter(group=None).iterator()
         return
     
     def setEditList(self):
@@ -21,22 +21,23 @@ class ItemGroupManage:
         try:
             users = []
             items = []
-            self.group = DBItemGroupName.objects.get(id=data['id'])
-            for i in DBItemGroups.objects.filter(group=self.group).values_list('user', flat=True).distinct():
-                users.append(User.objects.get(id=i))
-            for i in DBItemGroups.objects.filter(group=self.group).values_list('item', flat=True).distinct():
+            self.group = DBGroupName.objects.get(id=data['id'])
+            for i in Profile.objects.filter(group=self.group):
+                users.append(i.user)
+            for i in DBGroupItem.objects.filter(group=self.group).values_list('item', flat=True).distinct():
                 items.append(Item.objects.get(id=i))
             data['users'] = users
             data['items'] = items
             data['name'] = self.group.name
             return True
         except Exception as e:
+            print(e)
             return False
         
     def save(self,name): 
         data = self.data
         group = self.group
-        if(group.name!=name) and (len(DBItemGroupName.objects.filter(name=name))!=0):
+        if(group.name!=name) and (len(DBGroupName.objects.filter(name=name))!=0):
             data['name_error'] = "此名稱已經存在，請在試一次．"
             data['name'] = name
             return False
@@ -45,10 +46,15 @@ class ItemGroupManage:
         group.userQty=len(self.userArr)
         group.save()
         
-        DBItemGroups.objects.filter(group=group).delete()
+        DBGroupItem.objects.filter(group=group).delete()
+        for i in Profile.objects.filter(group=group):
+            i.group=None
+            i.save()
         for i in self.userArr:
-            for j in self.itemArr:
-                DBItemGroups.objects.create(item=j, user=i, group=group)
+            i.profile.group = group
+            i.profile.save()
+        for j in self.itemArr:
+            DBGroupItem.objects.create(item=j, group=group)     
         return True
         
     def create(self, name):
@@ -56,17 +62,18 @@ class ItemGroupManage:
         if(name==""):
             data['name_error'] = "名稱不能留空．"
             return False
-        if(len(DBItemGroupName.objects.filter(name=name))>0):
+        if(len(DBGroupName.objects.filter(name=name))>0):
             data['name_error'] = "此名稱已經存在，請在試一次．"
             data['name'] = name
             data['items'] = self.itemArr
             data['users'] = self.userArr
             return False
-        
-        group = DBItemGroupName.objects.create(name=name, itemQty=len(self.itemArr), userQty=len(self.userArr))
+        group = DBGroupName.objects.create(name=name, itemQty=len(self.itemArr), userQty=len(self.userArr))
         for i in self.userArr:
-            for j in self.itemArr:
-                DBItemGroups.objects.create(item=j, user=i, group=group)
+            i.profile.group = group
+            i.profile.save()
+        for j in self.itemArr:
+            DBGroupItem.objects.create(item=j, group=group)     
         return True
     
     def userValid(self, users):
@@ -74,12 +81,12 @@ class ItemGroupManage:
         self.userArr = []
         for i in users:
             user = User.objects.filter(id=i)
-            print(i)
             if len(user)==1:
                 self.userArr.append(user[0])
             else:
                 data['user_error'] = "表單資料不合法．"
                 self.userArr = []
+                print("user fail")
                 return False
         return True
     
@@ -93,8 +100,27 @@ class ItemGroupManage:
             else:
                 data['item_error'] = "表單資料不合法．"
                 self.itemArr = []
+                print("item fail")
                 return False
         return True
+    
+    def getDetail(self):
+        data = self.data
+        try:
+            users = []
+            items = []
+            group = DBGroupName.objects.get(id=data['id'])
+            for i in Profile.objects.filter(group=group):
+                users.append(i.user)
+            for i in DBGroupItem.objects.filter(group=group).values_list('item', flat=True).distinct():
+                items.append(Item.objects.get(id=i))
+            data['users'] = users
+            data['items'] = items
+            data['group'] = group
+            return True
+        except Exception as e:
+            print(e)
+            return False
     
 class AccountManage:
     def __init__(self, kwargs):
@@ -103,7 +129,7 @@ class AccountManage:
     def getUser(self):
         data = self.data
         #users = []
-        #for i in DBItemGroups.objects.filter(group=group).values_list('user', flat=True).distinct():
+        #for i in DBGroupItem.objects.filter(group=group).values_list('user', flat=True).distinct():
         #    users.append(User.objects.get(id=i)
         data['users'] = User.objects.all()
         
@@ -121,7 +147,7 @@ class AccountManage:
         try:
             user = User.objects.get(id=self.data['id'])
             self.data['account'] = user
-            self.data['permissions'] = DBItemGroups.objects.filter(user=user).order_by('item').order_by('group')
+            self.data['permissions'] = DBGroupItem.objects.filter(user=user).order_by('item').order_by('group')
         except Exception as e: 
             print(e)
             return False

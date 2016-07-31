@@ -25,14 +25,20 @@
     <div class="row">
         <div class="col-md-12">
             <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-4">
                     <h3>{{page_title}}</h3>
                 </div>
                 <div class="col-md-2 buttom-wrapper">
-                    <a href="{% url 'control:permissionsAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">新增權限群組</a>
+                    <a href="{% url 'control:permissionsAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">查詢</a>
                 </div>
-                <div class="col-md-3 buttom-wrapper">
-                    <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:permissionsAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">新增權限(指標)</a>
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:permissionsAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">新增權限</a>
+                </div>
+                <div class="col-md-2 buttom-wrapper">
+                    <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">管理員首頁</a>
                 </div>
             </div>
 		    <div class="row">

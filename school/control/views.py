@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from main.views import BaseView
-from main.models import Menu, Item, ShinyApp, Setting, DBItemGroupName, DBItemGroups
+from main.models import Menu, Item, ShinyApp, Setting, DBGroupName, DBGroupItem
 from .models import ItemGroupManage, AccountManage
 from .forms  import FMenu, FItem, FShinyApp, UserForm, UserProfileForm , UserEditForm
 # Create your views here.
@@ -699,7 +699,7 @@ class CPermissions(AdminBase):
     page_title = '權限管理' # title
 
     def get(self, request, *args, **kwargs):
-        kwargs['group'] = DBItemGroupName.objects.all().iterator()
+        kwargs['group'] = DBGroupName.objects.all().iterator()
         return super(CPermissions, self).get(request, *args, **kwargs)
     
 class CPermissionsAdd(AdminBase):
@@ -744,6 +744,7 @@ class CPermissionsEdit(AdminBase):
         users = request.POST.getlist('users')
         items = request.POST.getlist('items')
         name = request.POST.get('name')
+        print(True)
         if cgroup.userValid(users) and cgroup.itemValid(items) and cgroup.save(name):
             messages.success(request, "新增 %s 編輯成功。" % (name, ) )
             return redirect(reverse('control:permissions'))
@@ -753,19 +754,10 @@ class CPermissionsDetail(AdminBase):
     template_name = 'permissions/detail.html' # xxxx/xxx.html
 
     def get(self, request, *args, **kwargs):
-        try:
-            users = []
-            items = []
-            group = DBItemGroupName.objects.get(id=kwargs['id'])
-            for i in DBItemGroups.objects.filter(group=group).values_list('user', flat=True).distinct():
-                users.append(User.objects.get(id=i))
-            for i in DBItemGroups.objects.filter(group=group).values_list('item', flat=True).distinct():
-                items.append(Item.objects.get(id=i))
-            kwargs['users'] = users
-            kwargs['items'] = items
-            self.page_title = group.name+" 群組詳細資料"
-        except Exception as e:
+        cgroup = ItemGroupManage(kwargs)
+        if not cgroup.getDetail():
             return redirect(reverse('control:permissions'))
+        self.page_title = kwargs['group'].name+" 群組詳細資料"
         return super(CPermissionsDetail, self).get(request, *args, **kwargs)
     
 class CPermissionsRemove(AdminBase):
@@ -775,9 +767,9 @@ class CPermissionsRemove(AdminBase):
         print(request.POST.get('groupID'))
         print(request.POST.get('groupName'))
         try:
-            group = DBItemGroupName.objects.get(id=request.POST.get('groupID'), name=request.POST.get('groupName'))
+            group = DBGroupName.objects.get(id=request.POST.get('groupID'), name=request.POST.get('groupName'))
             name = group.name
-            DBItemGroups.objects.filter(group=group).delete()
+            DBGroupItem.objects.filter(group=group).delete()
             group.delete()
             messages.success(request, "新增 %s 移除成功。" % (name, ))
         except Exception as e:

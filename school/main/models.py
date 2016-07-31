@@ -50,12 +50,12 @@ class Item(models.Model):
         
 
     def delete(self, *args, **kwargs):
-        groups = DBItemGroups.objects.filter(item=self)
+        groups = DBGroupItem.objects.filter(item=self)
         if len(groups)>0:
             for i in groups.values_list('group', flat=True).distinct():
-                group = DBItemGroupName.objects.get(id=i)
-                userCount = len(DBItemGroups.objects.filter(group=group).exclude(item=self).values_list('user', flat=True).distinct())
-                itemCount = len(DBItemGroups.objects.filter(group=group).exclude(item=self).values_list('item', flat=True).distinct())
+                group = DBGroupName.objects.get(id=i)
+                userCount = len(DBGroupItem.objects.filter(group=group).exclude(item=self).values_list('user', flat=True).distinct())
+                itemCount = len(DBGroupItem.objects.filter(group=group).exclude(item=self).values_list('item', flat=True).distinct())
                 group.itemQty=itemCount
                 group.userQty=userCount
                 group.save() 
@@ -109,17 +109,16 @@ class ShinyApp(models.Model):
         self.item.save()
         
          
-class DBItemGroupName(models.Model):
+class DBGroupName(models.Model):
     name = models.CharField(max_length=128)
     itemQty = models.IntegerField()
     userQty = models.IntegerField()
     def __str__(self):
         return self.name+"群組"
     
-class DBItemGroups(models.Model):
+class DBGroupItem(models.Model):
     item = models.ForeignKey(Item)
-    user = models.ForeignKey(User)
-    group = models.ForeignKey(DBItemGroupName)
+    group = models.ForeignKey(DBGroupName)
     def __str__(self):
         return "所屬： "+self.group.name+"群組"
     

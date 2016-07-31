@@ -1,25 +1,25 @@
 	$(document).ready(function() {
-	    $('#undo_redo').multiselect({
-	        right: '#undo_redo_to',
-	        undo: '#undo_redo_undo',
-	        rightAll: '#undo_redo_rightAll',
-	        rightSelected: '#undo_redo_rightSelected',
-	        leftSelected: '#undo_redo_leftSelected',
-	        leftAll: '#undo_redo_leftAll',
-	        redo: '#undo_redo_redo',
+	    $('#multiselect').multiselect({
+	        right: '#added',
+	        undo: '#undo',
+	        rightAll: '#rightAll',
+	        rightSelected: '#rightSelected',
+	        leftSelected: '#leftSelected',
+	        leftAll: '#leftAll',
+	        redo: '#redo',
 	        search: {
 	            left: '<input type="text" name="q" class="form-control" placeholder="搜尋..." />'
 	        },
 	    });
 
-	    $('#undo_redo2').multiselect({
-	        right: '#undo_redo_to2',
-	        undo: '#undo_redo_undo2',
-	        rightAll: '#undo_redo_rightAll2',
-	        rightSelected: '#undo_redo_rightSelected2',
-	        leftSelected: '#undo_redo_leftSelected2',
-	        leftAll: '#undo_redo_leftAll2',
-	        redo: '#undo_redo_redo2',
+	    $('#multiselect2').multiselect({
+	        right: '#added2',
+	        undo: '#undo2',
+	        rightAll: '#rightAll2',
+	        rightSelected: '#rightSelected2',
+	        leftSelected: '#leftSelected2',
+	        leftAll: '#leftAll2',
+	        redo: '#redo2',
 	        search: {
 	            left: '<input type="text" name="q" class="form-control" placeholder="搜尋..." />'
 	        },
@@ -28,8 +28,8 @@
 
 	    $('#form1').on('submit', function() {
 	        var $name = $('#id_name');
-	        var $select = $('#undo_redo_to');
-	        var $select2 = $('#undo_redo_to2');
+	        var $select = $('#added');
+	        var $select2 = $('#added2');
 	        var pass = true;
 	        if ($select2.children().length == 0) {
 	            $select2.parent().addClass('has-error has-feedback');

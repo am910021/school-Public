@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views.generic import TemplateView
 from django.conf import settings
-from .models import Menu, Item, ShinyApp, DBItemGroups
+from .models import Menu, Item, ShinyApp, DBGroupItem
 from .aescipher import AESCipher as ase
 from .aescipher import toSHA as sha1
 # Create your views here.
@@ -86,8 +86,10 @@ class CShinyApp(UserBase):
             item = Item.objects.get(id=itemID)
             shiny = ShinyApp.objects.filter(item=item).order_by("order")
             kwargs['menuID'] = item.menu.id
-            group = DBItemGroups.objects.filter(user=request.user, item=item)
-            kwargs['token'] = True if len(group)>=1 or request.user.profile.type>=1 else False
+            user = request.user
+            
+            group = DBGroupItem.objects.filter(group=user.profile.group, item=item)
+            kwargs['token'] = True if len(group)>=1 or user.profile.type>=1 else False
         except Exception as e:
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)

@@ -75,11 +75,11 @@
               </td>
               <td>
                 {% if i.profile.type == 0 %}
-                權限群組分類
+                權限群組分類 {% if i.profile.isAuth %}, 三方認證 {% else %}, 本機帳戶 {% endif %}
                 {% elif i.profile.type == 1 %}
-                混合式分類（管理員）
+                管理員
                 {% elif i.profile.type == 2 %}
-                混合式分類（超級管理員）
+                超級管理員
                 {% endif %}
               </td>
               <td>
