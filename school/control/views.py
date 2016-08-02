@@ -810,6 +810,7 @@ class CAccountAdd(AdminBase):
         userProfile.user = user
         userProfile.type=1 if 'isManager' in request.POST else 0 #0 = Normal #1 = Manager
         userProfile.isActive = False if 'isBan' in request.POST else True
+        userProfile.isAuth = False
         userProfile.save()
         messages.success(request,user.username+' 帳號加入成功。')
         return redirect(reverse('control:account'))

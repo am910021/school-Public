@@ -18,7 +18,8 @@ import account.views as views
 from .views import CCenter, CModify, CModifyPwd, CPermissions, CAccountAuth, CXMLtest
 
 urlpatterns = [
-    url(r'^auth/(?P<token>\w+)/$', CAccountAuth.as_view(), name="accountAuth"),        
+    #url(r'^auth/(?P<token>\w+)/$', CAccountAuth.as_view(), name="accountAuth"),    
+    url(r'^auth/(?P<token>[A-Fa-f0-9]+)/$', CAccountAuth.as_view(), name="accountAuth"),      
     url(r'^xmltest/$', CXMLtest.as_view()),      
     url(r'^login/$', views.Login.as_view(), name='login'), 
     url(r'^signup/$', views.SignUp.as_view(), name='signup'), 

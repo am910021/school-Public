@@ -138,6 +138,7 @@ def createSuperuser():
         userProflie.fullName=username
         userProflie.type = 2  #0=normal user, 1=manager, 2=administrator
         userProflie.isActive = True
+        userProflie.isAuth = False
         userProflie.save()
         
         print(bcolors.OKBLUE + "\n "+ username +"超級管理員帳號建立成功 \n \n" + bcolors.ENDC)

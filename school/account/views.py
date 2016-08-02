@@ -190,19 +190,27 @@ class CAccountAuth(BaseView):
 
     def get(self, request, *args, **kwargs):
         token = kwargs['token']
+        if len(token)!=64:
+            return HttpResponse('第三方驗證錯誤無法使用.')
         res=httpget.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("test", token))
         #res=httpget.get("http://127.0.0.1:8000/account/xmltest/")
         res.encoding='utf8'
         root = BeautifulSoup(res.text, "xml").select('root')[0]
         error = root.select('msg')
         if len(error)>0:
-            return HttpResponse('驗證錯誤')
+            return HttpResponse('第三方驗證錯誤無法使用.')
         id = root.select('id')[0].text
         name = root.select('name')[0].text
         other = root.select('other')[0].text
         
         user = User.objects.filter(username=id)
-        if len(user)==0:
+        if len(user)==1 and user[0].profile.isAuth and user[0].profile.isActive:
+            user = user[0]
+            user.profile.fullName = name
+            user.profile.save()
+            login(request, authenticate(username=user.username, password=user.username))
+            messages.success(request,request.user.username+'帳號認證成功。')
+        elif len(user)==0:
             newUser = User()
             newUser.username = id
             newUser.set_password(id)
@@ -216,12 +224,6 @@ class CAccountAuth(BaseView):
             profile.save()
             messages.success(request,request.user.username+'帳號認證成功。')
             login(request, authenticate(username=id, password=id))
-        elif len(user)==1 and user[0].profile.isAuth and user[0].profile.isActive:
-            user = user[0]
-            user.profile.fullName = name
-            user.profile.save()
-            login(request, authenticate(username=user.username, password=user.username))
-            messages.success(request,request.user.username+'帳號認證成功。')
         else:
             messages.error(request,'帳號認證失敗。')
         return redirect(reverse('main:main'))
