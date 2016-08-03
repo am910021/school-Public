@@ -231,6 +231,7 @@ class CAccountAuth(BaseView):
             login(request, authenticate(username=id, password=id))
         else:
             return HttpResponse('第三方驗證錯誤無法使用.')
+        return redirect(reverse('main:main'))
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('main:main'))
