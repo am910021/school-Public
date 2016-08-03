@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django import forms
 from bs4 import BeautifulSoup
-import requests as httpget
+import requests as requests
 from account.models import Profile
 from account.forms import UserForm, UserProfileForm
 from main.views import BaseView, UserBase
@@ -192,16 +192,21 @@ class CAccountAuth(BaseView):
         token = kwargs['token']
         if len(token)!=64:
             return HttpResponse('第三方驗證錯誤無法使用.')
-        res=httpget.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("test", token))
-        #res=httpget.get("http://127.0.0.1:8000/account/xmltest/")
-        res.encoding='utf8'
-        root = BeautifulSoup(res.text, "xml").select('root')[0]
-        error = root.select('msg')
-        if len(error)>0:
+        try:
+            res=requests.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("yhImR", token))
+        except Exception as e:
+            print(e)
             return HttpResponse('第三方驗證錯誤無法使用.')
+        root = BeautifulSoup(res.text,"lxml").select('root')
+        if len(root)==0:
+            return HttpResponse('第三方驗證錯誤無法使用.')
+        if len(root[0].select('msg'))>0:
+            return HttpResponse('第三方驗證錯誤無法使用.')
+        
+        root = root[0]
         id = root.select('id')[0].text
         name = root.select('name')[0].text
-        other = root.select('other')[0].text
+        other = root.select('other')[0].text if len(root.select('other'))>0 else None
         
         user = User.objects.filter(username=id)
         if len(user)==1 and user[0].profile.isAuth and user[0].profile.isActive:
@@ -230,29 +235,4 @@ class CAccountAuth(BaseView):
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('main:main'))
-
-class CXMLtest(BaseView):
-    template_name = '' # xxxx/xxx.htmls
-    page_title = '' # title
-
-    def get(self, request, *args, **kwargs):
-        xml = """
-        <?xml version="1.0" encoding="ISO-8859-1"?>
-         <root>
-         <id>demo3</id>
-         <name>姓名2</name>
-         <other>(其他資訊)</other>
-        </root
-        """
-        
-        xml2 = """
-        <?xml version="1.0" encoding="ISO-8859-1"?>
-         <root>
-         <msg>error</msg>
-        </root
-        """
-        
-        return HttpResponse(xml)
     
-    def post(self, request, *args, **kwargs):
-        return redirect(reverse('main:main'))

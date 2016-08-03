@@ -147,7 +147,7 @@ class AccountManage:
         try:
             user = User.objects.get(id=self.data['id'])
             self.data['account'] = user
-            self.data['permissions'] = DBGroupItem.objects.filter(user=user).order_by('item').order_by('group')
+            self.data['permissions'] = DBGroupItem.objects.filter(group=user.profile.group)
         except Exception as e: 
             print(e)
             return False

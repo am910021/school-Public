@@ -100,7 +100,7 @@ $('#tbody2>tr:even').addClass('info');
         {% for i in permissions %}
         <tr>
           <td>
-            {{i.item.menu.name}}--{{i.item.name}}
+            {{i.menu.name}}--{{i.item.name}}
           </td>
           <td>
             {{i.group.name}}

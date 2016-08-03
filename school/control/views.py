@@ -870,7 +870,8 @@ class CAccountRemove(AdminBase):
     def post(self, request, *args, **kwargs):
         try:
             user = User.objects.get(id=request.POST.get('accountID'), username=request.POST.get('accountName'))
-            user.profile.delete()
+            if user.profile:
+                user.profile.delete()
             user.delete()
             username = user.username
         except Exception as e:
