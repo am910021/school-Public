@@ -29,7 +29,11 @@
     <br>
     <div class="row">
       <div class="col-md-offset-1 col-md-10">
-      {% if not group %}
+      {% if request.user.profile.type == 1 %}
+        <span class="text-success h2">此帳號為管理員，擁有所有指標的管理權限。</span>
+      {% elif request.user.profile.type == 2 %}
+        <span class="text-success h2">此帳號為超級管理員，擁有全域管理權限。</span>
+      {% elif not group %}
         <span class="text-success h2">很抱歉你目前沒有任何的權限。</span>
       {% else %}
         <span class="text-success h2">{{group.name}}權限群組</span>

@@ -74,11 +74,11 @@ $('#tbody2>tr:even').addClass('info');
           </td>
           <td>
             {% if account.profile.type == 0 %}
-            權限群組分類
+            權限群組分類{% if account.profile.isAuth %}, 第三方認證 {% else %}, 本機帳戶 {% endif %}
             {% elif account.profile.type == 1 %}
-            混合式分類（管理員）,選單管理, 項目管理, APP管理
+            管理員，所有指標管理權限
             {% elif account.profile.type == 2 %}
-            混合式分類（超級管理員）, 全域管理
+            超級管理員，全域管理權限
             {% endif %}
           </td>
         </tr>

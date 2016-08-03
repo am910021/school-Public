@@ -227,11 +227,10 @@ class CAccountAuth(BaseView):
             profile.isActive=True
             profile.isAuth=True
             profile.save()
-            messages.success(request,request.user.username+'帳號認證成功。')
+            messages.success(request,newUser.username+'帳號認證成功。')
             login(request, authenticate(username=id, password=id))
         else:
-            messages.error(request,'帳號認證失敗。')
-        return redirect(reverse('main:main'))
+            return HttpResponse('第三方驗證錯誤無法使用.')
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('main:main'))
