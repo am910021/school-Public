@@ -36,12 +36,12 @@ function show(appID){
             </div>
         </div>
 	    {% else %}
-	    <div class="row">
+	    <!-- <div class="row">
 			<div class="col-md-12 ">
 			  <span class="text-success h2">指標--{{itemName}}</span>
 			</div>
 	    </div>
-	    <br>
+	    <br> -->
 	    <div class="row">
 	        {% for i in listApps %}
 	            <div class="col-md-3 buttom-wrapper">
@@ -59,7 +59,7 @@ function show(appID){
 	    </form>
 	    {% for i in shiny %}
 	    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
-	        <span class="text-info h3">{{i.name}}</span>
+	        <!-- <span class="text-info h3">{{i.name}}</span> -->
 		    <iframe src="/shiny/apps/{{i.dirName}}/"  class="app-iframe"></iframe>
 		    {{listApps|delOneNumber}}
 	    </div>

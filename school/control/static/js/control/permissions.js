@@ -31,7 +31,7 @@
 	        var $select = $('#added');
 	        var $select2 = $('#added2');
 	        var pass = true;
-	        if ($select2.children().length == 0) {
+	        /*if ($select2.children().length == 0) {
 	            $select2.parent().addClass('has-error has-feedback');
 	            $select2.focus();
 	            pass = false;
@@ -40,7 +40,7 @@
 	            $select.parent().addClass('has-error has-feedback');
 	            $select.focus();
 	            pass = false;
-	        }
+	        }*/s
 	        if ($name.val().length == 0) {
 	            $name.parent().attr('class', 'form-group has-error has-feedback');
 	            $name.parent().append('<span id="error-icon" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
@@ -69,18 +69,18 @@
 	        }
 	    });
 
-	    $('select[class~="right-select"]').on('DOMSubtreeModified', function() {
+	    /*$('select[class~="right-select"]').on('DOMSubtreeModified', function() {
 	        var $this = $(this)
 	        if ($this.children().length == 0) {
 	            $this.parent().addClass('has-error has-feedback');
 	        } else {
 	            $this.parent().removeClass('has-error has-feedback');
 	        }
-	    });
+	    });*/
 	    
 		$('tbody>tr:even').addClass("info");
 		
-	    $('#tr-search').on('keyup', function() {
+	    /*$('#tr-search').on('keyup', function() {
 	        var keyword = $('#tr-search').val();
 	        if (keyword !== '') {
 	            $('tbody>tr').css("display", "none");
@@ -88,7 +88,7 @@
 	        } else {
 	            $('tbody>tr').attr("style", "")
 	        }
-	    });
+	    });*/
 	    
 	    $('button[class~="redirect"]').on('click', function() {
 	    	//alert(this.value)

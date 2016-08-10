@@ -11,7 +11,7 @@ import requests as requests
 from account.models import Profile
 from account.forms import UserForm, UserProfileForm
 from main.views import BaseView, UserBase
-from main.models import DBGroupItem, DBGroupName
+from main.models import DBGroupItem, DBGroupName, DBGroupUser
 
 
 class Login(BaseView):
@@ -178,9 +178,24 @@ class CPermissions(UserBase):
     page_title = '權限資料' # title
 
     def get(self, request, *args, **kwargs):
-        group = request.user.profile.group
-        kwargs['items'] = DBGroupItem.objects.filter(group=group)
-        kwargs['group'] = group
+        itemArr = []
+        user = request.user
+        if user.profile.level==0:
+            for i in DBGroupUser.objects.filter(user=user):
+                for j in DBGroupItem.objects.filter(group=i.group):
+                    itemArr.append(j)
+        elif user.profile.level > 0:
+            for i in DBGroupItem.objects.filter(group=user.profile.adAdmin):
+                itemArr.append(i)
+            for i in DBGroupItem.objects.filter(group=user.profile.adAdmin2):
+                itemArr.append(i)
+            for i in DBGroupItem.objects.filter(group=user.profile.atAdmin):
+                itemArr.append(i)
+            for i in DBGroupItem.objects.filter(group=user.profile.atAdmin2):
+                itemArr.append(i)
+        
+        kwargs['items'] = itemArr
+        kwargs['itemQty'] = len(itemArr)
         
         return super(CPermissions, self).get(request, *args, **kwargs)
     
@@ -206,13 +221,14 @@ class CAccountAuth(BaseView):
         root = root[0]
         id = root.select('id')[0].text
         name = root.select('name')[0].text
-        other = root.select('other')[0].text if len(root.select('other'))>0 else None
+        
         
         user = User.objects.filter(username=id)
         if len(user)==1 and user[0].profile.isAuth and user[0].profile.isActive:
             user = user[0]
             user.profile.fullName = name
             user.profile.save()
+            self.isAdmin(root,user.profile)
             login(request, authenticate(username=user.username, password=user.username))
             messages.success(request,request.user.username+'帳號認證成功。')
         elif len(user)==0:
@@ -227,6 +243,7 @@ class CAccountAuth(BaseView):
             profile.isActive=True
             profile.isAuth=True
             profile.save()
+            self.isAdmin(root,profile)
             messages.success(request,newUser.username+'帳號認證成功。')
             login(request, authenticate(username=id, password=id))
         else:
@@ -235,4 +252,113 @@ class CAccountAuth(BaseView):
     
     def post(self, request, *args, **kwargs):
         return redirect(reverse('main:main'))
+    
+    def isAdmin(self, xml, profile):
+        ad_iscoladmin = True if xml.select('ad_iscoladmin')[0].text=="True" else False
+        ad_isdepadmin = True if xml.select('ad_isdepadmin')[0].text=="True" else False
+        ad_iscoladmin2 = True if xml.select('ad_iscoladmin2')[0].text=="True" else False
+        ad_isdepadmin2 = True if xml.select('ad_isdepadmin2')[0].text=="True" else False
+        at_iscoladmin = True if xml.select('at_iscoladmin')[0].text=="True" else False
+        at_isdepadmin = True if xml.select('at_isdepadmin')[0].text=="True" else False
+        at_iscoladmin2 = True if xml.select('at_iscoladmin2')[0].text=="True" else False
+        at_isdepadmin2 = True if xml.select('at_isdepadmin2')[0].text=="True" else False
+        adAdmin = None
+        adAdmin2 = None
+        atAdmin = None
+        atAdmin2 = None
+        ad_adminCode = None
+        ad_adminName = None
+        ad_adminCode2 = None
+        ad_adminName2 = None
+        at_adminCode = None
+        at_adminName = None
+        at_adminCode2 = None
+        at_adminName2 = None
+        level = 0
+        
+        if ad_iscoladmin:
+            ad_adminCode = xml.select('ad_colno')[0].text
+            ad_adminName = xml.select('ad_colname')[0].text
+            level=1
+            print("ad_iscoladmin")
+        elif ad_isdepadmin:
+            ad_adminCode = xml.select('ad_depno')[0].text
+            ad_adminName = xml.select('ad_depname')[0].text
+            level=2 if level!=1 else 1
+            print("ad_isdepadmin")
+        if ad_adminCode:
+            if len(DBGroupName.objects.filter(code=ad_adminCode))==0:
+                adAdmin = DBGroupName.objects.create(code=ad_adminCode, name=ad_adminName, level=1)
+            else:
+                adAdmin = DBGroupName.objects.get(code=ad_adminCode)
+            
+        
+        if ad_iscoladmin2:
+            ad_adminCode2 = xml.select('ad_colno2')[0].text
+            ad_adminName2 = xml.select('ad_colname2')[0].text
+            level=1
+            print("ad_iscoladmin2")
+        elif ad_isdepadmin2:
+            ad_adminCode2 = xml.select('ad_depno2')[0].text
+            ad_adminName2 = xml.select('ad_depname2')[0].text
+            level=2 if level!=1 else 1
+            print("ad_isdepadmin2")
+        if ad_adminCode2:
+            if len(DBGroupName.objects.filter(code=ad_adminCode2))==0:
+                adAdmin2 = DBGroupName.objects.create(code=ad_adminCode2, name=ad_adminName2, level=2)
+            else:
+                adAdmin2 = DBGroupName.objects.get(code=ad_adminCode2)
+            
+            
+        if at_iscoladmin:
+            at_adminCode = xml.select('at_colno')[0].text
+            at_adminName = xml.select('at_colname')[0].text
+            level=1
+            print("at_iscoladmin")
+        elif at_isdepadmin:
+            at_adminCode = xml.select('at_depno')[0].text
+            at_adminName = xml.select('at_depname')[0].text
+            level=2 if level!=1 else 1
+            print("at_isdepadmin")
+        if at_adminCode:
+            if len(DBGroupName.objects.filter(code=at_adminCode))==0:
+                atAdmin = DBGroupName.objects.create(code=at_adminCode, name=at_adminName, level=1)
+            else:
+                atAdmin = DBGroupName.objects.get(code=at_adminCode)
+            
+            
+        if at_iscoladmin2:
+            at_adminCode2 = xml.select('at_colno2')[0].text
+            at_adminName2 = xml.select('at_colname2')[0].text
+            level=1
+            print("at_iscoladmin2")
+        elif at_isdepadmin2:
+            at_adminCode2 = xml.select('at_depno2')[0].text
+            at_adminName2 = xml.select('at_depname2')[0].text
+            level=2 if level!=1 else 1
+            print("at_isdepadmin2")
+        if at_adminCode2:
+            if len(DBGroupName.objects.filter(code=at_adminCode2))==0:
+                atAdmin2 = DBGroupName.objects.create(code=at_adminCode2, name=at_adminName2, level=2)
+            else:
+                atAdmin2 = DBGroupName.objects.get(code=at_adminCode2)
+            
+            
+            
+        if adAdmin:
+            print('adAdmin')
+        if adAdmin2:
+            print('adAdmin2') 
+        if atAdmin:
+            print('atAdmin')
+        if atAdmin2:
+            print('atAdmin2')
+            
+        profile.adAdmin = adAdmin
+        profile.adAdmin2 = adAdmin2
+        profile.atAdmin = atAdmin
+        profile.atAdmin2 = atAdmin2
+        profile.level = level
+        profile.save()
+        
     

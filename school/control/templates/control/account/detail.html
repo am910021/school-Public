@@ -94,16 +94,22 @@ $('#tbody2>tr:even').addClass('info');
           <th>
             群組
           </th>
+          <th>
+            主管
+          </th> 
         </tr>
       </thead>
       <tbody id="tbody2">
         {% for i in permissions %}
         <tr>
           <td>
-            {{i.menu.name}}--{{i.item.name}}
+            {{i.item.menu.name}}--{{i.item.name}}
           </td>
           <td>
             {{i.group.name}}
+          </td>
+          <td>
+            {% if i.group.level == 0%}否{% elif i.group.level == 1 %}一級{% elif i.group.level == 2 %}二級{% endif %}
           </td>
         </tr>
         {% endfor %}

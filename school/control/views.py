@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from main.views import BaseView
-from main.models import Menu, Item, ShinyApp, Setting, DBGroupName, DBGroupItem
+from main.models import Menu, Item, ShinyApp, Setting, DBGroupName, DBGroupItem, DBGroupUser
 from .models import ItemGroupManage, AccountManage
 from .forms  import FMenu, FItem, FShinyApp, UserForm, UserProfileForm , UserEditForm
 # Create your views here.
@@ -770,6 +770,8 @@ class CPermissionsRemove(AdminBase):
             group = DBGroupName.objects.get(id=request.POST.get('groupID'), name=request.POST.get('groupName'))
             name = group.name
             DBGroupItem.objects.filter(group=group).delete()
+            if group.level==0:
+                DBGroupUser.objects.filter(group=group).delete()
             group.delete()
             messages.success(request, "新增 %s 移除成功。" % (name, ))
         except Exception as e:

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from account.models import Profile
-from main.models import Menu,Item, DBGroupName, DBGroupItem
+from main.models import Menu,Item, DBGroupName, DBGroupItem, DBGroupUser
 from .forms import UserForm, UserProfileForm
 
 # Create your models here.
@@ -11,9 +11,10 @@ class ItemGroupManage:
     
     def setList(self):
         data = self.data
+        user = []
         data['menu_all'] = Menu.objects.all().iterator()
-        #data['user_all'] = User.objects.all().iterator()
-        data['user_all'] = Profile.objects.filter(type=0).filter(group=None).iterator()
+        data['user_all'] = Profile.objects.filter(type=0, level=0).iterator()
+        
         return
     
     def setEditList(self):
@@ -22,13 +23,16 @@ class ItemGroupManage:
             users = []
             items = []
             self.group = DBGroupName.objects.get(id=data['id'])
-            for i in Profile.objects.filter(group=self.group):
-                users.append(i.user)
+            level = self.group.level
+            if level==0:
+                for i in DBGroupUser.objects.filter(group=self.group):
+                    users.append(i.user)
             for i in DBGroupItem.objects.filter(group=self.group).values_list('item', flat=True).distinct():
                 items.append(Item.objects.get(id=i))
             data['users'] = users
             data['items'] = items
             data['name'] = self.group.name
+            data['level'] = level
             return True
         except Exception as e:
             print(e)
@@ -46,13 +50,12 @@ class ItemGroupManage:
         group.userQty=len(self.userArr)
         group.save()
         
+        if group.level==0:
+            DBGroupUser.objects.filter(group=group).delete()
+            for i in self.userArr:
+                DBGroupUser.objects.create(user=i, group=group)
+            
         DBGroupItem.objects.filter(group=group).delete()
-        for i in Profile.objects.filter(group=group):
-            i.group=None
-            i.save()
-        for i in self.userArr:
-            i.profile.group = group
-            i.profile.save()
         for j in self.itemArr:
             DBGroupItem.objects.create(item=j, group=group)     
         return True
@@ -70,8 +73,7 @@ class ItemGroupManage:
             return False
         group = DBGroupName.objects.create(name=name, itemQty=len(self.itemArr), userQty=len(self.userArr))
         for i in self.userArr:
-            i.profile.group = group
-            i.profile.save()
+            DBGroupUser.objects.create(user=i, group=group)
         for j in self.itemArr:
             DBGroupItem.objects.create(item=j, group=group)     
         return True
@@ -110,8 +112,9 @@ class ItemGroupManage:
             users = []
             items = []
             group = DBGroupName.objects.get(id=data['id'])
-            for i in Profile.objects.filter(group=group):
-                users.append(i.user)
+            if group.level==0:
+                for i in DBGroupUser.objects.filter(group=group):
+                    users.append(i.user)
             for i in DBGroupItem.objects.filter(group=group).values_list('item', flat=True).distinct():
                 items.append(Item.objects.get(id=i))
             data['users'] = users
@@ -145,9 +148,24 @@ class AccountManage:
     def getUserDetail(self):
         print(self.data['id'])
         try:
+            item = []
             user = User.objects.get(id=self.data['id'])
             self.data['account'] = user
-            self.data['permissions'] = DBGroupItem.objects.filter(group=user.profile.group)
+            profile = user.profile
+            if profile.adAdmin or profile.adAdmin2 or profile.atAdmin or profile.atAdmin2:
+                for i in DBGroupItem.objects.filter(group=profile.adAdmin):
+                    item.append(i)
+                for i in DBGroupItem.objects.filter(group=profile.adAdmin2):
+                    item.append(i)
+                for i in DBGroupItem.objects.filter(group=profile.atAdmin):
+                    item.append(i)
+                for i in DBGroupItem.objects.filter(group=profile.atAdmin2):
+                    item.append(i)
+            else:
+                for i in DBGroupUser.objects.filter(user=user):
+                    for j in DBGroupItem.objects.filter(group=i.group):
+                        item.append(j)
+            self.data['permissions'] = item
         except Exception as e: 
             print(e)
             return False

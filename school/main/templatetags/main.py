@@ -28,7 +28,6 @@ def setHide(data):
     style2="""
     display:black
     """
-    print(num)
     return style2 if num==1 else style
 
 

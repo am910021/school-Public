@@ -33,7 +33,7 @@
         <span class="text-success h2">此帳號為管理員，擁有所有指標的管理權限。</span>
       {% elif request.user.profile.type == 2 %}
         <span class="text-success h2">此帳號為超級管理員，擁有全域管理權限。</span>
-      {% elif not group %}
+      {% elif itemQty == 0 %}
         <span class="text-success h2">很抱歉你目前沒有任何的權限。</span>
       {% else %}
         <span class="text-success h2">{{group.name}}權限群組</span>
@@ -48,6 +48,9 @@
               <th>
                 APP數量
               </th>
+              <th>
+                群組
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -58,6 +61,9 @@
               </td>
               <td>
                 {{i.item.appQty}}
+              </td>
+              <td>
+                {{i.group.name}}
               </td>
             </tr>
             {% endfor %}

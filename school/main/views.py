@@ -10,6 +10,7 @@ from django.conf import settings
 from .models import Menu, Item, ShinyApp, DBGroupItem
 from .aescipher import AESCipher as ase
 from .aescipher import toSHA as sha1
+from main.models import DBGroupUser
 # Create your views here.
 
 class BaseView(TemplateView):
@@ -84,12 +85,8 @@ class CShinyApp(UserBase):
         try:
             itemID = kwargs['itemID'] if 'itemID' in kwargs else None
             item = Item.objects.get(id=itemID)
-            shiny = ShinyApp.objects.filter(item=item).order_by("order")
-            kwargs['menuID'] = item.menu.id
-            user = request.user
-            
-            group = DBGroupItem.objects.filter(group=user.profile.group, item=item)
-            kwargs['token'] = True if len(group)>=1 or user.profile.type>=1 else False
+            shiny = ShinyApp.objects.filter(item=item, isActive=True).order_by("order")
+            kwargs['menuID'] = item.menu.id 
         except Exception as e:
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)
@@ -106,6 +103,30 @@ class CShinyApp(UserBase):
         kwargs['shiny'] = shiny
         kwargs['totalApps'] = len(shiny)
         kwargs['listApps'] = list(range(0,len(shiny)))
+        
+        
+        #權限處理
+        user = request.user
+        itemArr = []
+        if user.profile.level==0:
+            for i in DBGroupUser.objects.filter(user=user):
+                for j in DBGroupItem.objects.filter(group=i.group):
+                    itemArr.append(j.item.id)
+            kwargs['token'] = True if item.id in itemArr else False
+        elif user.profile.level > 0:
+            for i in DBGroupItem.objects.filter(group=user.profile.adAdmin):
+                itemArr.append(i.item.id)
+            for i in DBGroupItem.objects.filter(group=user.profile.adAdmin2):
+                itemArr.append(i.item.id)
+            for i in DBGroupItem.objects.filter(group=user.profile.atAdmin):
+                itemArr.append(i.item.id)
+            for i in DBGroupItem.objects.filter(group=user.profile.atAdmin2):
+                itemArr.append(i.item.id)
+            kwargs['token'] = True if item.id in itemArr  else False
+        if user.profile.type>=1:
+            kwargs['token'] = True
+        
+        
         return super(CShinyApp, self).get(request, *args, **kwargs)
 
     def createCode(self, num):

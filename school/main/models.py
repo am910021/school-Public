@@ -111,13 +111,26 @@ class ShinyApp(models.Model):
          
 class DBGroupName(models.Model):
     name = models.CharField(max_length=128)
-    itemQty = models.IntegerField()
-    userQty = models.IntegerField()
+    itemQty = models.IntegerField(default=0)
+    userQty = models.IntegerField(default=0)
+    level = models.IntegerField(default=0) #0=個人，1=一級，2=二級
+    code = models.CharField(max_length=5, blank=True)
     def __str__(self):
         return self.name+"群組"
     
+    def getItemQty(self):
+        return len(DBGroupItem.objects.filter(group = self))
+    def getUserQty(self):
+        return len(DBGroupUser.objects.filter(group = self))
+    
 class DBGroupItem(models.Model):
     item = models.ForeignKey(Item)
+    group = models.ForeignKey(DBGroupName)
+    def __str__(self):
+        return "所屬： "+self.group.name+"群組"
+    
+class DBGroupUser(models.Model):
+    user = models.ForeignKey(User)
     group = models.ForeignKey(DBGroupName)
     def __str__(self):
         return "所屬： "+self.group.name+"群組"

@@ -31,6 +31,7 @@ $('#tbody2>tr:even').addClass('info');
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
     <h3>{{page_title}}</h3>
+    {% if group.level == 0%}
     <table class="table">
       <thead>
         <tr>
@@ -49,6 +50,12 @@ $('#tbody2>tr:even').addClass('info');
         {% endfor %}
        </tbody>
     </table>
+    {% else %}
+        <br><br>
+        <span class="h3">部門：{{group.name}}</span><br>
+        <span class="h3">級別：{% if group.level == 1 %}一級{% elif group.level == 2 %}二級{% endif %}</span>
+        <br><br>
+    {% endif %}
     <table class="table">
       <thead>
         <tr>

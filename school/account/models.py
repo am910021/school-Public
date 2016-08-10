@@ -14,7 +14,11 @@ class Profile(models.Model):
     expire = models.DateTimeField(blank=True)
     isActive = models.BooleanField(default=True)
     isAuth = models.BooleanField(default = True)
-    group = models.ForeignKey(DBGroupName, blank=True, null=True)
+    level = models.IntegerField(default=0) #0=個人，1=一級，2=二級
+    adAdmin = models.ForeignKey(DBGroupName, blank=True, null=True, related_name='adAdmin_fk')
+    adAdmin2 = models.ForeignKey(DBGroupName, blank=True, null=True, related_name='adAdmin2_fk')
+    atAdmin = models.ForeignKey(DBGroupName, blank=True, null=True, related_name='atAdmin_fk')
+    atAdmin2 = models.ForeignKey(DBGroupName, blank=True, null=True, related_name='atAdmin2_fk')
     
     def __str__(self):
         return self.user.username+"("+ self.fullName +")"

@@ -10,8 +10,59 @@
 <script src="{% static 'multiselect/js/multiselect.min.js' %}"></script>
 
 <script src="{% static 'js/control/permissions.js' %}"></script>
-<!-- <script>
-</script> -->
+<script>
+$(document).ready(function() {
+	
+ $('#tr-search').on('keyup', function() {
+     var arr = []
+     checkbox = $('input[type=checkbox]:checked');
+     for (i = 0; i < checkbox.length; i++) {
+         arr.push(checkbox[i].value)
+        }
+     search(arr)
+ });
+ 
+ $('input[type=checkbox]').on('click', function(){
+	 var arr = []
+	 checkbox = $('input[type=checkbox]:checked');
+	 for (i = 0; i < checkbox.length; i++) {
+		 arr.push(checkbox[i].value)
+		}
+	 search(arr)
+ });
+ 
+ function search(arr){
+	 var keyword = $('#tr-search').val();
+	 if(keyword == '' && arr.length != 0){
+		 $('tbody>tr').hide()
+		 var text = [];
+		 for (var i =0; i < arr.length; i++){
+			 $('tbody>tr').find(":contains('" + arr[i] + "')").parent().show();
+		 }
+	 }
+	 else if (keyword !== '' && arr.length==0) {
+         $('tbody>tr').hide()
+         $('tbody>tr').find(":contains('" + keyword + "')").parent().show();
+     } 
+	 else if (keyword !== '' &&  arr.length != 0){
+         $('tbody>tr').hide()
+         var text = [];
+         for (var i =0; i < arr.length; i++){
+        	 $('tbody>tr').find(":contains('" +keyword+ "')").parent().find(":contains('個人')").parent().show();
+         }
+	 }
+     else {
+         $('tbody>tr').show();
+     }
+	 
+	 $('tbody>tr').removeClass();
+	 $('tbody>tr:visible:even').addClass("info");
+ }
+ 
+ 
+ 
+});
+</script>
 {% endblock %}
 
 {% block content %}
@@ -47,6 +98,26 @@
                         <input class="form-control" id="tr-search" type="text" placeholder="搜尋...">
                     </div>
 		        </div>
+                <div class="col-md-1">
+                     <div class="form-group">
+                        <label>只顯示</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                     <div class="form-group">
+                        <input type="checkbox" value="個人" >個人<br>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                     <div class="form-group">
+                        <input type="checkbox" value="第一級" >第一級<br>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                     <div class="form-group">
+                        <input type="checkbox" value="第二級" >第二級<br>
+                    </div>
+                </div>
 		    </div>
             <br>
 		    <table class="table">
@@ -55,6 +126,9 @@
 		          <th>
 		            群組名稱
 		          </th>
+                  <th>
+                    分類
+                  </th>
 		          <th>
 		            指標數量
 		          </th>
@@ -78,11 +152,24 @@
 		          <td>
 		            {{i.name}}
 		          </td>
+                  <td>
+                    {% if i.level == 0 %}
+                    個人
+                    {% elif i.level == 1 %}
+                    第一級
+                    {% else %}
+                    第二級
+                    {% endif %}
+                  </td>
 		          <td>
-		            {{i.itemQty}}
+                    {{i.itemQty}}
 		          </td>
 		          <td>
-		            {{i.userQty}}
+                  {% if i.level == 0 %}
+                    {{i.userQty}}
+                  {% else %}
+                    不適用
+                  {% endif %}
 		          </td>
                   <td>
                     <button value="{% url 'control:permissionsDetail' i.id %}" class="btn glyphicon glyphicon-th-list redirect"></button>
