@@ -218,6 +218,7 @@ class CAccountAuth(BaseView):
     
     def Auth(self, request, *args, **kwargs):
         token = kwargs['token']
+        token = token[:len(token)-1]
         if len(token)!=64:
             return False
         try:
