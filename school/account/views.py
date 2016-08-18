@@ -227,7 +227,7 @@ class CAccountAuth(BaseView):
             return False
         root = BeautifulSoup(res.text,"lxml").select('root')
         if len(root)==0:
-            False
+            return False
         if len(root[0].select('msg'))>0:
             return False
         
