@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from bs4 import BeautifulSoup
 import requests as requests
@@ -204,19 +205,31 @@ class CAccountAuth(BaseView):
     page_title = '' # title
 
     def get(self, request, *args, **kwargs):
+        if self.Auth( request, *args, **kwargs):
+            return redirect(reverse('main:main'))
+        return HttpResponse('第三方驗證錯誤無法使用.')
+    
+    @csrf_exempt
+    def post(self, request, *args, **kwargs):
+        if self.Auth( request, *args, **kwargs):
+            return redirect(reverse('main:main'))
+        return HttpResponse('第三方驗證錯誤無法使用.')
+    
+    
+    def Auth(self, request, *args, **kwargs):
         token = kwargs['token']
         if len(token)!=64:
-            return HttpResponse('第三方驗證錯誤無法使用.')
+            return False
         try:
             res=requests.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("yhImR", token))
         except Exception as e:
             print(e)
-            return HttpResponse('第三方驗證錯誤無法使用.')
+            return False
         root = BeautifulSoup(res.text,"lxml").select('root')
         if len(root)==0:
-            return HttpResponse('第三方驗證錯誤無法使用.')
+            False
         if len(root[0].select('msg'))>0:
-            return HttpResponse('第三方驗證錯誤無法使用.')
+            return False
         
         root = root[0]
         id = root.select('id')[0].text
@@ -244,14 +257,12 @@ class CAccountAuth(BaseView):
             profile.isAuth=True
             profile.save()
             self.isAdmin(root,profile)
-            messages.success(request,newUser.username+'帳號認證成功。')
             login(request, authenticate(username=id, password=id))
+            messages.success(request,newUser.username+'帳號認證成功。')
         else:
-            return HttpResponse('第三方驗證錯誤無法使用.')
-        return redirect(reverse('main:main'))
+            return False
+        return True
     
-    def post(self, request, *args, **kwargs):
-        return redirect(reverse('main:main'))
     
     def isAdmin(self, xml, profile):
         ad_iscoladmin = True if xml.select('ad_iscoladmin')[0].text=="True" else False

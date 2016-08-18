@@ -1,3 +1,10 @@
 {% extends base_template_name %}
 {% block content %}
+<span class="text-info h1">校務研究系統首頁</span>
+<br>
+<br>
+{% if request.user.username == "" %}
+<span class="text-danger h3">你尚未登入帳號，請登入帳號。</span>
+{% endif %}
+
 {% endblock %}

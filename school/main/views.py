@@ -67,7 +67,7 @@ class UserBase(LoginRequiredMixin,BaseView):
 
 # Start 
 
-class Index(UserBase):
+class Index(BaseView):
     template_name = 'main/index.html' # xxxx/xxx.html
     page_title = '首頁' # title
 
