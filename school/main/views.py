@@ -40,7 +40,9 @@ class BaseView(TemplateView):
         return super(BaseView, self).get(request, *args, **kwargs)
 
     def getHost(self, request):
-        return str(request.META['HTTP_HOST']).split(":")[0]
+        if ":" in str(request.META['HTTP_HOST']):
+            return str(request.META['HTTP_HOST']).split(":")[0]
+        return str(request.META['HTTP_HOST'])
     
     def getPost(self, request):
         return request.META['SERVER_PORT']

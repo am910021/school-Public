@@ -205,32 +205,42 @@ class CAccountAuth(BaseView):
     page_title = '' # title
 
     def get(self, request, *args, **kwargs):
-        if self.Auth( request, *args, **kwargs):
+        auth=self.Auth( request, *args, **kwargs)
+        if auth=="":
             return redirect(reverse('main:main'))
-        return HttpResponse('第三方驗證錯誤無法使用.')
+        return HttpResponse('第三方驗證錯誤無法使用.  '+ auth)
     
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        if self.Auth( request, *args, **kwargs):
+        auth=self.Auth( request, *args, **kwargs)
+        if auth=="":
             return redirect(reverse('main:main'))
-        return HttpResponse('第三方驗證錯誤無法使用.')
+        return HttpResponse('第三方驗證錯誤無法使用.  '+ auth)
     
     
     def Auth(self, request, *args, **kwargs):
         token = kwargs['token']
-        token = token[:len(token)-1]
-        if len(token)!=64:
-            return False
+        #token = token[:len(token)-1]
+        #print("=====token=====")
+        #print(token)
+        #print("======end======")
+        #if len(token)!=64:
+        #    return False
         try:
-            res=requests.get("https://admin.cyut.edu.tw/interface/Auth.aspx?s=%s&c=%s" % ("yhImR", token))
+            res=requests.get("https://ip_address_removed"+token)
         except Exception as e:
-            print(e)
-            return False
+            return "連線錯誤"
         root = BeautifulSoup(res.text,"lxml").select('root')
         if len(root)==0:
-            return False
+            print("======start======")
+            print(res.text)
+            print("======end======")
+            return "資訊不足"
         if len(root[0].select('msg'))>0:
-            return False
+            print("======start======")
+            print(res.text)
+            print("======end======")
+            return "驗證錯誤"
         
         root = root[0]
         id = root.select('id')[0].text
@@ -242,7 +252,12 @@ class CAccountAuth(BaseView):
             user = user[0]
             user.profile.fullName = name
             user.profile.save()
-            self.isAdmin(root,user.profile)
+            try:
+                self.isAdmin(root,user.profile)
+            except:
+                print("======start======")
+                print(res.text)
+                print("======end======")
             login(request, authenticate(username=user.username, password=user.username))
             messages.success(request,request.user.username+'帳號認證成功。')
         elif len(user)==0:
@@ -257,12 +272,17 @@ class CAccountAuth(BaseView):
             profile.isActive=True
             profile.isAuth=True
             profile.save()
-            self.isAdmin(root,profile)
+            try:
+                self.isAdmin(root,user.profile)
+            except:
+                print("======start======")
+                print(res.text)
+                print("======end======")
             login(request, authenticate(username=id, password=id))
             messages.success(request,newUser.username+'帳號認證成功。')
         else:
-            return False
-        return True
+            return "登入資料錯誤"
+        return ""
     
     
     def isAdmin(self, xml, profile):
@@ -292,12 +312,12 @@ class CAccountAuth(BaseView):
             ad_adminCode = xml.select('ad_colno')[0].text
             ad_adminName = xml.select('ad_colname')[0].text
             level=1
-            print("ad_iscoladmin")
+            #print("ad_iscoladmin")
         elif ad_isdepadmin:
             ad_adminCode = xml.select('ad_depno')[0].text
             ad_adminName = xml.select('ad_depname')[0].text
             level=2 if level!=1 else 1
-            print("ad_isdepadmin")
+            #print("ad_isdepadmin")
         if ad_adminCode:
             if len(DBGroupName.objects.filter(code=ad_adminCode))==0:
                 adAdmin = DBGroupName.objects.create(code=ad_adminCode, name=ad_adminName, level=1)
@@ -309,12 +329,12 @@ class CAccountAuth(BaseView):
             ad_adminCode2 = xml.select('ad_colno2')[0].text
             ad_adminName2 = xml.select('ad_colname2')[0].text
             level=1
-            print("ad_iscoladmin2")
+            #print("ad_iscoladmin2")
         elif ad_isdepadmin2:
             ad_adminCode2 = xml.select('ad_depno2')[0].text
             ad_adminName2 = xml.select('ad_depname2')[0].text
             level=2 if level!=1 else 1
-            print("ad_isdepadmin2")
+            #print("ad_isdepadmin2")
         if ad_adminCode2:
             if len(DBGroupName.objects.filter(code=ad_adminCode2))==0:
                 adAdmin2 = DBGroupName.objects.create(code=ad_adminCode2, name=ad_adminName2, level=2)
@@ -326,12 +346,12 @@ class CAccountAuth(BaseView):
             at_adminCode = xml.select('at_colno')[0].text
             at_adminName = xml.select('at_colname')[0].text
             level=1
-            print("at_iscoladmin")
+            #print("at_iscoladmin")
         elif at_isdepadmin:
             at_adminCode = xml.select('at_depno')[0].text
             at_adminName = xml.select('at_depname')[0].text
             level=2 if level!=1 else 1
-            print("at_isdepadmin")
+            #print("at_isdepadmin")
         if at_adminCode:
             if len(DBGroupName.objects.filter(code=at_adminCode))==0:
                 atAdmin = DBGroupName.objects.create(code=at_adminCode, name=at_adminName, level=1)
@@ -343,12 +363,12 @@ class CAccountAuth(BaseView):
             at_adminCode2 = xml.select('at_colno2')[0].text
             at_adminName2 = xml.select('at_colname2')[0].text
             level=1
-            print("at_iscoladmin2")
+            #print("at_iscoladmin2")
         elif at_isdepadmin2:
             at_adminCode2 = xml.select('at_depno2')[0].text
             at_adminName2 = xml.select('at_depname2')[0].text
             level=2 if level!=1 else 1
-            print("at_isdepadmin2")
+            #print("at_isdepadmin2")
         if at_adminCode2:
             if len(DBGroupName.objects.filter(code=at_adminCode2))==0:
                 atAdmin2 = DBGroupName.objects.create(code=at_adminCode2, name=at_adminName2, level=2)
@@ -357,14 +377,14 @@ class CAccountAuth(BaseView):
             
             
             
-        if adAdmin:
-            print('adAdmin')
-        if adAdmin2:
-            print('adAdmin2') 
-        if atAdmin:
-            print('atAdmin')
-        if atAdmin2:
-            print('atAdmin2')
+        #if adAdmin:
+        #    print('adAdmin')
+        #if adAdmin2:
+        #    print('adAdmin2') 
+        #if atAdmin:
+        #    print('atAdmin')
+        #if atAdmin2:
+        #    print('atAdmin2')
             
         profile.adAdmin = adAdmin
         profile.adAdmin2 = adAdmin2
