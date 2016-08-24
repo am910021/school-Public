@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.http import HttpResponse
 from main.views import Index, blank
 from control.views import CAdminLogin
 urlpatterns = [
@@ -26,5 +27,6 @@ urlpatterns = [
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^developer/', include('developer.urls', namespace='developer')),
     url(r'^shiny/.*', blank),
+    url(r'^robots.txt', lambda x: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain"), name="robots_file"),
     url(r'^.*', Index.as_view()),
 ]

@@ -8,8 +8,8 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 from django.conf import settings
 from .models import Menu, Item, ShinyApp, DBGroupItem
-from .aescipher import AESCipher as ase
-from .aescipher import toSHA as sha1
+from func.aescipher import AESCipher as ase
+from func.aescipher import toSHA as sha1
 from main.models import DBGroupUser
 # Create your views here.
 
@@ -109,13 +109,16 @@ class CShinyApp(UserBase):
         
         #權限處理
         user = request.user
+        
+        if user.profile.type>=1:
+            kwargs['token'] = True
+            return super(CShinyApp, self).get(request, *args, **kwargs)
+        
         itemArr = []
-        if user.profile.level==0:
-            for i in DBGroupUser.objects.filter(user=user):
-                for j in DBGroupItem.objects.filter(group=i.group):
-                    itemArr.append(j.item.id)
-            kwargs['token'] = True if item.id in itemArr else False
-        elif user.profile.level > 0:
+        for i in DBGroupUser.objects.filter(user=user):
+            for j in DBGroupItem.objects.filter(group=i.group):
+                itemArr.append(j.item.id)
+        if user.profile.level > 0:
             for i in DBGroupItem.objects.filter(group=user.profile.adAdmin):
                 itemArr.append(i.item.id)
             for i in DBGroupItem.objects.filter(group=user.profile.adAdmin2):
@@ -124,11 +127,7 @@ class CShinyApp(UserBase):
                 itemArr.append(i.item.id)
             for i in DBGroupItem.objects.filter(group=user.profile.atAdmin2):
                 itemArr.append(i.item.id)
-            kwargs['token'] = True if item.id in itemArr  else False
-        if user.profile.type>=1:
-            kwargs['token'] = True
-        
-        
+        kwargs['token'] = True if item.id in itemArr else False
         return super(CShinyApp, self).get(request, *args, **kwargs)
 
     def createCode(self, num):

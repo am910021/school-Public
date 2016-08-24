@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from bs4 import BeautifulSoup
 import requests as requests
+from func.error import ErrorPrint as error
 from account.models import Profile
 from account.forms import UserForm, UserProfileForm
 from main.views import BaseView, UserBase
@@ -232,14 +233,9 @@ class CAccountAuth(BaseView):
             return "連線錯誤"
         root = BeautifulSoup(res.text,"lxml").select('root')
         if len(root)==0:
-            print("======start======")
-            print(res.text)
-            print("======end======")
+            error.printe("no xml", res.text)
             return "資訊不足"
         if len(root[0].select('msg'))>0:
-            print("======start======")
-            print(res.text)
-            print("======end======")
             return "驗證錯誤"
         
         root = root[0]
@@ -253,13 +249,11 @@ class CAccountAuth(BaseView):
             user.profile.fullName = name
             user.profile.save()
             try:
-                self.isAdmin(root,user.profile)
-            except:
-                print("======start======")
-                print(res.text)
-                print("======end======")
+                self.isAdmin(root, user.profile)
+            except Exception as e:
+                error.printe("xml", res.text, e)
             login(request, authenticate(username=user.username, password=user.username))
-            messages.success(request,request.user.username+'帳號認證成功。')
+            messages.success(request, user.username+'帳號認證成功。')
         elif len(user)==0:
             newUser = User()
             newUser.username = id
@@ -273,13 +267,11 @@ class CAccountAuth(BaseView):
             profile.isAuth=True
             profile.save()
             try:
-                self.isAdmin(root,user.profile)
-            except:
-                print("======start======")
-                print(res.text)
-                print("======end======")
+                self.isAdmin(root, profile)
+            except Exception as e:
+                error.printe("xml", res.text, e)
             login(request, authenticate(username=id, password=id))
-            messages.success(request,newUser.username+'帳號認證成功。')
+            messages.success(request, newUser.username+'帳號認證成功。')
         else:
             return "登入資料錯誤"
         return ""

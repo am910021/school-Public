@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from main.views import BaseView, UserBase
 from main.models import Setting
-from main.aescipher import toSHA as sha1
+from func.aescipher import toSHA as sha1
 # Create your views here.
 
 def developer_required(fun):

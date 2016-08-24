@@ -13,7 +13,7 @@ class ItemGroupManage:
         data = self.data
         user = []
         data['menu_all'] = Menu.objects.all().iterator()
-        data['user_all'] = Profile.objects.filter(type=0, level=0).iterator()
+        data['user_all'] = Profile.objects.filter(type=0).iterator()
         
         return
     

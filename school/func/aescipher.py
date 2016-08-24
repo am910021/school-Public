@@ -4,7 +4,7 @@ import hashlib
 from Crypto.Hash import SHA
 from Crypto import Random
 from Crypto.Cipher import AES
-from .models import Setting
+from main.models import Setting
 
 class AESCipher(object):
     
