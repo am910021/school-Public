@@ -82,16 +82,37 @@
         {% endfor %}
     {% endif %}
         
-        <li class="special">
+        {% if user.is_authenticated %}
+        <li class="special login-op">
             <div class="link" style="border-bottom: 1px solid #8AB5E2;">
-            {% if user.is_authenticated %}
-            <a href="{% url 'account:logout' %}">登出</a>
-            {% else %}
-            <a href="{% url 'account:login' %}">登入</a>
-            {% endif %}
+            <a href="{% url 'account:center' %}">帳戶中心</a>
             </div>
-
         </li>
+        {% if user.profile.type >= 1 %}
+        <li class="special login-op">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+            <a href="{% url 'control:main' %}">管理者頁面</a>
+            </div>
+        </li>
+        {% endif %}
+        <li class="special login-op">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+            <a href="#">用戶：{{user.profile.fullName}}</a>
+            </div>
+        </li>
+        <li class="special login-op">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+            <a href="{% url 'account:logout' %}">登出</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="special login-op">
+            <div class="link" style="border-bottom: 1px solid #8AB5E2;">
+            <a href="{% url 'account:login' %}">登入</a>
+            </div>
+        </li>
+        {% endif %}
+        
         <li class="special">
             <div class="link" style="border-bottom: 1px solid #8AB5E2;">
                 <a href="http://ip_address_removed">學校首頁</a>
@@ -114,9 +135,7 @@
 			             {% if user.profile.type >= 1 %}
                                 <div id="logined"><a href="{% url 'developer:main' %}">開發者頁面</a></div>
                                 <div id="logined"><a href="{% url 'control:main' %}" >管理者頁面</a></div>
-			             {% endif %}
-			             <!-- <div id="logined"><a href="{% url 'account:logout' %}" >登出</a></div> -->
-			             
+			             {% endif %}		             
                             <div id="logined" class=""><a href="{% url 'account:center' %}" >帳戶中心</a></div>
 			            {% else %}
 			             <div id="login"><a href="{% url 'account:login' %}" >登入</a></div>
@@ -125,21 +144,15 @@
 
 	            
 	            <div class="row" id="title-row">
-	               <div class="col-md-5" id="logo-col">
-		                <a href="{% url 'main:main' %}" class="h3" style="color:#fff;line-height:50px;text-decoration:none;" id="logo-link">
-		                    <img alt="" style="height:50px" src="{% static 'img/cyut_logo.png' %}"> 
-		                    <span>XX科技大學|</span><span style="font-size:14pt">校務研究系統</span>
+	               <div class="col-md-12">
+		                <a href="{% url 'main:main' %}" id="title-link">
+		                    <span>XX科技大學|</span><span id="title-sec">校務研究系統</span>
 		                </a>
+                        
+                        <a href="{% url 'main:main' %}"  id="logo-link">
+                            <img alt="logo" id="logo-img" src="{% static 'img/cyut_logo.png' %}"> 
+                        </a>
 	               </div>
-                   <div class="col-md-7" id="search-col">
-			            <form id="search">
-			            <div>
-			                <input type="text" style="height:100%;width:100%;font-size:14pt;">
-			            </div>
-			            <button type="submit" class="glyphicon glyphicon-search" ></button>
-			            
-			            </form>
-                   </div>
 	            </div>
 	            </header>
 	            <div id="main">

@@ -1,4 +1,5 @@
 {% extends base_template_name %}
+{% load staticfiles %}
 {% load main %}
 {% block head %}
 <style>
@@ -14,16 +15,41 @@
 </style>
 <script>
 document.domain = '{{serverIP}}';
-var totalApps = {% if totalApps %}{{totalApps}}{% else %}0{% endif %};
-
-function show(appID){
-    for (i = 1; i <= totalApps; i++) { 
-        document.getElementById('shinyapp'+i).style.display = 'none';
-    }
-    document.getElementById('shinyapp'+appID).style.display = 'block';
-}
 </script>
 {% endblock %}
+
+{% block script %}
+<script src="{% static 'js/login.js' %}"></script>
+
+<script>
+  $(document).ready(function() {
+	var appNames = ["{{appNames|safe}}"];
+	var totalApps = {{totalApps}};
+    var os = navigator.platform.toLowerCase();
+    if (os == "iphone" && os == "android")
+      $('app-position').remove();
+
+    $('button.fork').on('click', function() {
+      var id = $(this).val();
+      if (os == "iphone" || os == "android"){
+    	  openInNewTab("/shiny/apps/"+appNames[id-1]+"/")
+    	  return;
+      }
+      for (i = 1; i <= totalApps; i++) {
+        document.getElementById('shinyapp' + i).style.display = 'none';
+      }
+      document.getElementById('shinyapp' + id).style.display = 'block';
+    });
+
+    function openInNewTab(url) {
+      var win = window.open(url, '_blank');
+      win.focus();
+    }
+
+  });
+</script>
+{% endblock %}
+
 
 {% block content %}
 
@@ -45,7 +71,7 @@ function show(appID){
 	    <div class="row">
 	        {% for i in listApps %}
 	            <div class="col-md-3 buttom-wrapper">
-	                <button type="button" onclick="show({{i|plus}})" class="btn btn-primary btn-lg btn-block no-radius">
+	                <button type="button" value="{{i|plus}}" class="btn btn-primary btn-lg btn-block no-radius fork">
 	                    {{i|getName:shiny}}
 	                </button>
 	            </div>
@@ -57,6 +83,8 @@ function show(appID){
 	    <input type="hidden" id="license" value={{license}} readonly>
 	    <br>
 	    </form>
+     
+     <div id="app-position">
 	    {% for i in shiny %}
 	    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
 	        <!-- <span class="text-info h3">{{i.name}}</span> -->
@@ -64,6 +92,7 @@ function show(appID){
 		    {{listApps|delOneNumber}}
 	    </div>
 	    {% endfor %}
+     </div>
 	    <!-- 
 	    <iframe src="/shiny/apps/{{chart_demo.dirName}}/" style="border-top: 1px solid #AAA;border-bottom: 1px solid #AAA;border-left: none;border-right: none;width: 100%; height: 600px"></iframe>
 	     -->

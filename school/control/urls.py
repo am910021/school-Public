@@ -20,7 +20,7 @@ from .views import CItem, CItemAdd, CItemDelete, CItemEdit
 from .views import CApps, CAppAdd, CAppDelete, CAppEdit, CAppDownload
 from .views import CConfig, CConfigSchoolAPI, CConfigShiny, CCongigKey
 from .views import CPermissions, CPermissionsAdd, CPermissionsDetail, CPermissionsEdit, CPermissionsRemove
-from .views import CAccount, CAccountAdd, CAccountEdit, CAccountRemove, CAccountDetail
+from .views import CAccount, CAccountAdd, CAccountEdit, CAccountRemove, CAccountDetail, CAccountAdd3nd
 
 
 urlpatterns = [
@@ -62,6 +62,7 @@ urlpatterns = [
     
     url(r'account/$', CAccount.as_view(), name="account"),
     url(r'account/add/$', CAccountAdd.as_view(), name="accountAdd"),
+    url(r'account/add/3nd/$', CAccountAdd3nd.as_view(), name="accountAdd3nd"),
     url(r'account/edit/(?P<id>[0-9]+)/$', CAccountEdit.as_view(), name="accountEdit"),
     url(r'account/detail/(?P<id>[0-9]+)/$', CAccountDetail.as_view(), name="accountDetail"),
     url(r'account/remove/$', CAccountRemove.as_view(), name="accountRemove"),

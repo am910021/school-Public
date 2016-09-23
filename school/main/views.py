@@ -100,11 +100,17 @@ class CShinyApp(UserBase):
             request.user.profile.license = sha1(self.createCode(32)+request.user.password+request.user.username)
             request.user.profile.save()
         self.page_title=shiny[0].name
+        appNames = []
+        for i in shiny:
+            appNames.append(i.dirName)
+        print(appNames)
+        
         kwargs['itemName'] = item.name
         kwargs['license'] = request.user.profile.license
         kwargs['shiny'] = shiny
         kwargs['totalApps'] = len(shiny)
         kwargs['listApps'] = list(range(0,len(shiny)))
+        kwargs['appNames'] = '","'.join(appNames)
         
         
         #權限處理

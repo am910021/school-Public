@@ -64,12 +64,10 @@ class UserForm(forms.ModelForm):
     password.widget.attrs.update({'class':'form-control'})
     password2 = forms.CharField(widget=forms.PasswordInput(), label='確認密碼')
     password2.widget.attrs.update({'class':'form-control'})
-    email = forms.EmailField(label='電子郵件')
-    email.widget.attrs.update({'class':'form-control'})
-    
+
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
+        fields = ('username', )
         
     def clean_password2(self):
         password = self.cleaned_data.get('password')
@@ -85,12 +83,10 @@ class UserEditForm(forms.ModelForm):
     password.widget.attrs.update({'class':'form-control'})
     password2 = forms.CharField(widget=forms.PasswordInput(), label='確認密碼', required=False)
     password2.widget.attrs.update({'class':'form-control'})
-    email = forms.EmailField(label='電子郵件')
-    email.widget.attrs.update({'class':'form-control'})
-    
+
     class Meta:
         model = User
-        fields = ('username', 'email')
+        fields = ('username', )
         
     def clean_password2(self):
         password = self.cleaned_data.get('password')

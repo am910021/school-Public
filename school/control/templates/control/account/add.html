@@ -19,11 +19,14 @@ $(document).ready(function() {
 <div class="row">
   <div class="col-md-12">
     <div class="row">
-      <div class="col-md-offset-2 col-md-5">
+      <div class="col-md-offset-2 col-md-3">
         <h3>{{page_title}}</h3>
       </div>
       <div class="col-md-2 buttom-wrapper">
         <a href="{% url 'control:account' %}" class="no-radius btn btn-primary btn-lg btn-block">上一頁</a>
+      </div>
+      <div class="col-md-2 buttom-wrapper">
+        <a href="{% url 'control:accountAdd3nd' %}" class="no-radius btn btn-primary btn-lg btn-block">第三方帳號</a>
       </div>
       <div class="col-md-3 buttom-wrapper">
         <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
@@ -77,18 +80,6 @@ $(document).ready(function() {
           <div class="col-sm-5">
             <span class="text-danger">{{ userProfileForm.fullName.errors }}</span>
           </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label" for="id_email">{{ userForm.email.label }}</label>
-            <div class="col-sm-5">
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-                    {{ userForm.email }}
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <span class="text-danger">{{ userForm.email.errors }}</span>
-            </div>
         </div>
         <div class="form-group">
           <label for="id_manager" class="col-sm-2 control-label">

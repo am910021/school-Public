@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from account.models import Profile
 from main.views import BaseView
 from main.models import Menu, Item, ShinyApp, Setting, DBGroupName, DBGroupItem, DBGroupUser
 from .models import ItemGroupManage, AccountManage
@@ -799,7 +800,7 @@ class CAccountAdd(AdminBase):
     
     def post(self, request, *args, **kwargs):
         userForm = UserForm(request.POST)
-        userProfileForm = UserProfileForm(request.POST)      
+        userProfileForm = UserProfileForm(request.POST)    
         if not (userForm.is_valid() and userProfileForm.is_valid()):
             kwargs['userForm'] = userForm
             kwargs['userProfileForm'] = userProfileForm
@@ -816,6 +817,58 @@ class CAccountAdd(AdminBase):
         userProfile.save()
         messages.success(request,user.username+' 帳號加入成功。')
         return redirect(reverse('control:account'))
+    
+class CAccountAdd3nd(AdminBase):
+    template_name = 'account/add3nd.html' # xxxx/xxx.html
+    page_title = '新增第三方帳號' # title
+    
+    def post(self, request, *args, **kwargs):
+        data = request.POST.get("userData")
+        if "," not in data:
+            kwargs['error'] = '資料格式錯誤。'
+        
+        data = data.replace("\r\n","")
+        data = data.replace("\r","")
+        data = data.replace(" ","")
+        temp = data.split(";")
+        userArr = []
+        repeat = []
+        sp = ""
+        
+        for i in temp:
+            if len(i.split(","))>2:
+                kwargs['error'] = '資料格式錯誤。'
+                break;
+            sp = i.split(",")
+            
+            try:
+                User.objects.get(username=sp[0])
+                repeat.append(sp[0])
+            except:
+                userArr.append(sp)
+            
+        if(len(repeat)>0):
+            kwargs['error'] = '資料重復：'+', '.join(repeat)
+            return super(CAccountAdd3nd, self).post(request, *args, **kwargs)
+        
+        for i in userArr:
+            newUser = User()
+            newUser.username = i[0]
+            newUser.set_password(i[0])
+            newUser.save()
+            profile = Profile()
+            profile.user = newUser
+            profile.fullName = i[1]
+            profile.type=0
+            profile.isActive=True
+            profile.isAuth=True
+            profile.save()    
+            
+            
+            
+        messages.success(request,'帳號加入成功。')
+        return super(CAccountAdd3nd, self).post(request, *args, **kwargs)
+    
     
 class CAccountEdit(AdminBase):
     template_name = 'account/edit.html' # xxxx/xxx.html

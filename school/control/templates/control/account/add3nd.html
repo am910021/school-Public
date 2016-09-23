@@ -1,0 +1,61 @@
+{% extends base_template_name %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+	$('#sendForm').on('click', function() {
+		if(!$('#id_userData').val()){
+			$('#error').html("請輸入資料。");
+			return;
+		}
+		$('#usrform').submit();
+		
+		 
+		});   
+});
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-7">
+        <h3>{{page_title}}</h3>
+      </div>
+      <div class="col-md-2 buttom-wrapper">
+        <a href="{% url 'control:accountAdd' %}" class="no-radius btn btn-primary btn-lg btn-block">上一頁</a>
+      </div>
+      <div class="col-md-3 buttom-wrapper">
+        <a href="{% url 'control:main' %}" class="no-radius btn btn-primary btn-lg btn-block">回管理員首頁</a>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <form class="form-horizontal" id="usrform" role="form" method="post" action="{% url 'control:accountAdd3nd' %}">
+        {% csrf_token %}
+          <div class="input-group">
+              <span class="h4" >帳號跟名稱以英文豆號, 隔開，不同人的資料以分號 ; 隔開，空白自動去除</span>
+              <br>
+              範列： <span class="h4 text-info">10914021,希拉蕊;10914022,歐巴馬</span> 或是 
+              <span class="h4 text-info">10914021,希拉蕊 ; 10914022,歐巴馬</span>
+              <br>
+              <br>
+              <span id="error" class="h3 text-danger">{{error}}</span>
+          </div>
+          <div class="input-group">
+              <textarea id="id_userData" name="userData" class="form-control custom-control" rows="10" style="resize:none"></textarea>     
+              <span id="sendForm" class="input-group-addon btn btn-primary">送出</span>
+          </div>
+        </form>
+   
+
+
+        
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
