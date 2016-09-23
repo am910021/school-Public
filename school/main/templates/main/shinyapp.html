@@ -15,39 +15,14 @@
 </style>
 <script>
 document.domain = '{{serverIP}}';
+var appNames = ["{{appNames|safe}}"];
+var totalApps = {{totalApps}};
 </script>
 {% endblock %}
 
 {% block script %}
 <script src="{% static 'js/login.js' %}"></script>
-
-<script>
-  $(document).ready(function() {
-	var appNames = ["{{appNames|safe}}"];
-	var totalApps = {{totalApps}};
-    var os = navigator.platform.toLowerCase();
-    if (os == "iphone" && os == "android")
-      $('app-position').remove();
-
-    $('button.fork').on('click', function() {
-      var id = $(this).val();
-      if (os == "iphone" || os == "android"){
-    	  openInNewTab("/shiny/apps/"+appNames[id-1]+"/")
-    	  return;
-      }
-      for (i = 1; i <= totalApps; i++) {
-        document.getElementById('shinyapp' + i).style.display = 'none';
-      }
-      document.getElementById('shinyapp' + id).style.display = 'block';
-    });
-
-    function openInNewTab(url) {
-      var win = window.open(url, '_blank');
-      win.focus();
-    }
-
-  });
-</script>
+<script src="{% static 'js/shiny.js' %}"></script>
 {% endblock %}
 
 
