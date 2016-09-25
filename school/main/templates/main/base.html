@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{% static 'org/css/simple-sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'org/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'org/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'org/css/style.css' %}" media="screen" type="text/css" />
+    <link rel="stylesheet" href="{% static 'org/css/style.css' %}">
     
     <style>
 #footer {
@@ -39,9 +39,20 @@
     <div id="wrapper">
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
-            <!-- menu in hrer -->
-            <h3 class="text-center">校務研究系統</h3>
+            <!-- menu in hrer <h3 class="text-center">校務研究系統</h3> -->
+            
+            
     <ul id="accordion" class="accordion">
+    
+    
+       <li>
+            <div class="link" id="sys-name">
+                <a href="http://ip_address_removed">
+                <img alt="logo" id="logo-img" src="{% static 'img/cyut_logo.png' %}">
+                <span  style="height:60px;" >校務研究系統</span>
+                </a>
+            </div>
+        </li>
     
     {% for i in menu %}
         {% if i.activeQty > 0 or user.profile.type >= 1 %}
@@ -142,7 +153,7 @@
 			            {% endif %}
 	                </div>
 
-	            
+	            <!-- 
 	            <div class="row" id="title-row">
 	               <div class="col-md-12">
 		                <a href="{% url 'main:main' %}" id="title-link">
@@ -154,6 +165,7 @@
                         </a>
 	               </div>
 	            </div>
+              -->
 	            </header>
 	            <div id="main">
 	                <div class="row">
