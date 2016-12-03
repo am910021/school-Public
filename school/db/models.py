@@ -83,8 +83,34 @@ class Studsem_all(models.Model):
     hst_sem = models.CharField(max_length=16,blank=True)
     
     
+class Studsem(models.Model):
+    sts_acy = models.IntegerField()
+    sts_sem = models.IntegerField()
+    std_serno = models.CharField(max_length=20)
+    cls_id = models.CharField(max_length=20)
+    sts_status = models.IntegerField()
+    sts_reason = models.CharField(blank=True,max_length=5)
+    sts_ptpone = models.BooleanField()
+    sts_back = models.BooleanField()
+    sts_tsch = models.BooleanField()
+    sts_tdep = models.BooleanField()
+    sts_five = models.BooleanField()
     
-    
+class Dep(models.Model):
+    acy = models.IntegerField()
+    dep_no = models.CharField(max_length=20)
+    col_no = models.CharField(max_length=20)
+    dep_sname = models.CharField(max_length=32)
+    dep_fname = models.CharField(max_length=64)
+
+class Case(models.Model):
+    acy = models.IntegerField()
+    dep_no = models.CharField(max_length=20)
+    cas_key = models.CharField(max_length=20)
+    pef_key = models.CharField(max_length=20)
+    pep_key = models.CharField(max_length=20)
+    cas_no = models.CharField(max_length=20)
+
     
     
     
