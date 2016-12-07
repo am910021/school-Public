@@ -109,7 +109,7 @@ class Case(models.Model):
     cas_key = models.CharField(max_length=20)
     pef_key = models.CharField(max_length=20)
     pep_key = models.CharField(max_length=20)
-    cas_no = models.CharField(max_length=20)
+    cas_no = models.CharField(max_length=64)
 
     
 class Pefund(models.Model):
