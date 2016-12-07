@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 SITE_NAME = "校務系統"
-SITE_VERSION = '0.6.3'
+SITE_VERSION = '0.6.4'
 
 # Application definition
 

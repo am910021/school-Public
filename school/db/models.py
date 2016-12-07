@@ -112,8 +112,17 @@ class Case(models.Model):
     cas_no = models.CharField(max_length=20)
 
     
+class Pefund(models.Model):
+    pef_key = models.CharField(max_length=10)
+    pef_name = models.CharField(max_length=128)
     
+class Peplan(models.Model):
+    pep_key = models.CharField(max_length=10)
+    pep_name = models.CharField(max_length=128)
     
-    
+class Pefund_rel(models.Model):
+    pef_key = models.CharField(max_length=10)
+    pep_key = models.CharField(max_length=10)
+    dep_no = models.CharField(max_length=20)
     
     
