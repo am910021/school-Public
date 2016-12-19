@@ -46,7 +46,7 @@ class Studsem_all(models.Model):
     sub_name2 = models.CharField(max_length=10)
     col_fname = models.CharField(max_length=16)
     dep_no = models.CharField(max_length=6)
-    dep_fname = models.CharField(max_length=16)
+    dep_fname = models.CharField(max_length=32)
     cls_year = models.IntegerField()
     cls_class = models.CharField(max_length=1)
     sts_status = models.IntegerField()

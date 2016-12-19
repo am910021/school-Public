@@ -7,7 +7,7 @@ from main.models import Setting
 
 class SchoolApi: 
     def getRequest(self,url):
-        isProxy = True
+        isProxy = False
         if isProxy:
             proxies={"https":"http://ip_address_removed:3128"}
             #print(url)
@@ -18,10 +18,12 @@ class SchoolApi:
         
 def studsem_all_update():
     s = SchoolApi()
-    for i in range(84,106): #105
+    for i in range(100,106): #84-105 
         for j in range(1,3): #1,3
+            Studsem_all.objects.filter(sts_acy=i, sts_sem=j).delete()
             url = "https://ip_address_removed/studsem_all/%03d/%d/" % (i, j)
             data = json.loads(s.getRequest(url))
+            print(url)
             for k in data:
                 Studsem_all.objects.get_or_create(
                 sts_acy=int(k['sts_acy']),
@@ -72,8 +74,9 @@ def studsem_all_update():
         
 def studsem_update():
     s = SchoolApi()
-    for i in range(84,106):
-        for j in range(1,3):
+    for i in range(98,106): #資料從84年開始
+        for j in range(1,3): # 1 2，1 2，1 2
+            Studsem.objects.filter(sts_acy=i, sts_sem=j).delete()
             url = "https://ip_address_removed/studsem/%03d/%d/" % (i, j)
             data = json.loads(s.getRequest(url))
             for d in data:
@@ -149,7 +152,8 @@ def case_update():
         
 if __name__ == '__main__':
     #studsem_all_update()
-    case_update()
+    studsem_update()
+    #case_update()
     
             
             
