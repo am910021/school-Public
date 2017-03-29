@@ -125,4 +125,13 @@ class Pefund_rel(models.Model):
     pep_key = models.CharField(max_length=10)
     dep_no = models.CharField(max_length=20)
     
+class Case_funds(models.Model):
+    cas_key = models.CharField(max_length=20)
+    cas_funds = models.IntegerField()
+    
+class Dpment(models.Model):
+    acy = models.IntegerField()
+    dep_no = models.CharField(max_length=20)
+    dep_fname = models.CharField(max_length=128)
+
     

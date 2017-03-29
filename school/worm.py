@@ -74,7 +74,7 @@ def getWeb():
                         r[i]=webRate
                         m = int(dd.select("strong")[1].text.replace(" ",""))
                         Salary.objects.create(department=db_department,title=tData[i],rate=rate,money=m,type=i)         
-                print(department+"--加入完成")
+                print("%s--%s--己加入" % (department, university))
             except Exception as e:
                 print("錯誤："+str(e))
         print(university+"--加入完成")

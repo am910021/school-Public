@@ -2,7 +2,7 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
 import json, requests, django
 django.setup()
-from db.models import Studsem_all, Studsem, Pefund, Peplan, Pefund_rel, Case
+from db.models import Studsem_all, Studsem, Pefund, Peplan, Pefund_rel, Case, Case_funds, Dpment
 from main.models import Setting
 
 class SchoolApi: 
@@ -78,6 +78,7 @@ def studsem_update():
         for j in range(1,3): # 1 2，1 2，1 2
             Studsem.objects.filter(sts_acy=i, sts_sem=j).delete()
             url = "https://ip_address_removed/studsem/%03d/%d/" % (i, j)
+            print(url)
             data = json.loads(s.getRequest(url))
             for d in data:
                 Studsem.objects.create(
@@ -150,10 +151,36 @@ def case_update():
         print("Case %d 學年度己更新"% (i))
     print("Case 更新完成")   
         
+def case2_update():
+    s = SchoolApi()
+    
+    print("case_funds 開始更新")
+    
+    case = Case.objects.all().order_by("acy")
+    Case_funds.objects.all().delete()
+    url_s = "https://ip_address_removed/case_funds/%d"
+    for c in case:
+        url = url_s % (c.cas_key)
+        data = json.loads(s.getRequest(url))
+        for d in data:
+            Case_funds.objects.create(cas_key = d['cas_key'],cas_funds = d['cas_funds'])
+    print("case_funds 更新完成")
+    
+    print("Dpment 開始更新")
+    Dpment.objects.all().delete()
+    url = "https://ip_address_removed/dpment/"
+    data = json.loads(s.getRequest(url))
+    for d in data:
+        Dpment.objects.create(acy = d['acy'],dep_no = d['dep_no'],dep_fname = d['dep_fname']) 
+    print("Dpment 更新完成")
+    
+        
+        
 if __name__ == '__main__':
     #studsem_all_update()
-    studsem_update()
+    #studsem_update()
     #case_update()
+    case2_update()
     
             
             
