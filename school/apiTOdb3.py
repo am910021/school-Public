@@ -158,7 +158,7 @@ def case2_update():
     
     case = Case.objects.all().order_by("acy")
     Case_funds.objects.all().delete()
-    url_s = "https://ip_address_removed/case_funds/%d"
+    url_s = "https://ip_address_removed/case_funds/%s/"
     for c in case:
         url = url_s % (c.cas_key)
         data = json.loads(s.getRequest(url))

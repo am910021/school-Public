@@ -9,10 +9,13 @@
     	  openInNewTab("/shiny/apps/"+appNames[id-1]+"/")
     	  return;
       }
+
       for (i = 1; i <= totalApps; i++) {
-        document.getElementById('shinyapp' + i).style.display = 'none';
+	
+        document.getElementById('shinyapp' + i).style.visibility = 'hidden';
+	document.getElementById('shinyapp' + i).style.height = '0px';
       }
-      document.getElementById('shinyapp' + id).style.display = 'block';
+	document.getElementById('shinyapp' + id).removeAttribute("style")
     });
 
     function openInNewTab(url) {

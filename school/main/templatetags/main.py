@@ -23,10 +23,9 @@ def getNumber(data):
 def setHide(data):
     num=data[0]+1
     style="""
-    display:none
+    visibility:hidden;height:0px;
     """
     style2="""
-    display:black
     """
     return style2 if num==1 else style
 

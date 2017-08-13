@@ -80,6 +80,7 @@ class SignUp(BaseView):
         userProfile = userProfileForm.save(commit=False)
         userProfile.user = user
         userProfile.type=1 #2 = Manager
+        userProfile.isAuth=False
         userProfile.save()
         #messages.success(request, '註冊成功')
         messages.success(request,'註冊成功')
