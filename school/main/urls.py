@@ -19,4 +19,5 @@ from .views import Index, CShinyApp
 urlpatterns = [
     url(r'^$', Index.as_view(), name='main'),
     url(r'^shiny/(?P<itemID>[0-9]+)/$', CShinyApp.as_view(), name='shiny'),
+    url(r'^shiny/(?P<itemID>[0-9]+)/(?P<appID>[0-9]+)/$', CShinyApp.as_view(), name='shiny2'),
 ]

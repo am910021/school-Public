@@ -11,6 +11,7 @@ from main.views import BaseView
 from main.models import Menu, Item, ShinyApp, Setting, DBGroupName, DBGroupItem, DBGroupUser
 from .models import ItemGroupManage, AccountManage
 from .forms  import FMenu, FItem, FShinyApp, UserForm, UserProfileForm , UserEditForm
+from time import gmtime, strftime
 # Create your views here.
 
 def admin_required(fun):
@@ -376,13 +377,11 @@ class CAppAdd(ManagerBase):
         
         try:
             config = Setting.objects.get(name="dirPath")
-            dirName = str(request.POST.get('dirName')).replace(" ","-")
-            if os.path.exists(config.c1+dirName):
-                kwargs['dir_exists'] = "* 資料夾已存在"
-                kwargs['form'] = form
-                return super(CAppAdd, self).post(request, *args, **kwargs)
-            
             file = request.FILES['upload_file']
+            fileSize = file.size
+            
+            dirName = strftime("%Y-%m-%d_%H-%M-%S_", gmtime())+fileSize          
+            
             os.makedirs(config.c1+dirName)
             zip_ref = zipfile.ZipFile(file, 'r')
             zip_ref.extractall(config.c1+dirName)
@@ -450,9 +449,7 @@ class CAppEdit(ManagerBase):
         try:
             shiny = ShinyApp.objects.get(id=request.POST.get('appID'))
             item = shiny.item
-            dir = str(request.POST.get('dirName')).replace(" ","-")
             orgDir = shiny.dirName
-            orgName = shiny.name
             config = Setting.objects.get(name="dirPath")
         except:
             return redirect(reverse('main:main'))
@@ -464,17 +461,14 @@ class CAppEdit(ManagerBase):
             kwargs['menuID'] = shiny.item.menu.id
             return super(CAppAdd, self).post(request, *args, **kwargs)
         
-        if orgDir != dir:
-            os.rename(config.c1+orgDir, config.c1+dir)
-        
         if 'upload_file' in request.FILES:
             file = request.FILES['upload_file']
-            if os.path.exists(config.c1+dir):
-                shutil.rmtree(config.c1+dir)
+            if os.path.exists(orgDir):
+                shutil.rmtree(orgDir)
                 
-            os.makedirs(config.c1+dir)
+            os.makedirs(orgDir)
             zip_ref = zipfile.ZipFile(file, 'r')
-            zip_ref.extractall(config.c1+dir)
+            zip_ref.extractall(orgDir)
             zip_ref.close()
             
             os.makedirs(config.c1+dir+"/zip/")
@@ -498,7 +492,7 @@ class CAppEdit(ManagerBase):
         item.save()
         
         #messages.success(request, 'APP更新成功。')
-        msg = "%s(%s) APP修改成功。" % (request.POST.get('name'), orgName)
+        msg = "%s APP修改成功。" % (request.POST.get('name'))
         messages.success(request, msg)
         return redirect(reverse('control:apps', args=(request.POST.get('item'),)))
     

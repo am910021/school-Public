@@ -1,0 +1,79 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+{% load main %}
+{% block head %}
+<style>
+.app-iframe{
+    border-top: 1px solid #AAA;
+    border-bottom: 0px;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    height: 600px
+}
+
+</style>
+<script>
+document.domain = '{{serverIP}}';
+var appNames = ["{{appNames|safe}}"];
+var totalApps = {{totalApps}};
+</script>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/login.js' %}"></script>
+<script src="{% static 'js/shiny.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    {% if shiny %}
+    
+	    {% if not token %}
+        <div class="row">
+            <div class="col-md-12 ">
+              <span class="text-success h2">很抱歉你的權限不足，此頁面不可顯示。權限資訊可以在帳戶中心找到。</span>
+            </div>
+        </div>
+	    {% else %}
+	    <!-- <div class="row">
+			<div class="col-md-12 ">
+			  <span class="text-success h2">指標--{{itemName}}</span>
+			</div>
+	    </div>
+	    <br> -->
+	    <div class="row">
+	        {% for i in listApps %}
+	            <div class="col-md-3 buttom-wrapper">
+	                <button type="button" value="{{i|plus}}" class="btn btn-primary btn-lg btn-block no-radius fork">
+	                    {{i|getName:shiny}}
+	                </button>
+	            </div>
+	            {{i|nextRow|safe}}
+	        {% endfor %}
+	    </div>
+	        
+	    <form>
+	    <input type="hidden" id="license" value={{license}} readonly>
+	    <br>
+	    </form>
+     
+     <div id="app-position">
+	    {% for i in shiny %}
+	    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
+	        <!-- <span class="text-info h3">{{i.name}}</span> -->
+		    <iframe src="/shiny/apps/{{i.dirName}}/"  class="app-iframe"></iframe>
+		    {{listApps|delOneNumber}}
+	    </div>
+	    {% endfor %}
+     </div>
+	    <!-- 
+	    <iframe src="/shiny/apps/{{chart_demo.dirName}}/" style="border-top: 1px solid #AAA;border-bottom: 1px solid #AAA;border-left: none;border-right: none;width: 100%; height: 600px"></iframe>
+	     -->
+        {% endif %}
+    {% else %}
+    <h3>沒有找到圖</h3>
+    {% endif %}
+    
+{% endblock %}

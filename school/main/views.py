@@ -10,25 +10,37 @@ from django.conf import settings
 from .models import Menu, Item, ShinyApp, DBGroupItem
 from func.aescipher import AESCipher as ase
 from func.aescipher import toSHA as sha1
-from main.models import DBGroupUser
+from main.models import DBGroupUser, Setting
+
 # Create your views here.
 
 class BaseView(TemplateView):
 
+    SITE_VERSION = ""
     # Base template to extend in drived views
     base_template_name = 'main/base.html'
-
+    
+    def __init__(self):
+        if BaseView.SITE_VERSION != "":
+            return
+        
+        data = Setting.objects.filter(name="SITE_VERSION")
+        if(len(data) == 0):
+            BaseView.SITE_VERSION = "unknow"
+        else:
+            BaseView.SITE_VERSION = data[0].c1
+        print("BaseView initialize")
+    
     def get_context_data(self, **kwargs):
         context = super(BaseView, self).get_context_data(**kwargs)
-            
+
         # Settings context data for base template
         context['base_template_name'] = self.base_template_name
         context['SITE_NAME'] = settings.SITE_NAME
-        context['SITE_VERSION'] = settings.SITE_VERSION
+        context['SITE_VERSION'] = BaseView.SITE_VERSION
         context['menu'] = Menu.objects.all().order_by('order')
         if hasattr(self, 'page_title'):
             context['page_title'] = self.page_title
-
         return context
     
     def get(self, request, *args, **kwargs):
@@ -93,6 +105,15 @@ class CShinyApp(UserBase):
             print(e)
             return super(CShinyApp, self).get(request, *args, **kwargs)
         
+        try:
+            appID = kwargs['appID'] if 'appID' in kwargs else None
+            app = ShinyApp.objects.get(id=appID)
+            kwargs['shinyApp'] = app 
+        except Exception as e:
+            print(e)
+            kwargs['shinyApp'] = shiny[0] 
+        
+        
         if len(shiny)==0:
             return super(CShinyApp, self).get(request, *args, **kwargs)
             
@@ -100,26 +121,23 @@ class CShinyApp(UserBase):
             request.user.profile.license = sha1(self.createCode(32)+request.user.password+request.user.username)
             request.user.profile.save()
         self.page_title=shiny[0].name
-        appNames = []
-        for i in shiny:
-            appNames.append(i.dirName)
-        print(appNames)
-        
-        kwargs['itemName'] = item.name
+
         kwargs['license'] = request.user.profile.license
         kwargs['shiny'] = shiny
-        kwargs['totalApps'] = len(shiny)
-        kwargs['listApps'] = list(range(0,len(shiny)))
-        kwargs['appNames'] = '","'.join(appNames)
-        
-        
+
         #權限處理
         user = request.user
-        
         if user.profile.type>=1:
             kwargs['token'] = True
             return super(CShinyApp, self).get(request, *args, **kwargs)
         
+        kwargs['token'] = self.getItemArr(item, user)
+        return super(CShinyApp, self).get(request, *args, **kwargs)
+
+    def createCode(self, num):
+        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
+    
+    def hasToken(self,item, user):
         itemArr = []
         for i in DBGroupUser.objects.filter(user=user):
             for j in DBGroupItem.objects.filter(group=i.group):
@@ -133,11 +151,7 @@ class CShinyApp(UserBase):
                 itemArr.append(i.item.id)
             for i in DBGroupItem.objects.filter(group=user.profile.atAdmin2):
                 itemArr.append(i.item.id)
-        kwargs['token'] = True if item.id in itemArr else False
-        return super(CShinyApp, self).get(request, *args, **kwargs)
-
-    def createCode(self, num):
-        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(num))
+        return True if item.id in itemArr else False
 
 def blank(request):
     return HttpResponse("Page not found.")

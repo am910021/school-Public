@@ -13,16 +13,9 @@
 }
 
 </style>
-<script>
-document.domain = '{{serverIP}}';
-var appNames = ["{{appNames|safe}}"];
-var totalApps = {{totalApps}};
-</script>
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'js/login.js' %}"></script>
-<script src="{% static 'js/shiny.js' %}"></script>
 {% endblock %}
 
 
@@ -37,20 +30,11 @@ var totalApps = {{totalApps}};
             </div>
         </div>
 	    {% else %}
-	    <!-- <div class="row">
-			<div class="col-md-12 ">
-			  <span class="text-success h2">指標--{{itemName}}</span>
-			</div>
-	    </div>
-	    <br> -->
 	    <div class="row">
-	        {% for i in listApps %}
+	        {% for i in shiny %}
 	            <div class="col-md-3 buttom-wrapper">
-	                <button type="button" value="{{i|plus}}" class="btn btn-primary btn-lg btn-block no-radius fork">
-	                    {{i|getName:shiny}}
-	                </button>
+                    <a href="{% url 'main:shiny2' i.item.id i.id %}" class="btn btn-primary btn-lg btn-block no-radius fork">{{i.name}}</a>
 	            </div>
-	            {{i|nextRow|safe}}
 	        {% endfor %}
 	    </div>
 	        
@@ -60,17 +44,9 @@ var totalApps = {{totalApps}};
 	    </form>
      
      <div id="app-position">
-	    {% for i in shiny %}
-	    <div id="shinyapp{{listApps|getNumber}}" style="{{listApps|setHide}}">
-	        <!-- <span class="text-info h3">{{i.name}}</span> -->
-		    <iframe src="/shiny/apps/{{i.dirName}}/"  class="app-iframe"></iframe>
-		    {{listApps|delOneNumber}}
-	    </div>
-	    {% endfor %}
+        <iframe src="/shiny/apps/{{shinyApp.dirName}}/"  class="app-iframe"></iframe>
      </div>
-	    <!-- 
-	    <iframe src="/shiny/apps/{{chart_demo.dirName}}/" style="border-top: 1px solid #AAA;border-bottom: 1px solid #AAA;border-left: none;border-right: none;width: 100%; height: 600px"></iframe>
-	     -->
+	   
         {% endif %}
     {% else %}
     <h3>沒有找到圖</h3>
