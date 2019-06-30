@@ -374,26 +374,22 @@ class CAppAdd(ManagerBase):
             kwargs['not_found']="*請選擇檔案"
             kwargs['form'] = form
             return super(CAppAdd, self).post(request, *args, **kwargs)
-        
         try:
             config = Setting.objects.get(name="dirPath")
             file = request.FILES['upload_file']
             fileSize = file.size
-            
-            dirName = strftime("%Y-%m-%d_%H-%M-%S_", gmtime())+fileSize          
+            dirName = strftime("%Y-%m-%d_%H-%M-%S_", gmtime())+str(fileSize)       
             
             os.makedirs(config.c1+dirName)
             zip_ref = zipfile.ZipFile(file, 'r')
             zip_ref.extractall(config.c1+dirName)
             zip_ref.close()
-            
             os.makedirs(config.c1+dirName+"/zip/")
             fd = open(config.c1+dirName+'/zip/'+file.name, 'wb')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
 
-            
             form = form.save(commit=False)
             form.user = request.user
             form.dirName = dirName

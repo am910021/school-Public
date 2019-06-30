@@ -48,13 +48,11 @@ class FShinyApp(forms.ModelForm):
         
     name = forms.CharField(max_length=32)
     name.widget.attrs.update({'class':'form-control'})
-    dirName = forms.CharField(max_length=32)
-    dirName.widget.attrs.update({'class':'form-control'})
     isActive = forms.BooleanField(required=False)
     isActive.initial=True
     class Meta:
         model = ShinyApp
-        fields = ('item', 'name', 'dirName', 'isActive')
+        fields = ('item', 'name', 'isActive')
         
 
 class UserForm(forms.ModelForm):
