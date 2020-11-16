@@ -1,0 +1,11 @@
+yum install httpd-devel
+
+source bin/activate
+pip3 install mod_wsgi 
+
+LoadModule wsgi_module "/usr/lib64/httpd/modules/mod_wsgi-py36.cpython-36m-x86_64-linux-gnu.so"
+
+
+
+
+

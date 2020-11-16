@@ -1,0 +1,10 @@
+set global validate_password_policy=0;
+set global validate_password_length=3;
+CREATE USER 'school'@'localhost' IDENTIFIED by 'school';
+GRANT USAGE ON *.* TO 'school'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+CREATE DATABASE IF NOT EXISTS `school` default character set utf8;
+GRANT ALL PRIVILEGES ON `school`.* TO 'school'@'localhost';GRANT ALL PRIVILEGES ON `school\_%`.* TO 'school'@'localhost';
+quit
+
+
+
